@@ -91,7 +91,9 @@ export const Modal: React.FC<ModalProps> = ({
       ) : (
         <DialogHeader>{title}</DialogHeader>
       )}
-      <DialogBody>{children}</DialogBody>
+      <DialogBody className="m-2 p-2 overflow-y-auto max-h-[90%] h-full">
+        {children}
+      </DialogBody>
       {!disableFooter && (
         <DialogFooter>
           <Button

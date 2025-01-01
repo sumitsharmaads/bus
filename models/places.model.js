@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import Common from "../utils/common.js";
 
 const GSchema = mongoose.Schema;
 
@@ -15,11 +16,22 @@ const PlacesSchema = new GSchema(
       required: true,
       trim: true,
     },
-    city: {
+    name: {
       type: String,
       required: true,
       trim: true,
       unique: true,
+    },
+    accentcity: {
+      type: String,
+      trim: true,
+      unique: true,
+    },
+    latitude: {
+      type: String,
+    },
+    longitude: {
+      type: String,
     },
   },
   { timestamps: true }
@@ -89,11 +101,12 @@ PlacesSchema.plugin(function (schema) {
     }
   };
 
-  schema.statics.getAll = async function (condition) {
+  schema.statics.getAll = async function (condition, projection = {}) {
+    const model = this;
     const {
       page = 1,
       items = 10000,
-      isCount,
+      isCount = false,
       search,
       sort = { city: 1 },
     } = condition || {};
@@ -109,7 +122,7 @@ PlacesSchema.plugin(function (schema) {
       if (isCount) {
         const count = await model.countDocuments(tempCondition);
         const result = await model
-          .find(tempCondition)
+          .find(tempCondition, { projection })
           .limit(items)
           .skip((page - 1) * items)
           .sort(sort);
@@ -119,16 +132,18 @@ PlacesSchema.plugin(function (schema) {
         };
       } else {
         const result = await model
-          .find(tempCondition)
+          .find(tempCondition, { projection })
           .limit(items)
           .skip((page - 1) * items)
           .sort(sort);
+        console.log("result", result);
         return {
           count: null,
           result,
         };
       }
     } catch (error) {
+      console.log("failed to parse places", error);
       throw new Error("failed to get all places", error);
     }
   };

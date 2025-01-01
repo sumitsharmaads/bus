@@ -9,16 +9,22 @@ import {
 } from "../utils/common.js";
 import { Otp } from "../models/otp.model.js";
 import EmailUtil from "../utils/EmailUtil.js";
-import { redisClient } from "../redisConnection.js";
+import {
+  ACCESS_TOKEN_EXPIRY_UTIL,
+  REFRESH_TOKEN_EXPIRY_UTIL,
+} from "../utils/constant.js";
+import { Token } from "../models/token.model.js";
 
 export const register = async (req, res, next) => {
   console.log("Controller: Register user");
-  const { fullname, email, username, password, phone } = req.body;
-  if (!fullname || !email || !username || !password || !phone) {
+  const { fullname, email, password, username } = req.body;
+  if (!fullname || !email || !password) {
     console.log("Error: Missing mandatory fields during registration.");
     return next(createError(400, "Please provide all mandatory fields"));
   }
-
+  if (!username) {
+    req.body.username = email.split("@")[0];
+  }
   try {
     const user = await User.register(req.body);
     if (user) {
@@ -215,32 +221,28 @@ export const verifyOtp = async (req, res, next) => {
     }
     const accessToken = generateAccessToken(existingUser, uuid);
     const refreshToken = generateRefreshToken(existingUser);
-    /*
-    //7 days
-    await redisClient.set(
-      existingUser._id.toString(),
-      refreshToken,
-      "EX",
-      7 * 24 * 60 * 60
-    );
-    //15 min
-    await redisClient.set(uuid, accessToken, "EX", 15 * 60);
-    */
+    const expiryDate = new Date(Date.now() + REFRESH_TOKEN_EXPIRY_UTIL);
+    await Token.addToken({
+      token: refreshToken,
+      userId: existingUser?._id,
+      expiryDate,
+    });
     const cookiesOption = {
       httpOnly: true,
-      secure: true,
-      sameSite: "Strict",
+      secure: process.env.Environment !== "development",
+      sameSite: "None",
     };
     return res
       .clearCookie("hash-id")
       .cookie("uuid", uuid, cookiesOption)
-      .cookie("access-token", accessToken, {
+      .cookie("accessToken", accessToken, {
         ...cookiesOption,
-        maxAge: 15 * 60 * 1000,
+        maxAge: ACCESS_TOKEN_EXPIRY_UTIL,
       })
-      .cookie("refresh-token", refreshToken, {
+      .cookie("refreshToken", refreshToken, {
         ...cookiesOption,
-        maxAge: 7 * 24 * 60 * 60 * 1000,
+        signed: true,
+        maxAge: REFRESH_TOKEN_EXPIRY_UTIL,
       })
       .status(200)
       .json({
@@ -432,5 +434,34 @@ export const resetPassword = async (req, res, next) => {
     return next(
       createError(500, "An unexpected error occurred during password reset.")
     );
+  }
+};
+
+export const logoutHandler = async (req, res, next) => {
+  const { signedCookies } = req;
+  const { refreshToken } = signedCookies;
+  if (!refreshToken) {
+    console.error("refreshToken: Refresh token is missing in request cookies");
+    throw new Error("No refresh token provided");
+  }
+  try {
+    const refreshTokenInDb = await Token.findByToken(refreshToken);
+    if (!refreshTokenInDb) {
+      throw new Error("Invalid refresh token");
+    }
+    await Token.deleteOne({ _id: refreshTokenInDb._id });
+    res.clearCookie("accessToken");
+    res.clearCookie("refreshToken");
+    res.clearCookie("uuid");
+    return res.status(200).json({
+      success: true,
+      status: 200,
+      message: "User logout sucesssfully",
+    });
+  } catch (error) {
+    res.clearCookie("accessToken");
+    res.clearCookie("refreshToken");
+    res.clearCookie("uuid");
+    return next(createError(401, "Session expired"));
   }
 };

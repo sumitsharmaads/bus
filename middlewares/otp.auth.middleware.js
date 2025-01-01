@@ -6,7 +6,6 @@ import { createError } from "../utils/error.js";
 export const validateOtp = async (req, _, next) => {
   const { otp, username } = req.body;
   const token = req.cookies["hash-id"];
-  const currentDate = new Date();
 
   if (!token) {
     console.log("validateOtp: Token is missing or invalid");
@@ -30,20 +29,10 @@ export const validateOtp = async (req, _, next) => {
       return next(createError(404, "OTP data not found"));
     }
 
-    const { expiryDate } = otpData;
-
     // Check for OTP mismatch
     if (makeString(otp) !== makeString(otpData.otp)) {
       console.log("validateOtp: OTP mismatch");
       return next(createError(400, "Invalid OTP, please try again."));
-    }
-
-    // Check if OTP has expired
-    if (currentDate.getTime() > new Date(expiryDate).getTime()) {
-      console.log("validateOtp: OTP has expired");
-      return next(
-        createError(440, "OTP has expired, please request a new one.")
-      );
     }
 
     // Attach user ID to the request for further processing

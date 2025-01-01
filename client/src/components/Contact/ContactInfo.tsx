@@ -1,7 +1,6 @@
 import React from "react";
 import { PhoneIcon, InboxIcon } from "@heroicons/react/24/solid";
 import { IconButton } from "@material-tailwind/react";
-import Map from "../Map";
 
 export const ContactInfo: React.FC = () => {
   return (
@@ -36,7 +35,6 @@ export const ContactInfo: React.FC = () => {
           </p>
         </div>
       </address>
-      <Map />
     </div>
   );
 };

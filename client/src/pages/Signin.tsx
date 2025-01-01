@@ -1,15 +1,20 @@
 import React, { useCallback, useMemo, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { PublicRoutes } from "../navigation";
 import { Input } from "@material-tailwind/react";
 import { OTP } from "../components/auth/OTP";
-import { LoginType } from "../types";
+import { LoginType, UserInfoType } from "../types";
 import { emailRegex, passwordRegex } from "../utils";
 import { LabelError } from "../common";
 import { EyeSlashIcon } from "@heroicons/react/20/solid";
 import { EyeIcon } from "@heroicons/react/24/solid";
+import { post } from "../service";
+import { useLoader } from "../contexts/LoaderContext";
+import User from "../utils/User";
 
 export const SignIn: React.FC = () => {
+  const { setLoading } = useLoader();
+  const navigate = useNavigate();
   const [ispasswordType, setIsPasswordType] = useState<boolean>(true);
   const [loginState, setLoginState] = useState<LoginType>({
     email: "",
@@ -62,13 +67,55 @@ export const SignIn: React.FC = () => {
 
   const submitHandler = async (e: React.FormEvent) => {
     e.preventDefault();
+    setTouched({ email: true, password: true });
     if (validateState) {
-      setSteps(2);
+      try {
+        await post(
+          "auth/login",
+          {
+            username: loginState.email,
+            password: loginState.password,
+          },
+          {},
+          {
+            setLoading,
+            showSuccess: true,
+            successMessage:
+              "Please verify otp which is sent to your email address",
+          }
+        );
+        setSteps(2);
+      } catch (error) {}
     }
   };
 
   const onSubmitOTP = async (num: number) => {
-    alert(`otp is ${num}`);
+    try {
+      const response = await post<{
+        result: {
+          token: string;
+          user: UserInfoType;
+        };
+      }>(
+        "auth/verify-otp",
+        {
+          username: loginState.email,
+          otp: num,
+        },
+        {},
+        { setLoading }
+      );
+      if (response.data?.result) {
+        const user = response.data?.result?.user;
+        User.loginUser({
+          ...user,
+          token: response.data?.result?.token,
+        });
+        navigate("/");
+      } else {
+        //show alert
+      }
+    } catch (error) {}
   };
 
   if (steps === 1) {
@@ -164,12 +211,7 @@ export const SignIn: React.FC = () => {
                 </div>
                 <button
                   type="submit"
-                  className={`w-full py-2 px-4 text-white font-medium rounded-lg bg-secondary ${
-                    !validateState
-                      ? "text-gray-dark bg-drak-light"
-                      : "bg-[#1E293B] hover:bg-primary focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  }`}
-                  disabled={!validateState}
+                  className="w-full py-2 px-4 bg-[#1E293B] text-white font-medium rounded-lg hover:bg-primary focus:outline-none focus:ring-2"
                 >
                   Log In
                 </button>

@@ -1,9 +1,10 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { PublicRoutes } from "../navigation";
+import { PublicRoutes } from "../../navigation";
 import { MobileHeader } from "./MobileHeader";
-
-export const Header: React.FC<{ isLoggedIn?: boolean }> = ({ isLoggedIn }) => {
+import User from "../../utils/User";
+import { AvatarDropdown } from "./AvatarDropdown";
+export const Header: React.FC = () => {
   const navigate = useNavigate();
   const [menuOpen, setMenuOpen] = useState(false);
   const [viewPort, setViewPort] = useState({
@@ -90,14 +91,11 @@ export const Header: React.FC<{ isLoggedIn?: boolean }> = ({ isLoggedIn }) => {
       )}
 
       <div className="flex items-center space-x-4">
+        {viewPort.mobileView && User.isLogin && <AvatarDropdown />}
         {!viewPort.mobileView && (
           <>
-            {isLoggedIn ? (
-              <img
-                src="/path/to/avatar.png"
-                alt="Avatar"
-                className="h-8 w-8 rounded-full"
-              />
+            {User.isLogin ? (
+              <AvatarDropdown />
             ) : (
               <>
                 <Link
@@ -117,12 +115,14 @@ export const Header: React.FC<{ isLoggedIn?: boolean }> = ({ isLoggedIn }) => {
           </>
         )}
         {!viewPort.mobileView && <span className="w-1">|</span>}
-        <button
-          className="p-2 text-primary hover:underline"
-          onClick={() => navigate(PublicRoutes.QUICK_INQUERY)}
-        >
-          Inquery Now
-        </button>
+        {!viewPort.mobileView && (
+          <button
+            className="p-2 text-primary hover:underline"
+            onClick={() => navigate(PublicRoutes.QUICK_INQUERY)}
+          >
+            Inquery Now
+          </button>
+        )}
         {(viewPort.tabView || viewPort.mobileView) && (
           <div className="col-auto items-center">
             <button onClick={toggleMenu} className="focus:outline-none">

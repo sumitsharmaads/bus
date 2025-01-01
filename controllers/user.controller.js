@@ -22,6 +22,7 @@ export const changePassword = async (req, res, next) => {
       message: "User password updated successfully.",
     });
   } catch (error) {
+    console.log("change password error", error);
     next(error);
   }
 };

@@ -7,12 +7,13 @@ import {
 } from "@material-tailwind/react";
 import { ChevronRightIcon } from "@heroicons/react/24/outline";
 import { ChevronRightIcon as ChevronRightCircleIconFilled } from "@heroicons/react/24/solid";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { Modal } from "../../common";
 import { ServiceStepper } from "./ServiceStepper";
 import { LocalServiceForm } from "./LocalServiceForm";
 import { ServiceInfoForm } from "./ServiceInfoForm";
 import { OutstationBusBooking } from "./OutstationBusBooking";
+import { useRentalServiceContext } from "../../contexts/RentealServiceContext";
 
 type RadioOptionProps = {
   value: "local" | "outstation";
@@ -61,13 +62,11 @@ const RadioOption: React.FC<RadioOptionProps> = ({
 };
 
 export const BookBusCard: React.FC = () => {
-  const [selectedService, setSelectedService] = useState<
-    "local" | "outstation" | null
-  >(null);
+  const { busService, changeBusService } = useRentalServiceContext();
   const [showModal, setShowModal] = useState(false);
 
   const handleRadioChange = (value: "local" | "outstation") => {
-    setSelectedService(value);
+    changeBusService(value);
   };
 
   const handleCloseModal = () => setShowModal(false);
@@ -92,14 +91,14 @@ export const BookBusCard: React.FC = () => {
           <ul className="sk-radio arrow custom-scroll grid grid-cols-1 md:grid-cols-2 gap-4 mt-2">
             <RadioOption
               value="local"
-              selectedService={selectedService}
+              selectedService={busService}
               onChange={handleRadioChange}
               label="Local Bus Service"
               description="Ideal for city commutes and local travel."
             />
             <RadioOption
               value="outstation"
-              selectedService={selectedService}
+              selectedService={busService}
               onChange={handleRadioChange}
               label="Outstation Bus Service"
               description="Perfect for inter-city and long-distance travel."
@@ -108,8 +107,8 @@ export const BookBusCard: React.FC = () => {
         </CardBody>
         <CardFooter className="flex justify-center">
           <Button
-            className={`${selectedService ? "bg-primary text-white" : ""}`}
-            disabled={!selectedService}
+            className={`${busService ? "bg-primary text-white" : ""}`}
+            disabled={!busService}
             onClick={() => setShowModal(true)}
           >
             Book Bus
@@ -122,22 +121,22 @@ export const BookBusCard: React.FC = () => {
         size={"sm"}
         showCloseIcon={true}
         title={`${
-          selectedService === "outstation" ? "Outstation" : "Local"
+          busService === "outstation" ? "Outstation" : "Local"
         } Bus Booking`}
         showConfirm={false}
-        wrapperClassName="overflow-y-auto max-h-[90%] overflow-x-hidden"
+        wrapperClassName="overflow-x-hidden"
         disableFooter={true}
       >
         <ServiceStepper
           totalSteps={2}
           stepsData={{
             1:
-              selectedService === "outstation" ? (
+              busService === "outstation" ? (
                 <OutstationBusBooking />
               ) : (
                 <LocalServiceForm />
               ),
-            2: <ServiceInfoForm />,
+            2: <ServiceInfoForm handleClose={handleCloseModal} />,
           }}
         />
       </Modal>

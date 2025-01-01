@@ -1,5 +1,5 @@
 import axios, { AxiosError } from "axios";
-import { tokenStorage, userStorage } from "../db";
+import User from "../utils/User";
 
 export const domain = process.env.REACT_APP_API_URL;
 
@@ -12,7 +12,8 @@ const axiosInstance = axios.create({
 
 axiosInstance.interceptors.request.use(
   (request) => {
-    const accessToken = tokenStorage.getItem("token");
+    request.withCredentials = true;
+    const accessToken = User.getToken();
     if (accessToken) {
       request.headers["Authorization"] = `Bearer ${accessToken}`;
     }
@@ -32,29 +33,24 @@ axiosInstance.interceptors.response.use(
       //adding concept of refresh token
       originalRequest._retry = true;
       try {
-        const refreshToken = tokenStorage.getItem("token");
-        const response = await axios.post("https://your.auth.server/refresh", {
-          refreshToken,
-        });
-        const { refreshToken: newFreshToken } = response.data;
+        const refreshToken = User.getToken();
+        const response = await axios.get(`${domain}auth/refresh-token`);
+        const { token: newFreshToken } = response?.data?.result;
         if (newFreshToken) {
-          tokenStorage.setItem("token", newFreshToken);
+          User.updateUserInfo({ token: newFreshToken });
         }
         axiosInstance.defaults.headers.common["Authorization"] = `Bearer ${
           newFreshToken || refreshToken
         }`;
         return axiosInstance(originalRequest);
       } catch (refreshError) {
-        tokenStorage.removeItem("token");
-        userStorage.removeItem("users");
+        User.logout();
         window.location.href = "/login";
         return Promise.reject(refreshError);
       }
     }
     if (error?.response?.status === 401) {
-      //my all token expired
-      tokenStorage.removeItem("token");
-      userStorage.removeItem("users");
+      User.logout();
       window.location.href = "/login";
       return Promise.reject(error);
     }

@@ -1,11 +1,14 @@
 import { BookBusCard, HeroSection, ServiceBox } from "../components/services";
+import { RentalServiceContextProvider } from "../contexts/RentealServiceContext";
 
 const Services: React.FC = () => {
   return (
     <section>
       <HeroSection />
       <div className="container mx-auto p-6">
-        <BookBusCard />
+        <RentalServiceContextProvider>
+          <BookBusCard />
+        </RentalServiceContextProvider>
         {/* <ServiceTab /> */}
         <div className="flex flex-col md:flex-row md:space-x-8 mt-4">
           {/* left section */}

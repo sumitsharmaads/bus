@@ -1,14 +1,38 @@
 import jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs";
-import User from "../models/user.model.js";
 import { createError } from "../utils/error.js";
-import { redisClient } from "../redisConnection.js";
+import { Token } from "../models/token.model.js";
+import { makeString } from "../utils/common.js";
 
 export const validateAccessToken = async (req, res, next) => {
   console.log("Middleware: Inside validateAccessToken");
-  const token =
-    req.cookies["refresh-token"] ||
-    req.header("Authorization")?.replace("Bearer ", "");
+  const authToken = req.get("Authorization");
+  const accessToken = authToken?.split("Bearer ")[1];
+  if (!accessToken) {
+    console.log("not a valid acess token");
+    return next(createError(401, "You are not authenticated!"));
+  }
+  const { signedCookies = {} } = req;
+  const { refreshToken } = signedCookies;
+
+  if (!refreshToken) {
+    res.clearCookie("accessToken");
+    res.clearCookie("refreshToken");
+    res.clearCookie("uuid");
+    console.log("not a valid refreshToken");
+    return next(createError(401, "You are not authenticated!"));
+  }
+
+  const refreshTokenInDB = await Token.findByToken(refreshToken);
+
+  if (!refreshTokenInDB) {
+    res.clearCookie("accessToken");
+    res.clearCookie("refreshToken");
+    res.clearCookie("uuid");
+    return next(createError(401, "You are not authenticated!"));
+  }
+  const user = refreshTokenInDB.userId;
+
   const _uuid = req.cookies["uuid"];
 
   // Options for JWT verification
@@ -18,15 +42,10 @@ export const validateAccessToken = async (req, res, next) => {
     audience: _uuid,
   };
 
-  if (!token) {
-    console.log("validateAccessToken: No token provided");
-    return next(createError(401, "You are not authenticated!"));
-  }
-
   try {
     // JWT verification
     const decoded = jwt.verify(
-      token,
+      accessToken,
       process.env.ACCESS_TOKEN_SECRET_KEY,
       options
     );
@@ -35,10 +54,12 @@ export const validateAccessToken = async (req, res, next) => {
       console.log(
         "validateAccessToken: Invalid token format (missing user ID)"
       );
+      res.clearCookie("accessToken");
+      res.clearCookie("refreshToken");
+      res.clearCookie("uuid");
       return next(createError(403, "Invalid token. Access forbidden."));
     }
 
-    // UUID validation (comparing it with the stored UUID)
     const isUuidValid = await bcrypt.compare(
       `${decoded.id.toString()}${process.env.UUID_KEY}`,
       _uuid
@@ -46,39 +67,18 @@ export const validateAccessToken = async (req, res, next) => {
 
     if (!isUuidValid) {
       console.log("validateAccessToken: UUID does not match");
+      res.clearCookie("accessToken");
+      res.clearCookie("refreshToken");
+      res.clearCookie("uuid");
       return next(createError(403, "Invalid token. Access forbidden."));
     }
 
-    // Check if the token exists in Redis
-    const storedToken = await redisClient.get(_uuid);
-    if (storedToken !== token) {
-      console.log("validateAccessToken: Token does not match stored token");
+    if (makeString(decoded?.id) !== makeString(user?._id)) {
+      res.clearCookie("accessToken");
+      res.clearCookie("refreshToken");
+      res.clearCookie("uuid");
       return next(createError(403, "Invalid token. Access forbidden."));
     }
-
-    // Fetch user data from Redis or fallback to database
-    let user;
-    const cachedUser = await redisClient.get(`${decoded.id}_data`);
-
-    if (!cachedUser) {
-      console.log(
-        "validateAccessToken: User not found in cache, fetching from DB..."
-      );
-      const _user = await User.getInfo({ _id: decoded.id }, { password: 0 });
-
-      if (!_user) {
-        console.log("validateAccessToken: User not found in DB");
-        return next(createError(404, "User not found"));
-      }
-
-      // Cache the user data for future requests
-      await redisClient.set(`${decoded.id}_data`, JSON.stringify(_user));
-      user = _user;
-    } else {
-      console.log("validateAccessToken: User found in cache");
-      user = JSON.parse(cachedUser); // Parse JSON string from Redis
-    }
-
     req.user = {
       ...user,
       isAdmin: user.roleType === 0,
@@ -92,13 +92,20 @@ export const validateAccessToken = async (req, res, next) => {
     next(); // Continue to the next middleware or route handler
   } catch (error) {
     console.error("validateAccessToken: Error during token validation", error);
-
     if (error.name === "TokenExpiredError") {
       console.log("validateAccessToken: Token has expired");
-      return next(createError(440, "Session expired. Please log in again."));
+      return res.status(401).json({
+        success: false,
+        status: 5001,
+        message: "retry",
+        stack: error?.stack,
+      });
+    } else {
+      console.log("validateAccessToken: Invalid token");
+      res.clearCookie("accessToken");
+      res.clearCookie("refreshToken");
+      res.clearCookie("uuid");
+      return next(createError(403, "Invalid token. Access forbidden."));
     }
-
-    console.log("validateAccessToken: Invalid token");
-    return next(createError(403, "Invalid token. Access forbidden."));
   }
 };

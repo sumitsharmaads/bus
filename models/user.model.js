@@ -40,7 +40,7 @@ const UserSchema = new GSchema(
       type: String,
       lowercase: true,
       required: [true, "can't be blank"],
-      match: [/^[a-zA-Z0-9]+$/, "is invalid"],
+      //match: [/^[a-zA-Z0-9]+$/, "is invalid"],
       index: true,
       unique: true,
     },
@@ -55,6 +55,9 @@ const UserSchema = new GSchema(
     isVerified: {
       type: Boolean,
       default: false,
+    },
+    gender: {
+      type: String,
     },
     isActive: {
       type: Boolean,
@@ -109,6 +112,7 @@ UserSchema.plugin(function (schema) {
   schema.pre("save", async function (next) {
     if (!this.isModified("password")) return next();
     try {
+      console.log("pre save user");
       const salt = await bcrypt.genSalt(10);
       const hashedPassword = await bcrypt.hash(this.password, salt);
       this.password = hashedPassword;
@@ -125,7 +129,6 @@ UserSchema.plugin(function (schema) {
    * @returns {Promise<boolean>} - Resolves to true if the passwords match, false otherwise.
    */
   schema.methods.isCorrectPassword = async function (password) {
-    console.log(this.password, "this.password");
     return await bcrypt.compare(password, this.password);
   };
 
@@ -371,10 +374,10 @@ UserSchema.plugin(function (schema) {
         throw new Error("New password does not meet complexity requirements");
       }
 
-      const salt = await bcrypt.genSalt(10);
-      const hashedNewPassword = await bcrypt.hash(newPassword, salt);
+      //const salt = await bcrypt.genSalt(10);
+      //const hashedNewPassword = await bcrypt.hash(newPassword, salt);
 
-      user.password = hashedNewPassword;
+      user.password = newPassword;
       //user.loginTime = Date.now();
       await user.save();
 

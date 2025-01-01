@@ -5,4 +5,5 @@ export * from "./SocialDrawer";
 export * from "./Icon";
 export * from "./LabelError";
 export * from "./Modal";
-export * from "./AutoCompletePlaces";
+export * from "./FullPageLoader";
+export * from "./AutoComplete";

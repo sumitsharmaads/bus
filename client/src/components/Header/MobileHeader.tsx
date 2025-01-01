@@ -1,13 +1,14 @@
 import { useState, useRef, useEffect } from "react";
-import { Link } from "react-router-dom";
-import { PublicRoutes } from "../navigation";
+import { Link, useNavigate } from "react-router-dom";
+import { PublicRoutes } from "../../navigation";
+import User from "../../utils/User";
 
 export const MobileHeader: React.FC<{
   toggleMenu: () => void;
   menuOpen: boolean;
   mobileView: boolean;
 }> = ({ toggleMenu, menuOpen, mobileView }) => {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const navigate = useNavigate();
   const ref = useRef<HTMLDivElement>(null);
 
   const handleClickOutside = (event: MouseEvent) => {
@@ -64,8 +65,16 @@ export const MobileHeader: React.FC<{
         Contact
       </Link>
       {mobileView && (
+        <button
+          className="p-2 text-primary hover:underline"
+          onClick={() => navigate(PublicRoutes.QUICK_INQUERY)}
+        >
+          Inquery Now
+        </button>
+      )}
+      {mobileView && (
         <>
-          {!isLoggedIn && (
+          {!User.isLogin && (
             <>
               <div className="block mt-2 p-2">
                 <Link

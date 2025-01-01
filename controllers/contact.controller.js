@@ -124,3 +124,7 @@ export const inqueryHandler = async (req, res, next) => {
     );
   }
 };
+
+export const rentalService = async (req, res, next) => {
+  const { name, email, inquery } = req.body;
+};

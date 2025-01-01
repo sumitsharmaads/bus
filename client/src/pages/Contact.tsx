@@ -1,5 +1,4 @@
 import { ContactForm, ContactInfo } from "../components/Contact";
-import Map from "../components/Map";
 
 const Contact: React.FC = () => {
   return (

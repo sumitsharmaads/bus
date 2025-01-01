@@ -3,17 +3,16 @@ import {
   contactHandler,
   inqueryHandler,
 } from "../controllers/contact.controller.js";
-import { deleteImage, uploadImage } from "../controllers/image.controller.js";
-import upload from "../config/mutler.config.js";
+import {
+  localServiceController,
+  outStationServiceController,
+} from "../controllers/rentalService.controller.js";
 
 const router = express.Router();
 
 router.post("/contact", contactHandler);
 router.post("/inquery", inqueryHandler);
-router.post("/rental");
-router.post("/upload", upload.single("image"), uploadImage);
-router.delete("/image/:public_id", deleteImage);
-router.get("/cities");
-/**Add booking routes */
+router.post("/local", localServiceController);
+router.post("/outstation", outStationServiceController);
 
 export default router;

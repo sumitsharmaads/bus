@@ -3,6 +3,9 @@ import { Input, Textarea } from "@material-tailwind/react";
 import React, { useCallback, useMemo, useState } from "react";
 import { emailRegex, nameRegex } from "../utils";
 import { LabelError } from "../common";
+import { post } from "../service";
+import { useLoader } from "../contexts/LoaderContext";
+import { useNavigate } from "react-router-dom";
 
 type InqueryStateType = {
   name: string;
@@ -10,6 +13,8 @@ type InqueryStateType = {
   inquery: string;
 };
 const Inquiry: React.FC = () => {
+  const { setLoading } = useLoader();
+  const navigate = useNavigate();
   const [inqueryState, setInqueryState] = useState<InqueryStateType>({
     name: "",
     email: "",
@@ -43,12 +48,7 @@ const Inquiry: React.FC = () => {
         ...prevState,
         [name]: value,
       }));
-      setTouched((prevState) => ({
-        ...prevState,
-        [name]: false,
-      }));
     },
-
     []
   );
 
@@ -60,7 +60,9 @@ const Inquiry: React.FC = () => {
   }, []);
 
   const validateState = useMemo(() => {
-    console.log("it is get called");
+    const wordCount = (inqueryState?.inquery || " ")
+      ?.trim()
+      ?.split(/\s+/).length;
     let emailError = "";
     let messageError = "";
     let nameError = "";
@@ -70,8 +72,8 @@ const Inquiry: React.FC = () => {
     if (!emailRegex.test(inqueryState?.email || "")) {
       emailError = "Please enter a valid email address.";
     }
-    const wordCount = inqueryState.inquery.trim().split(/\s+/).length;
-    if (wordCount < 20 || wordCount > 200) {
+
+    if (wordCount < 10 || wordCount > 200) {
       messageError = "Your message should be between 10 and 200 words.";
     }
     setErrors({ email: emailError, inquery: messageError, name: nameError });
@@ -80,10 +82,17 @@ const Inquiry: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("handleSumit called");
     setTouched({ name: true, email: true, inquery: true });
     if (validateState) {
-      //inside api call
+      try {
+        await post(
+          "forms/inquery",
+          inqueryState,
+          {},
+          { setLoading, showSuccess: true }
+        );
+        navigate("/");
+      } catch (error) {}
     }
   };
   return (

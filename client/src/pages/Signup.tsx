@@ -6,8 +6,11 @@ import { Input, Typography } from "@material-tailwind/react";
 import { SignInType } from "../types";
 import { LabelError } from "../common";
 import { emailRegex, nameRegex, passwordRegex } from "../utils";
+import { post } from "../service";
+import { useLoader } from "../contexts/LoaderContext";
 
 export const Signup: React.FC = () => {
+  const { setLoading } = useLoader();
   const [ispasswordType, setIsPasswordType] = useState<boolean>(true);
   const navigate = useNavigate();
   const [signupState, setSignupState] = useState<SignInType>({
@@ -15,7 +18,15 @@ export const Signup: React.FC = () => {
     email: "",
     password: "",
   });
-
+  const [touched, setTouched] = useState<{
+    email: boolean;
+    password: boolean;
+    name: boolean;
+  }>({
+    email: false,
+    password: false,
+    name: false,
+  });
   const [errors, setErrors] = useState<{
     email?: string;
     password?: string;
@@ -36,6 +47,13 @@ export const Signup: React.FC = () => {
     },
     []
   );
+
+  const handleBlur = useCallback((field: "email" | "password" | "name") => {
+    setTouched((prevState) => ({
+      ...prevState,
+      [field]: true,
+    }));
+  }, []);
 
   const validateState = useMemo(() => {
     let emailError = "";
@@ -58,8 +76,23 @@ export const Signup: React.FC = () => {
 
   const submitHandler = async (e: React.FormEvent) => {
     e.preventDefault();
+    setTouched({ password: true, email: true, name: true });
     if (validateState) {
-      navigate("/login");
+      try {
+        await post(
+          "auth/register",
+          {
+            fullname: signupState.name,
+            email: signupState.email,
+            password: signupState.password,
+          },
+          {},
+          { setLoading }
+        );
+        navigate("/login");
+      } catch (error) {
+        //error occuerd
+      }
     }
   };
   return (
@@ -124,8 +157,9 @@ export const Signup: React.FC = () => {
                   placeholder="Enter your name"
                   onChange={handleChange}
                   value={signupState.name}
+                  onBlur={() => handleBlur("name")}
                 />
-                {errors.name && (
+                {errors.name && touched.name && (
                   <LabelError errorMessage={errors.name} color={"red"} />
                 )}
               </div>
@@ -142,8 +176,9 @@ export const Signup: React.FC = () => {
                   placeholder="Enter your email address"
                   onChange={handleChange}
                   value={signupState.email}
+                  onBlur={() => handleBlur("email")}
                 />
-                {errors.email && (
+                {errors.email && touched.email && (
                   <LabelError errorMessage={errors.email} color={"red"} />
                 )}
               </div>
@@ -160,6 +195,7 @@ export const Signup: React.FC = () => {
                   required
                   onChange={handleChange}
                   value={signupState.password}
+                  onBlur={() => handleBlur("password")}
                   icon={
                     ispasswordType ? (
                       <EyeSlashIcon onClick={() => setIsPasswordType(false)} />
@@ -171,12 +207,11 @@ export const Signup: React.FC = () => {
                 <LabelError
                   errorMessage={`Password must be 10-15 characters, including uppercase,
                     lowercase, a number, and a special character.`}
-                  color={errors.password ? "red" : "black"}
+                  color={errors.password && touched.password ? "red" : "black"}
                 />
               </div>
               <button
                 type="submit"
-                disabled={!validateState}
                 className="w-full py-2 px-4 bg-[#1E293B] text-white font-medium rounded-lg hover:bg-primary focus:outline-none focus:ring-2"
               >
                 Create Account

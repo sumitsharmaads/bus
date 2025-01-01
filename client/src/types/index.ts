@@ -1,10 +1,11 @@
 export type UserInfoType = {
-  firtName: string;
-  lastName: string;
+  fullname: string;
   email: string;
-  username: string;
-  id: string;
-  role: number;
+  phone: string;
+  gender: string;
+  _id: string;
+  roleType: number;
+  token: string;
 };
 
 export type TokenType = {

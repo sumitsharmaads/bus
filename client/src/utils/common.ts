@@ -2,6 +2,9 @@ export const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 export const passwordRegex =
   /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
 export const nameRegex = /^[A-Za-z]+([-' ]?[A-Za-z]+)*$/;
+export const phoneRegex = /^\d{10}$/;
+export const inputDateRegex = /^\d{4}-\d{2}-\d{2}$/;
+export const inputDateTimeRegex = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}(:\d{2})?$/;
 
 export const getTodayDateTime = () => {
   const today = new Date();
