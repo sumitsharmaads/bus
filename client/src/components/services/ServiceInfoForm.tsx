@@ -79,7 +79,7 @@ export const ServiceInfoForm: React.FC<{ handleClose?: () => void }> = ({
       emailError = "Please enter a valid email address.";
     }
 
-    if (formState.message && (wordCount < 5 || wordCount > 200)) {
+    if (formState.message && (wordCount < 2 || wordCount > 200)) {
       messageError = "Your message should be between 5 and 200 words.";
     }
     if (!phoneRegex.test((formState.phone || "").toString())) {

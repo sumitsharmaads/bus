@@ -80,7 +80,10 @@ export const LocalServiceForm: React.FC = () => {
       purpose: true,
       travelDate: true,
     });
-    onChange(1, formValue);
+    if (validateState) {
+      onChange(1, formValue);
+      changeStep(2);
+    }
   };
   return (
     <div className="flex flex-1 flex-col justify-center items-center">

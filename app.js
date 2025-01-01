@@ -31,7 +31,7 @@ app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ extended: true, limit: "10mb" }));
 console.log("process.env.COOKIE_SECRET", process.env.COOKIE_SECRET);
 app.use(cookieParser(process.env.COOKIE_SECRET));
-
+app.set("trust proxy", true);
 app.use(express.static(path.join(__dirname, "serverPublic")));
 const limiter = rateLimit({
   windowMs: 10 * 60 * 1000, // 10 minutes

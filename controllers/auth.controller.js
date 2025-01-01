@@ -440,6 +440,7 @@ export const resetPassword = async (req, res, next) => {
 export const logoutHandler = async (req, res, next) => {
   const { signedCookies } = req;
   const { refreshToken } = signedCookies;
+  console.log("refreshToken", refreshToken);
   if (!refreshToken) {
     console.error("refreshToken: Refresh token is missing in request cookies");
     throw new Error("No refresh token provided");
@@ -459,6 +460,7 @@ export const logoutHandler = async (req, res, next) => {
       message: "User logout sucesssfully",
     });
   } catch (error) {
+    console.log(error);
     res.clearCookie("accessToken");
     res.clearCookie("refreshToken");
     res.clearCookie("uuid");

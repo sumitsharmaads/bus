@@ -1,10 +1,9 @@
-<!DOCTYPE html>
-<html lang="en">
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
 
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Contact Local Bus Service</title>
+  <title>Contact Support</title>
   <style type="text/css">
     body {
       margin: 0;
@@ -55,93 +54,37 @@
       text-align: center;
       padding: 20px;
     }
-
-    .header {
-      text-align: center;
-      padding: 30px;
-      background-color: #d9534f;
-      color: white;
-    }
-
-    .header img {
-      max-width: 120px;
-    }
-
-    .content {
-      padding: 30px;
-      background-color: #fff;
-    }
-
-    .content h2 {
-      color: #333;
-      font-size: 22px;
-      margin-bottom: 10px;
-    }
-
-    .content p {
-      font-size: 14px;
-      line-height: 1.6;
-    }
-
-    @media (max-width: 600px) {
-      .content {
-        padding: 20px;
-      }
-
-      .support-section {
-        padding: 15px;
-      }
-    }
   </style>
 </head>
 
 <body>
-
   <table cellpadding="0" cellspacing="0" border="0">
-    <!-- Header Section -->
     <tr>
       <td align="center" style="padding: 20px;">
-        <img src="<%= host %>/images/logo.png" alt="Company Logo" width="150">
+        <img src="<%=host%>/images/logo.png" alt="Company Logo" width="150">
       </td>
     </tr>
     <tr>
       <td style="padding: 20px; text-align: center;">
-        <h1>Contact Us - Local Bus Service</h1>
-        <p>We received a request for local bus service. Please find the details below:</p>
+        <h1>Contact Us</h1>
+        <p>We received a message from a user. Please find the details below:</p>
       </td>
     </tr>
-
-    <!-- Content Section -->
     <tr>
-      <td class="content">
+      <td style="padding: 20px;">
         <p><strong>First Name:</strong> <%= firstname %></p>
         <p><strong>Last Name:</strong> <%= lastname %></p>
-        <p><strong>Phone:</strong> <%= phone %></p>
-        <p><strong>Purpose of Travel:</strong> <%= purpose %></p>
-        <p><strong>Travel Date:</strong> <%= travelDate %></p>
-        <p><strong>Destination:</strong> <%= destination %></p>
-        <p><strong>Tour:</strong> <%= tour %></p>
-        <% if (returnDate) { %>
-        <p><strong>Return Date:</strong> <%= returnDate %></p>
-        <% } %>
-        <% if (email) { %>
         <p><strong>Email:</strong> <%= email %></p>
-        <% } else { %>
-        <p><strong>Email:</strong> Not provided</p>
-        <% } %>
-
-        <% if (message) { %>
+        <p><strong>Phone:</strong> <%= phone %></p>
         <p><strong>Message:</strong></p>
         <p><%= message %></p>
-        <% } else { %>
-        <p><strong>Message:</strong> No message provided</p>
-        <% } %>
-
-        <p>Our team will get back to you shortly.</p>
       </td>
     </tr>
-
-    <!-- Support Section -->
+    <tr>
+      <td style="padding: 20px; text-align: center;">
+        <p>If you have any questions or need further assistance, please don't hesitate to contact us.</p>
+      </td>
+    </tr>
     <tr>
       <td class="support-section">
         <h3>Need Help?</h3>
@@ -150,15 +93,12 @@
         <p>Address: 1234 Street Name, City, State, Zip Code</p>
       </td>
     </tr>
-
-    <!-- Footer Section -->
     <tr>
       <td class="footer">
-        <p>&copy; 2024, Local Bus Services. All rights reserved.</p>
+        <p>&copy; 2024, Dadhich Bus Services. All rights reserved.</p>
       </td>
     </tr>
   </table>
-
 </body>
 
 </html>

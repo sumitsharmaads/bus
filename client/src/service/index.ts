@@ -20,7 +20,13 @@ export const get = async <T>(
   const { setLoading, showSuccess, successMessage } = addUpConfig || {};
   handleLoading(true, setLoading);
   try {
-    const response = await axiosInstance.get(url, config);
+    const response = await axiosInstance.get(url, {
+      withCredentials: true,
+      headers: {
+        "Access-Control-Allow-Origin": "http://localhost:3000",
+        "Access-Control-Allow-Credentials": true,
+      },
+    });
     handleLoading(false, setLoading);
     if (showSuccess) {
       successPopup(successMessage || response.data.message);
