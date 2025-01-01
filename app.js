@@ -23,13 +23,6 @@ const app = express();
 
 app.disable("x-powered-by");
 app.use(helmet());
-
-const limiter = rateLimit({
-  windowMs: 10 * 60 * 1000, // 10 minutes
-  max: 100, // limit each IP to 100 requests per windowMs
-  message: "Too many requests from this IP, please try again later.",
-});
-app.use(limiter);
 app.use(mongoSanitize());
 app.use(xssClean());
 app.use(compression());
@@ -39,7 +32,13 @@ app.use(express.urlencoded({ extended: true, limit: "10mb" }));
 console.log("process.env.COOKIE_SECRET", process.env.COOKIE_SECRET);
 app.use(cookieParser(process.env.COOKIE_SECRET));
 
-app.use(express.static(path.join(__dirname, "public")));
+app.use(express.static(path.join(__dirname, "serverPublic")));
+const limiter = rateLimit({
+  windowMs: 10 * 60 * 1000, // 10 minutes
+  max: 100, // limit each IP to 100 requests per windowMs
+  message: "Too many requests from this IP, please try again later.",
+});
+app.use(limiter);
 
 /**view setup engine */
 app.set("views", path.join(__dirname, "views"));
