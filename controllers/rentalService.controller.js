@@ -3,6 +3,7 @@ import { createError } from "../utils/error.js";
 import Message from "../models/message.model.js";
 
 export const localServiceController = async (req, res, next) => {
+  const rentalEmail = req.website.rentalEmail;
   const {
     source,
     purpose,
@@ -19,7 +20,7 @@ export const localServiceController = async (req, res, next) => {
   }
   try {
     const emailSend = await EmailUtil.sendEmailWithTemplate(
-      "skworrier@gmail.com",
+      rentalEmail,
       "New Local Bus Service Request",
       {
         data: {
@@ -31,6 +32,7 @@ export const localServiceController = async (req, res, next) => {
           email: email || "",
           phone,
           message: message || "",
+          ...(req.website || {}),
         },
         req,
         template: "local_bus_rental_template.html",
@@ -65,6 +67,7 @@ export const localServiceController = async (req, res, next) => {
 };
 
 export const outStationServiceController = async (req, res, next) => {
+  const rentalEmail = req.website.rentalEmail;
   const {
     source,
     purpose,
@@ -92,10 +95,13 @@ export const outStationServiceController = async (req, res, next) => {
   }
   try {
     const emailSend = await EmailUtil.sendEmailWithTemplate(
-      "skworrier@gmail.com",
+      rentalEmail,
       "New Outstation Tour Service Request",
       {
-        data: req.body,
+        data: {
+          ...req.body,
+          ...(req.website || {}),
+        },
         req,
         template: "outstation_bus_rental_template.html",
       }

@@ -49,6 +49,7 @@ const EmailUtil = {
     const template = otherOptions?.template;
     const templateData = otherOptions?.data;
     templateData.host = getHostName(otherOptions.req);
+    console.log("otherOptions?.data", otherOptions?.data);
     let templateEmailHtml = FS.readFileSync(
       Path.join(__dirname, GTemplateRelationPath, template),
       "utf8"
@@ -60,7 +61,6 @@ const EmailUtil = {
       subject,
       html: emailCotent,
     };
-    console.log(templateData.host);
     return sendEmail(mailOptions);
   },
   sendEmailWithAttachment: function (to, subject, otherOptions = {}) {},

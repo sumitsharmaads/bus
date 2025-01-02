@@ -62,10 +62,6 @@ export const refreshToken = async function (req, res, next) {
     if (refrehToken) {
       return res
         .cookie("uuid", uuid, cookiesOption)
-        .cookie("accessToken", newAccessToken, {
-          ...cookiesOption,
-          maxAge: ACCESS_TOKEN_EXPIRY_UTIL,
-        })
         .cookie("refreshToken", refrehToken, {
           ...cookiesOption,
           signed: true,
@@ -83,10 +79,6 @@ export const refreshToken = async function (req, res, next) {
     } else {
       return res
         .cookie("uuid", uuid, cookiesOption)
-        .cookie("accessToken", newAccessToken, {
-          ...cookiesOption,
-          maxAge: ACCESS_TOKEN_EXPIRY_UTIL,
-        })
         .status(200)
         .json({
           success: true,

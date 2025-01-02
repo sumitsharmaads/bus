@@ -1,10 +1,28 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Outlet } from "react-router-dom";
 import { Icon, SocialDrawer } from "../common";
 import { WhatsappIcon, FacebookIcon, Instagram } from "../svg";
 import { Header } from "../components";
+import User from "../utils/User";
+import { get } from "../service";
 
 export const PublicLayout: React.FC = () => {
+  const refreshAccessToken = async () => {
+    const response = await get("auth/refresh-token");
+    console.log(response);
+  };
+
+  useEffect(() => {
+    console.log("login useEffect");
+    if (User.isLogin) {
+      refreshAccessToken();
+      const intervalId = setInterval(() => {
+        refreshAccessToken();
+      }, 1 * 60 * 1000);
+      return () => clearInterval(intervalId);
+    }
+  }, []);
+
   return (
     <div className="flex flex-col">
       <Header />

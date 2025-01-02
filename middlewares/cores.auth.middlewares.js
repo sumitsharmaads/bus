@@ -1,20 +1,18 @@
 import cors from "cors";
 import { getHostName } from "../utils/common.js";
 
-const customCors = (credentialsRequired) => {
-  console.log("customcors", credentialsRequired);
+const customCors = () => {
   const allowedOrigin = process.env.CORS_ORIGIN.toString()
     .split(",")
     .map((s) => s.trim());
   return (req, res, next) => {
     const host = getHostName(req);
-    console.log("host", host);
     const corsOptions = {
       origin: (origin, callback) => {
-        console.log("origin", origin);
-        if (allowedOrigin.indexOf(host) !== -1 || !host) {
+        if (allowedOrigin.indexOf(host || origin) !== -1 || !host) {
           callback(null, true);
         } else {
+          console.log("not allowed due to cors policy");
           callback(new Error("Not allowed by CORS"));
         }
       },

@@ -4,7 +4,8 @@ import Message from "../models/message.model.js";
 
 export const contactHandler = async (req, res, next) => {
   console.log("Controller: inside contactHandler");
-
+  console.log("website info", req.website);
+  const contactEmails = req.website.contactEmail;
   const { firstname, lastname, email, phone, message } = req.body;
 
   // Validate if all required fields are provided
@@ -16,7 +17,7 @@ export const contactHandler = async (req, res, next) => {
   try {
     // Send contact message email to support
     const emailSend = await EmailUtil.sendEmailWithTemplate(
-      "skworrier@gmail.com", // Support email
+      contactEmails, // Support email
       "New Contact Message", // Subject of the email
       {
         data: {
@@ -25,6 +26,7 @@ export const contactHandler = async (req, res, next) => {
           email,
           phone,
           message,
+          ...(req.website || {}),
         },
         req,
         template: "contact_template.html", // Path to the contact template
@@ -66,7 +68,7 @@ export const contactHandler = async (req, res, next) => {
 
 export const inqueryHandler = async (req, res, next) => {
   console.log("Controller: inside inqueryHandler");
-
+  const inqueryEmail = req.website.inqueryEmail;
   const { name, email, inquery } = req.body;
 
   // Validate if all required fields are provided
@@ -83,13 +85,14 @@ export const inqueryHandler = async (req, res, next) => {
   try {
     // Send inquiry email to support
     const emailSent = await EmailUtil.sendEmailWithTemplate(
-      "skworrier@gmail.com", // Support email
+      inqueryEmail, // Support email
       "New Inquiry Received", // Subject of the email
       {
         data: {
           name,
           email,
           inquery,
+          ...(req.website || {}),
         },
         req,
         template: "inquery_template.html",
@@ -123,8 +126,4 @@ export const inqueryHandler = async (req, res, next) => {
       createError(500, "Internal server error. Please try again later.")
     );
   }
-};
-
-export const rentalService = async (req, res, next) => {
-  const { name, email, inquery } = req.body;
 };

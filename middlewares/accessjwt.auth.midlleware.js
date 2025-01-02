@@ -1,6 +1,6 @@
 import jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs";
-import { createError } from "../utils/error.js";
+import { invalidSessionError } from "../utils/error.js";
 import { Token } from "../models/token.model.js";
 import { makeString } from "../utils/common.js";
 
@@ -10,26 +10,20 @@ export const validateAccessToken = async (req, res, next) => {
   const accessToken = authToken?.split("Bearer ")[1];
   if (!accessToken) {
     console.log("not a valid acess token");
-    return next(createError(401, "You are not authenticated!"));
+    return invalidSessionError(res, next, "You are not authenticated!");
   }
   const { signedCookies = {} } = req;
   const { refreshToken } = signedCookies;
 
   if (!refreshToken) {
-    res.clearCookie("accessToken");
-    res.clearCookie("refreshToken");
-    res.clearCookie("uuid");
     console.log("not a valid refreshToken");
-    return next(createError(401, "You are not authenticated!"));
+    return invalidSessionError(res, next, "You are not authenticated!");
   }
 
   const refreshTokenInDB = await Token.findByToken(refreshToken);
 
   if (!refreshTokenInDB) {
-    res.clearCookie("accessToken");
-    res.clearCookie("refreshToken");
-    res.clearCookie("uuid");
-    return next(createError(401, "You are not authenticated!"));
+    return invalidSessionError(res, next, "You are not authenticated!");
   }
   const user = refreshTokenInDB.userId;
 
@@ -54,10 +48,7 @@ export const validateAccessToken = async (req, res, next) => {
       console.log(
         "validateAccessToken: Invalid token format (missing user ID)"
       );
-      res.clearCookie("accessToken");
-      res.clearCookie("refreshToken");
-      res.clearCookie("uuid");
-      return next(createError(403, "Invalid token. Access forbidden."));
+      return invalidSessionError(res, next, "You are not authenticated!");
     }
 
     const isUuidValid = await bcrypt.compare(
@@ -67,17 +58,16 @@ export const validateAccessToken = async (req, res, next) => {
 
     if (!isUuidValid) {
       console.log("validateAccessToken: UUID does not match");
-      res.clearCookie("accessToken");
-      res.clearCookie("refreshToken");
-      res.clearCookie("uuid");
-      return next(createError(403, "Invalid token. Access forbidden."));
+      return invalidSessionError(res, next, "You are not authenticated!", 403);
     }
 
     if (makeString(decoded?.id) !== makeString(user?._id)) {
-      res.clearCookie("accessToken");
-      res.clearCookie("refreshToken");
-      res.clearCookie("uuid");
-      return next(createError(403, "Invalid token. Access forbidden."));
+      return invalidSessionError(
+        res,
+        next,
+        "Invalid token. Access forbidden.",
+        403
+      );
     }
     req.user = {
       ...user,
@@ -89,7 +79,7 @@ export const validateAccessToken = async (req, res, next) => {
     console.log(
       "validateAccessToken: Token validation successful. User authenticated."
     );
-    next(); // Continue to the next middleware or route handler
+    next();
   } catch (error) {
     console.error("validateAccessToken: Error during token validation", error);
     if (error.name === "TokenExpiredError") {
@@ -102,10 +92,12 @@ export const validateAccessToken = async (req, res, next) => {
       });
     } else {
       console.log("validateAccessToken: Invalid token");
-      res.clearCookie("accessToken");
-      res.clearCookie("refreshToken");
-      res.clearCookie("uuid");
-      return next(createError(403, "Invalid token. Access forbidden."));
+      return invalidSessionError(
+        res,
+        next,
+        "Invalid token. Access forbidden.",
+        403
+      );
     }
   }
 };

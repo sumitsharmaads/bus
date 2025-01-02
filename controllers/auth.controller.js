@@ -104,6 +104,7 @@ export const login = async (req, res, next) => {
       {
         data: {
           otp,
+          ...(req.website || {}),
         },
         req,
         template: "otp_template.html",
@@ -230,15 +231,11 @@ export const verifyOtp = async (req, res, next) => {
     const cookiesOption = {
       httpOnly: true,
       secure: process.env.Environment !== "development",
-      sameSite: "None",
+      sameSite: process.env.Environment !== "development" ? "None" : "Lax",
     };
     return res
       .clearCookie("hash-id")
       .cookie("uuid", uuid, cookiesOption)
-      .cookie("accessToken", accessToken, {
-        ...cookiesOption,
-        maxAge: ACCESS_TOKEN_EXPIRY_UTIL,
-      })
       .cookie("refreshToken", refreshToken, {
         ...cookiesOption,
         signed: true,
@@ -303,6 +300,7 @@ export const forgotPassword = async (req, res, next) => {
       {
         data: {
           otp,
+          ...(req.website || {}),
         },
         req,
         template: "otp_template_forgot_password.html",
@@ -440,18 +438,16 @@ export const resetPassword = async (req, res, next) => {
 export const logoutHandler = async (req, res, next) => {
   const { signedCookies } = req;
   const { refreshToken } = signedCookies;
-  console.log("refreshToken", refreshToken);
   if (!refreshToken) {
     console.error("refreshToken: Refresh token is missing in request cookies");
-    throw new Error("No refresh token provided");
+    return invalidSessionError(res, next, "No refresh token provided");
   }
   try {
     const refreshTokenInDb = await Token.findByToken(refreshToken);
     if (!refreshTokenInDb) {
-      throw new Error("Invalid refresh token");
+      return invalidSessionError(res, next, "Invalid refresh token");
     }
     await Token.deleteOne({ _id: refreshTokenInDb._id });
-    res.clearCookie("accessToken");
     res.clearCookie("refreshToken");
     res.clearCookie("uuid");
     return res.status(200).json({
@@ -461,9 +457,6 @@ export const logoutHandler = async (req, res, next) => {
     });
   } catch (error) {
     console.log(error);
-    res.clearCookie("accessToken");
-    res.clearCookie("refreshToken");
-    res.clearCookie("uuid");
-    return next(createError(401, "Session expired"));
+    return invalidSessionError(res, next);
   }
 };

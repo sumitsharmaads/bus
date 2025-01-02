@@ -108,32 +108,32 @@ export function validateOTPdData(req, jwtData, otpData) {
 
   return false;
 }
-let Common = function () {};
-Common.isNullOrEmpty = function (strVal) {
-  if (typeof strVal == "object") {
-    return Common.isEmptyObject(strVal);
-  }
-  if (
-    strVal === "" ||
-    strVal === null ||
-    strVal === "null" ||
-    strVal === undefined ||
-    strVal === "undefined"
-  ) {
-    return true;
-  } else {
-    return false;
-  }
-};
+class Common {
+  isNullOrEmpty = function (strVal) {
+    if (typeof strVal == "object") {
+      return Common.isEmptyObject(strVal);
+    }
+    if (
+      strVal === "" ||
+      strVal === null ||
+      strVal === "null" ||
+      strVal === undefined ||
+      strVal === "undefined"
+    ) {
+      return true;
+    } else {
+      return false;
+    }
+  };
 
-Common.isEmptyObject = function (O) {
-  if (typeof O != "object") {
+  isEmptyObject = function (O) {
+    if (typeof O != "object") {
+      return true;
+    }
+    for (let x in O) {
+      return false;
+    }
     return true;
-  }
-  for (let x in O) {
-    return false;
-  }
-  return true;
-};
-
+  };
+}
 export default Common;
