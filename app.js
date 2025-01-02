@@ -38,7 +38,7 @@ const limiter = rateLimit({
   message: "Too many requests from this IP, please try again later.",
 });
 app.use(limiter);
-app.use(corsMiddleware());
+//app.use(corsMiddleware());
 
 /**view setup engine */
 app.set("views", path.join(__dirname, "views"));
