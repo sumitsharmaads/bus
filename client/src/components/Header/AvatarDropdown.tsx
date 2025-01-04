@@ -35,16 +35,22 @@ export const AvatarDropdown: React.FC<AvatarDropdown> = ({
         <Avatar src="images/public/avtar.jpg" />
       </MenuHandler>
       <MenuList>
-        <MenuItem>
+        <Link
+          to={PublicRoutes.PROFILE}
+          className="text-normal font-poppins capitalize active:font-semibold"
+        >
+          <MenuItem className="mb-2">Profile</MenuItem>
+        </Link>
+        {User.isAdmin && (
           <Link
-            to={PublicRoutes.PROFILE}
-            className="text-normal font-poppins capitalize hover:underline active:font-semibold"
+            to={"/admin"}
+            className="text-normal font-poppins capitalize active:font-semibold"
           >
-            Profile
+            <MenuItem className="mb-2">Admin</MenuItem>
           </Link>
-        </MenuItem>
-        <MenuItem>
-          <Button onClick={handleLogOut}>Logout</Button>
+        )}
+        <MenuItem onClick={handleLogOut} className="bg-secondary text-white">
+          Logout
         </MenuItem>
       </MenuList>
     </Menu>

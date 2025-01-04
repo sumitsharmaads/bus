@@ -1,7 +1,9 @@
 import axios, { AxiosError } from "axios";
 import User from "../utils/User";
-
 export const domain = process.env.REACT_APP_API_URL;
+
+let logout: Function | null = null;
+let updateUserInfo: Function | null = null;
 
 const axiosInstance = axios.create({
   baseURL: domain,
@@ -10,6 +12,14 @@ const axiosInstance = axios.create({
   },
   withCredentials: true,
 });
+
+export const setAuthHandlers = (
+  logoutHandler: Function,
+  updateUserInfoHandler: Function
+) => {
+  logout = logoutHandler;
+  updateUserInfo = updateUserInfoHandler;
+};
 
 axiosInstance.interceptors.request.use(
   (request) => {
@@ -38,21 +48,33 @@ axiosInstance.interceptors.response.use(
         const response = await axios.get(`${domain}auth/refresh-token`);
         const { token: newFreshToken } = response?.data?.result;
         if (newFreshToken) {
-          User.updateUserInfo({ token: newFreshToken });
+          if (updateUserInfo) {
+            updateUserInfo({ token: newFreshToken });
+          } else {
+            User.updateUserInfo({ token: newFreshToken });
+          }
         }
         axiosInstance.defaults.headers.common["Authorization"] = `Bearer ${
           newFreshToken || refreshToken
         }`;
         return axiosInstance(originalRequest);
       } catch (refreshError) {
-        User.logout();
-        window.location.href = "/login";
+        if (logout) {
+          logout();
+        } else {
+          User.logout();
+          window.location.href = "/login";
+        }
         return Promise.reject(refreshError);
       }
     }
     if (error?.response?.status === 401) {
-      User.logout();
-      window.location.href = "/login";
+      if (logout) {
+        logout();
+      } else {
+        User.logout();
+        window.location.href = "/login";
+      }
       return Promise.reject(error);
     }
     return Promise.reject(error);

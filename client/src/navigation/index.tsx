@@ -1,15 +1,16 @@
 export const AdminRoutes = {
-  DASHBOARD: "/admin/dashboard",
-  USER: "/admin/users",
-  USER_ADD: "/admin/users/add",
-  USER_EDIT: "/admin/users/:id/edit",
-  LOCATIONS: "/admin/locations",
-  LOCATIONS_ADD: "/admin/locations/add",
-  LOCATIONS_EDIT: "/admin/locations/:id/edit",
-  PROFILE: "/admin/profile",
-  BOOKING: "/admin/booking",
-  ADD_BOOKING: "/admin/booking/add",
-  EDIT_BOOKING: "/admin/booking/:id/edit",
+  DASHBOARD: "dashboard",
+  USER: "users",
+  USER_ADD: "users/add",
+  USER_EDIT: "users/:id/edit",
+  LOCATIONS: "locations",
+  LOCATIONS_ADD: "locations/add",
+  LOCATIONS_EDIT: "locations/:id/edit",
+  PROFILE: "profile",
+  BOOKING: "booking",
+  ADD_BOOKING: "booking/add",
+  EDIT_BOOKING: "booking/:id/edit",
+  SETTING: "setting",
 };
 
 export const PublicRoutes = {

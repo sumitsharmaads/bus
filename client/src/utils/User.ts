@@ -124,7 +124,11 @@ class User {
   }
 
   get isLogin() {
-    return this.info.user && this.info?.user?.token && this.info.user._id;
+    return !!(
+      this.info?.user &&
+      this.info?.user?.token &&
+      this.info?.user?._id
+    );
   }
 
   get isAdmin() {

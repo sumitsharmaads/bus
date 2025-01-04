@@ -1,7 +1,7 @@
 import { Navigate, createHashRouter } from "react-router-dom";
 import { PublicRoutes, AdminRoutes } from "../navigation";
 import { NotFound } from "../components";
-import { PublicLayout } from "../layouts";
+import { AdminLayout, PublicLayout } from "../layouts";
 import Contact from "../pages/Contact";
 import { Signup } from "../pages/Signup";
 import { SignIn } from "../pages/Signin";
@@ -9,16 +9,30 @@ import ForgotPassword from "../pages/ForgotPassword";
 import Inquiry from "../pages/Inquery";
 import Services from "../pages/Servies";
 import Profile from "../pages/Profile";
-import { PreventLoginRoute, PrivateRoute } from "../components/auth";
+import {
+  AdminProtectedRoute,
+  PreventLoginRoute,
+  PrivateRoute,
+} from "../components/auth";
+import { AuthContextProvider } from "../contexts/AuthContextProvider";
+import { Home } from "../pages/Home";
 
 export const router = createHashRouter([
   {
     path: "/",
-    element: <PublicLayout />,
+    element: (
+      <AuthContextProvider>
+        <PublicLayout />
+      </AuthContextProvider>
+    ),
     children: [
       {
         index: true,
-        element: <>Hello</>,
+        element: <Home />,
+      },
+      {
+        path: PublicRoutes.HOME,
+        element: <Home />,
       },
       {
         path: PublicRoutes.SIGNUP,
@@ -45,6 +59,24 @@ export const router = createHashRouter([
       {
         path: PublicRoutes.CONTACT,
         element: <Contact />,
+      },
+      {
+        path: "/admin",
+        element: (
+          <AdminProtectedRoute>
+            <AdminLayout />
+          </AdminProtectedRoute>
+        ),
+        children: [
+          {
+            index: true,
+            element: <>hello</>,
+          },
+          {
+            path: AdminRoutes.SETTING,
+            element: <>Settings</>,
+          },
+        ],
       },
       { path: "*", element: <NotFound /> },
     ],

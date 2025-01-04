@@ -12,7 +12,11 @@ import { PlusIcon, XMarkIcon } from "@heroicons/react/24/solid";
 import { classNameOrEmptyString, throttle } from "../../utils";
 import { Button } from "../Button";
 import { PersistStorageType, PopupPosition } from "../types";
-import { getSocialDrawerState, setSocialDrawerState } from "./PersistStorage";
+import {
+  drawerStorage,
+  getSocialDrawerState,
+  setSocialDrawerState,
+} from "./PersistStorage";
 import { useClickAway } from "../../hooks";
 import { Link } from "react-router-dom";
 import { Popover } from "../Popover";
@@ -145,9 +149,9 @@ export const SocialDrawer: SocialDrawerComponentProps = ({
                 direction: "up",
               },
             };
-            if (persistState) setSocialDrawerState(storageData);
-            if (newX > 10 && newY > 10) setIsDragging(true);
           }
+          if (persistState) setSocialDrawerState(storageData);
+          if (newX > 10 && newY > 10) setIsDragging(true);
         }
       }
     },

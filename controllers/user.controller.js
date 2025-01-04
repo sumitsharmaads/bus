@@ -26,3 +26,25 @@ export const changePassword = async (req, res, next) => {
     next(error);
   }
 };
+
+export const updateUser = async (req, res, next) => {
+  console.log("Controller: inside updateUser");
+  const { id } = req.params;
+  try {
+    const user = await User.updateUser(id, oldPassword, newPassword);
+    if (!user) {
+      console.log("Error: User not found.");
+      return next(createError(404, "Failed to update user"));
+    }
+    console.log("User password updated successfully");
+    return res.status(200).json({
+      success: true,
+      status: 200,
+      message: "User information updated successfully.",
+      result: user,
+    });
+  } catch (error) {
+    console.log("change password error", error);
+    next(error);
+  }
+};

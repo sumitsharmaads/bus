@@ -4,13 +4,14 @@ import { PublicRoutes } from "../navigation";
 import { Input } from "@material-tailwind/react";
 import { OTP } from "../components/auth/OTP";
 import { LoginType, UserInfoType } from "../types";
-import { emailRegex, passwordRegex } from "../utils";
+import { emailRegex, parseExpirationToken, passwordRegex } from "../utils";
 import { LabelError } from "../common";
 import { EyeSlashIcon } from "@heroicons/react/20/solid";
 import { EyeIcon } from "@heroicons/react/24/solid";
 import { post } from "../service";
 import { useLoader } from "../contexts/LoaderContext";
 import User from "../utils/User";
+import { tokenExpiryStorage } from "../db";
 
 export const SignIn: React.FC = () => {
   const { setLoading } = useLoader();
@@ -111,6 +112,11 @@ export const SignIn: React.FC = () => {
           ...user,
           token: response.data?.result?.token,
         });
+        const expirationDuration = parseExpirationToken(
+          process.env.REACT_APP_TOKEN_EXPIRY || "10m"
+        );
+        const expirationTime = Date.now() + expirationDuration;
+        tokenExpiryStorage.setItem("", expirationTime);
         navigate("/");
       } else {
         //show alert

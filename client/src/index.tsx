@@ -4,6 +4,7 @@ import "./index.css";
 import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 import { ThemeProvider } from "@material-tailwind/react";
+import { WebsiteContextProvider } from "./contexts/WebsiteProvider";
 
 /**
  * https://github.com/creativetimofficial/material-tailwind-kit-react/blob/main/package.json
@@ -16,7 +17,9 @@ const root = ReactDOM.createRoot(
 root.render(
   <React.StrictMode>
     <ThemeProvider>
-      <App />
+      <WebsiteContextProvider>
+        <App />
+      </WebsiteContextProvider>
     </ThemeProvider>
   </React.StrictMode>
 );

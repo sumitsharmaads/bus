@@ -1,38 +1,26 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { Outlet } from "react-router-dom";
-import { Icon, SocialDrawer } from "../common";
+import { SocialDrawer } from "../common";
 import { WhatsappIcon, FacebookIcon, Instagram } from "../svg";
 import { Header } from "../components";
-import User from "../utils/User";
-import { get } from "../service";
+import { useWebsite } from "../contexts/WebsiteProvider";
+import { Footer } from "../components/Footer";
 
 export const PublicLayout: React.FC = () => {
-  const refreshAccessToken = async () => {
-    const response = await get("auth/refresh-token");
-    console.log(response);
-  };
-
-  useEffect(() => {
-    console.log("login useEffect");
-    if (User.isLogin) {
-      refreshAccessToken();
-      const intervalId = setInterval(() => {
-        refreshAccessToken();
-      }, 1 * 60 * 1000);
-      return () => clearInterval(intervalId);
-    }
-  }, []);
-
+  const { websiteInfo } = useWebsite();
   return (
     <div className="flex flex-col">
       <Header />
       <Outlet />
-      <SocialDrawer>
+      <Footer />
+      <SocialDrawer persistState={true}>
         <SocialDrawer.Item
           id={1}
           iconJSX={<WhatsappIcon />}
           link={{
-            address: "https://wa.me/your-phone-number",
+            address: `https://wa.me/${
+              websiteInfo?.whatsappNumber || "your-phone-number"
+            }`,
           }}
           className="bg-transparent hover:bg-transparent shadow-none"
         />
@@ -40,7 +28,7 @@ export const PublicLayout: React.FC = () => {
           id={2}
           iconJSX={<FacebookIcon />}
           link={{
-            address: "https://facebook.com",
+            address: websiteInfo?.facebook || "https://facebook.com",
           }}
           className="bg-transparent hover:bg-transparent shadow-none"
         />
@@ -48,7 +36,7 @@ export const PublicLayout: React.FC = () => {
           id={3}
           iconJSX={<Instagram />}
           link={{
-            address: "https://instagram.com",
+            address: websiteInfo?.instagram || "https://instagram.com",
           }}
           className="bg-transparent hover:bg-transparent shadow-none"
         />

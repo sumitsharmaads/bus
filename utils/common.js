@@ -109,7 +109,7 @@ export function validateOTPdData(req, jwtData, otpData) {
   return false;
 }
 class Common {
-  isNullOrEmpty = function (strVal) {
+  static isNullOrEmpty = function (strVal) {
     if (typeof strVal == "object") {
       return Common.isEmptyObject(strVal);
     }
@@ -126,7 +126,7 @@ class Common {
     }
   };
 
-  isEmptyObject = function (O) {
+  static isEmptyObject = function (O) {
     if (typeof O != "object") {
       return true;
     }

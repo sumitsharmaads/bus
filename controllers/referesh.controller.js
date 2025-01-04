@@ -19,15 +19,13 @@ export const refreshToken = async function (req, res, next) {
   const currentDate = new Date();
   if (!refreshToken) {
     console.error("refreshToken: Refresh token is missing in request cookies");
-    throw new Error("No refresh token provided");
-    // return next(createError(401, "No refresh token provided"));
+    return next(createError(401, "No refresh token provided"));
   }
 
   try {
     const refreshTokenInDb = await Token.findByToken(refreshToken);
     if (!refreshTokenInDb) {
-      throw new Error("Invalid refresh token");
-      //return next(createError(401, "Invalid token"));
+      return next(createError(401, "Invalid token"));
     }
     const user = refreshTokenInDb.userId;
     const isUuidValid = await bcrypt.compare(
@@ -37,8 +35,7 @@ export const refreshToken = async function (req, res, next) {
     const tokenExpiryDate = new Date(refreshTokenInDb.expiryDate);
     if (!isUuidValid) {
       console.log("refresh token: UUID does not match");
-      throw new Error("Invalid token. UUID does not match");
-      //return next(createError(403, "Invalid token. Access forbidden."));
+      return next(createError(403, "Invalid token. Access forbidden."));
     }
     const timeDifference = tokenExpiryDate.getTime() - currentDate.getTime();
     const uuid = createUUID(user._id);

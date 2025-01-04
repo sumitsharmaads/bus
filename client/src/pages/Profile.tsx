@@ -3,17 +3,42 @@ import React, { useState } from "react";
 import { Button, Modal } from "../common";
 import PlusCircleIcon from "@heroicons/react/24/solid/PlusCircleIcon";
 import { DeleteIcon, EditIcon } from "../svg";
+import User from "../utils/User";
+import { UserInfoType } from "../types";
+import { post } from "../service";
+import { useLoader } from "../contexts/LoaderContext";
+
+const LOGGEDIN_USER = {
+  fullname: "",
+  _id: "",
+  email: "",
+  roleType: 1,
+  phone: "",
+  gender: "",
+  username: "",
+};
+
+type TempTicketGuest = {
+  name: string;
+  age: string;
+  gender: string;
+};
 
 const Profile: React.FC = () => {
+  const { setLoading } = useLoader();
   const [isEditing, setIsEditing] = useState(false);
-  const [userInfo, setUserInfo] = useState({
-    name: "Nicholas Swatz",
-    phone: "(629) 555-0123",
-    email: "nicholasswatz@gmail.com",
-    gender: "Male",
-    username: "Username",
-  });
+  const [isAddingNewGuest, setIsAddingNewGuest] = useState(false);
   const [showModal, setShowModal] = useState(false);
+  const [editRowData, setEditRowData] = useState<number | null>(null);
+  const [userInfo, setUserInfo] = useState<Omit<UserInfoType, "token">>(
+    User.user || LOGGEDIN_USER
+  );
+  const [tempUser, setTempUser] = useState<TempTicketGuest>({
+    name: "",
+    age: "",
+    gender: "",
+  });
+  const [tempUserList, setTempUserList] = useState<TemplateStringsArray[]>([]);
   const [newUser, setNewUser] = useState({ name: "", age: "", gender: "" });
   const [userList, setUserList] = useState([
     {
@@ -27,8 +52,14 @@ const Profile: React.FC = () => {
 
   const toggleEdit = () => setIsEditing(!isEditing);
 
-  const handleUserChange = (field: string, value: string) => {
-    setUserInfo({ ...userInfo, [field]: value });
+  const handleUserChange = (
+    field: keyof Omit<UserInfoType, "token">,
+    value: string
+  ) => {
+    setUserInfo((prev) => ({
+      ...prev,
+      [field]: value,
+    }));
   };
 
   const handleNewUserChange = (field: string, value: string) => {
@@ -66,6 +97,22 @@ const Profile: React.FC = () => {
     setEditingRowIndex(null);
   };
 
+  const handleUpdateUser = async () => {
+    const tempUser: any = userInfo;
+    delete tempUser?.token;
+    try {
+      const response = await post(
+        `users/update-user/${userInfo._id}`,
+        tempUser,
+        {},
+        {
+          showSuccess: true,
+          setLoading,
+        }
+      );
+      console.log(response);
+    } catch (error) {}
+  };
   return (
     <section>
       <div className="px-2 h-[2px] bg-primary transition-all duration-300 ease-in-out" />
@@ -88,11 +135,13 @@ const Profile: React.FC = () => {
                   type="text"
                   name={"fullname"}
                   id={"fullname"}
-                  value={userInfo.name}
-                  onChange={(e) => handleUserChange("name", e.target.value)}
+                  value={userInfo.fullname}
+                  onChange={(e) => handleUserChange("fullname", e.target.value)}
                 />
               ) : (
-                <h1 className="mt-4 text-2xl font-semibold">{userInfo.name}</h1>
+                <h1 className="mt-4 text-2xl font-semibold">
+                  {userInfo.fullname}
+                </h1>
               )}
             </div>
             <div className="mt-6">
@@ -166,9 +215,24 @@ const Profile: React.FC = () => {
               </ul>
             </div>
             <div className="mt-6 text-right">
-              <Button onClick={toggleEdit}>
-                {isEditing ? "Save" : <EditIcon />}
-              </Button>
+              {isEditing ? (
+                <>
+                  <Button
+                    onClick={() => {
+                      setUserInfo(User.user || LOGGEDIN_USER);
+                      toggleEdit();
+                    }}
+                    className="mr-2"
+                  >
+                    Cancel
+                  </Button>
+                  <Button onClick={handleUpdateUser}>Save</Button>
+                </>
+              ) : (
+                <Button onClick={toggleEdit}>
+                  <EditIcon />
+                </Button>
+              )}
             </div>
           </div>
 
