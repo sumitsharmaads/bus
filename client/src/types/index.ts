@@ -11,31 +11,34 @@ export type UserInfoType = {
   username: string;
 };
 type AddressType = {
-  address1: string;
-  address2: string | undefined;
   city: string;
   state: string;
   pincode: string;
+  address1: string;
+  address2: string;
 };
 export type WebsiteInfoType = {
-  constactEmail: [string];
-  rentalEmail: [string];
-  inqueryEmail: [string];
-  whatsappNumber: string;
+  id: string;
   phone: string;
-  facebook: string;
-  instagram: string;
   logo: {
     id: string;
     url: string;
-  };
+  } | null;
   preLogo: {
     id: string;
     url: string;
   } | null;
-  supportEmail: string;
   brandname: string;
   contactAddress: AddressType;
+  socialLinks: {
+    facebook: string;
+    instagram: string;
+    twitter: string;
+    phone: string;
+  } | null;
+  emails: {
+    supportEmail: string;
+  } | null;
 };
 
 export type TokenType = {
@@ -57,4 +60,16 @@ export type SignInType = {
   email: string;
   name: string;
   password: string;
+};
+
+export type ErrorResponse = {
+  success: false;
+  status: 400 | 401 | 403 | 404 | 500;
+  message: string;
+};
+
+export type SuccessResponse<T> = {
+  success: true;
+  message: string;
+  data: T;
 };

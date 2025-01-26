@@ -1,46 +1,54 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Outlet } from "react-router-dom";
-import { SocialDrawer } from "../common";
-import { WhatsappIcon, FacebookIcon, Instagram } from "../svg";
 import { Header } from "../components";
 import { useWebsite } from "../contexts/WebsiteProvider";
 import { Footer } from "../components/Footer";
+import { setAuthHandlers } from "../api/axiosInstance";
+import { useAuth } from "../contexts/AuthContextProvider";
+import { ArrowUpIcon } from "@heroicons/react/20/solid";
 
 export const PublicLayout: React.FC = () => {
-  const { websiteInfo } = useWebsite();
+  const { logout, updateUserInfo } = useAuth();
+  const [showScrollToTop, setShowScrollToTop] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const scrollThreshold = window.innerHeight * 1.5; // 100vh + 50vh
+      if (window.scrollY > scrollThreshold) {
+        setShowScrollToTop(true);
+      } else {
+        setShowScrollToTop(false);
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, []);
+
+  useEffect(() => {
+    if (logout && updateUserInfo) setAuthHandlers(logout, updateUserInfo);
+  }, []);
+
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
   return (
     <div className="flex flex-col">
       <Header />
-      <Outlet />
+      <main className="flex-1">
+        <Outlet />
+      </main>
       <Footer />
-      <SocialDrawer persistState={true}>
-        <SocialDrawer.Item
-          id={1}
-          iconJSX={<WhatsappIcon />}
-          link={{
-            address: `https://wa.me/${
-              websiteInfo?.whatsappNumber || "your-phone-number"
-            }`,
-          }}
-          className="bg-transparent hover:bg-transparent shadow-none"
-        />
-        <SocialDrawer.Item
-          id={2}
-          iconJSX={<FacebookIcon />}
-          link={{
-            address: websiteInfo?.facebook || "https://facebook.com",
-          }}
-          className="bg-transparent hover:bg-transparent shadow-none"
-        />
-        <SocialDrawer.Item
-          id={3}
-          iconJSX={<Instagram />}
-          link={{
-            address: websiteInfo?.instagram || "https://instagram.com",
-          }}
-          className="bg-transparent hover:bg-transparent shadow-none"
-        />
-      </SocialDrawer>
+      {showScrollToTop && (
+        <button
+          onClick={scrollToTop}
+          className="fixed bottom-6 right-6 bg-[#C22A54] text-white p-3 rounded-full shadow-lg hover:bg-[#E53E3E] transition duration-300 z-50"
+        >
+          <ArrowUpIcon className="h-6 w-6" />
+        </button>
+      )}
     </div>
   );
 };

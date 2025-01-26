@@ -24,7 +24,7 @@ export const Footer: React.FC = () => {
           <div className="flex space-x-4 mt-6">
             <a
               href={`https://wa.me/${
-                websiteInfo?.whatsappNumber || "your-phone-number"
+                websiteInfo?.socialLinks?.phone || "your-phone-number"
               }`}
               className="p-2 bg-[#C22A54] text-white rounded-full hover:bg-[#E53E3E] transition"
               aria-label="Whatsapp"
@@ -32,14 +32,18 @@ export const Footer: React.FC = () => {
               <WhatsappIcon className="h-6 w-6" />
             </a>
             <a
-              href={websiteInfo?.facebook || "https://facebook.com"}
+              href={
+                websiteInfo?.socialLinks?.facebook || "https://facebook.com"
+              }
               className="p-2 bg-[#C22A54] text-white rounded-full hover:bg-[#E53E3E] transition"
               aria-label="Facebook"
             >
               <FacebookIcon className="h-6 w-6" />
             </a>
             <a
-              href={websiteInfo?.instagram || "https://instagram.com"}
+              href={
+                websiteInfo?.socialLinks?.instagram || "https://instagram.com"
+              }
               className="p-2 bg-[#C22A54] text-white rounded-full hover:bg-[#E53E3E] transition"
               aria-label="Instagram"
             >
@@ -145,10 +149,10 @@ export const Footer: React.FC = () => {
               </i>
               <a
                 href={`mailto:${
-                  websiteInfo?.supportEmail || "dadhichbus@gmail.com"
+                  websiteInfo?.emails?.supportEmail || "dadhichbus@gmail.com"
                 }`}
               >
-                {websiteInfo?.supportEmail || "dadhichbus@gmail.com"}
+                {websiteInfo?.emails?.supportEmail || "dadhichbus@gmail.com"}
               </a>
             </li>
           </ul>

@@ -126,7 +126,6 @@ export const SocialDrawer: SocialDrawerComponentProps = ({
             Math.max(0, newY),
             screenHeight - buttonHeight
           );
-          console.log("button ref", constrainedX, constrainedY);
           buttonRef.current.style.left = `${constrainedX}px`;
           buttonRef.current.style.top = `${constrainedY}px`;
           buttonRef.current.style.right = "auto";

@@ -34,6 +34,6 @@ const DefaultStore = createStorage<unknown>("default");
 export const tokenStorage = createStorage<TokenType>("token");
 export const userStorage = createStorage<UserInfoType>("users");
 export const websiteStorage = createStorage<WebsiteInfoType | null>("website");
-export const tokenExpiryStorage = createStorage<number | null>("expiry");
+export const tokenExpiryStorage = createStorage<string | null>("expiry");
 export { createStorage };
 export default DefaultStore;

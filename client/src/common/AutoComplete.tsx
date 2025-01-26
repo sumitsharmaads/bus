@@ -21,6 +21,7 @@ interface AutoComplete<T = DefaultOption> {
   ) => void;
   handleSelect: (data: T, setValue: Dispatch<SetStateAction<string>>) => void;
   color?: color;
+  defaultValue?: string;
   handleBlur?: (
     event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
     inputSelectionFlag?: boolean
@@ -37,8 +38,9 @@ export function AutoComplete<TOptions = DefaultOption>({
   label = "",
   color = "blue",
   handleBlur,
+  defaultValue,
 }: AutoComplete<TOptions>): React.ReactElement {
-  const [value, setValue] = useState("");
+  const [value, setValue] = useState(defaultValue || "");
   const [showDropdown, setShowDropdown] = useState(false);
   const [options, setOptions] = useState<TOptions[] | undefined>([]);
   const [inputSelection, setInputSelection] = useState(false);

@@ -34,7 +34,6 @@ export const SignIn: React.FC = () => {
   );
 
   const validateState = useMemo(() => {
-    console.log("validateState");
     let emailError = "";
     let passwordError = "";
     if (!emailRegex.test(loginState?.email || "")) {
@@ -96,6 +95,7 @@ export const SignIn: React.FC = () => {
         result: {
           token: string;
           user: UserInfoType;
+          expiryTime: string;
         };
       }>(
         "auth/verify-otp",
@@ -112,11 +112,7 @@ export const SignIn: React.FC = () => {
           ...user,
           token: response.data?.result?.token,
         });
-        const expirationDuration = parseExpirationToken(
-          process.env.REACT_APP_TOKEN_EXPIRY || "10m"
-        );
-        const expirationTime = Date.now() + expirationDuration;
-        tokenExpiryStorage.setItem("", expirationTime);
+        tokenExpiryStorage.setItem("", response.data?.result?.expiryTime);
         navigate("/");
       } else {
         //show alert

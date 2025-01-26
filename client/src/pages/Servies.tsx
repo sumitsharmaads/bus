@@ -1,62 +1,62 @@
+import React from "react";
 import { BookBusCard, HeroSection, ServiceBox } from "../components/services";
 import { RentalServiceContextProvider } from "../contexts/RentealServiceContext";
 
 const Services: React.FC = () => {
   return (
-    <section>
+    <section className="">
+      {/* Hero Section */}
       <HeroSection />
-      <div className="container mx-auto p-6">
+
+      {/* Main Content */}
+      <div className="max-w-7xl mx-auto px-6 md:px-12 py-12">
         <RentalServiceContextProvider>
           <BookBusCard />
         </RentalServiceContextProvider>
-        {/* <ServiceTab /> */}
-        <div className="flex flex-col md:flex-row md:space-x-8 mt-4">
-          {/* left section */}
-          <div className="md:w-1/2  p-6 rounded-lg">
-            <h2 className="font-volkhov text-lg md:text-xl mb-2">
-              Dadhich Bus Services: Your Trusted Partner for Premium Bus Rentals
+
+        {/* About Section */}
+        <div className="flex flex-col md:flex-row gap-8 mt-12">
+          {/* Left Section */}
+          <div className="md:w-1/2">
+            <h2 className="text-2xl md:text-3xl font-semibold mb-4 ">
+              Dadhich Bus Services: Premium Bus Rentals
             </h2>
-            <p className="text-pretty font-poppins text-zinc-600 mb-2">
+            <p className="text-sm leading-relaxed ">
               Dadhich Bus Services excels in providing top-quality bus rental
               solutions, specializing in Volvo and minibus rentals that cater to
               diverse travel needs. With a strong focus on quality and customer
               satisfaction, we maintain a fleet of well-equipped, comfortable
-              buses suitable for groups of all sizes. Our Volvo buses offer a
-              luxurious travel experience, boasting modern amenities and
-              spacious interiors to ensure every journey is pleasant and
-              memorable. For smaller groups, our minibuses provide a perfect
-              blend of comfort and convenience without sacrificing any
+              buses suitable for groups of all sizes.
+            </p>
+            <p className="text-sm leading-relaxed  mt-4">
+              Our Volvo buses offer a luxurious travel experience, boasting
+              modern amenities and spacious interiors to ensure every journey is
+              pleasant and memorable. For smaller groups, our minibuses provide
+              a perfect blend of comfort and convenience without sacrificing any
               amenities.
             </p>
-            <p className="text-pretty font-poppins text-zinc-600 mb-2">
-              Dadhich Bus Services is committed to safety, punctuality, and a
-              customer-centric approach, ensuring a smooth, stress-free journey.
-              Our rental services extend far beyond Fatehabad, covering a wide
-              range of destinations across India. Whether you need a bus for a
-              short day trip or a long-distance excursion, our experienced
-              drivers ensure a reliable and enjoyable ride.
-            </p>
-            <p className="text-pretty font-poppins text-zinc-600">
-              With competitive pricing, flexible packages, and a steadfast
-              commitment to excellence, Dadhich Bus Services is your go-to
-              choice for hassle-free, high-quality group travel. Let us make
-              your travel comfortable, convenient, and memorable.
+            <p className="text-sm leading-relaxed  mt-4">
+              Whether you need a bus for a short day trip or a long-distance
+              excursion, Dadhich Bus Services ensures a reliable and enjoyable
+              ride. Let us make your travel comfortable, convenient, and
+              memorable.
             </p>
           </div>
-          {/* right section */}
-          <div className="md:w-1/2 mb-6 md:mb-0 flex justify-center items-center">
-            <div className="w-full p-4 rounded-lg flex justify-center">
-              <img
-                src="images/public/rental_hero_image.webp?tr=w-500,h-333"
-                alt="Dadhich bus travel"
-                className="object-cover rounded-lg w-full md:w-4/5 lg:w-3/4"
-              />
-            </div>
+
+          {/* Right Section */}
+          <div className="md:w-1/2 flex justify-center items-center">
+            <img
+              src="images/public/rental_hero_image.webp?tr=w-500,h-333"
+              alt="Dadhich Bus Travel"
+              className="rounded-lg shadow-lg object-cover w-full"
+            />
           </div>
         </div>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-8">
+
+        {/* Features Section */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mt-12">
           <ServiceBox iconName="booking" message="Easy Booking" />
-          <ServiceBox iconName="verified" message="Professioanl Drivers" />
+          <ServiceBox iconName="verified" message="Professional Drivers" />
           <ServiceBox iconName="bus" message="Big Fleet of Vehicles" />
           <ServiceBox iconName="interior" message="Luxury Interiors" />
         </div>

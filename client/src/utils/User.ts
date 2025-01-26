@@ -1,4 +1,4 @@
-import { userStorage } from "../db";
+import { tokenExpiryStorage, userStorage } from "../db";
 import { UserInfoType } from "../types";
 export const defaultUser = {
   gender: null,
@@ -104,6 +104,7 @@ class User {
       user: null,
     };
     userStorage.removeItem("users");
+    tokenExpiryStorage.removeItem("");
   }
 
   private getUser(): Omit<UserInfoType, "token"> | null {

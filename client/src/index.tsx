@@ -5,6 +5,7 @@ import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 import { ThemeProvider } from "@material-tailwind/react";
 import { WebsiteContextProvider } from "./contexts/WebsiteProvider";
+import { SocialFixedDrawer } from "./components/SocialFixedDrawer";
 
 /**
  * https://github.com/creativetimofficial/material-tailwind-kit-react/blob/main/package.json
@@ -19,6 +20,7 @@ root.render(
     <ThemeProvider>
       <WebsiteContextProvider>
         <App />
+        <SocialFixedDrawer />
       </WebsiteContextProvider>
     </ThemeProvider>
   </React.StrictMode>

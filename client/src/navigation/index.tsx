@@ -1,14 +1,14 @@
 export const AdminRoutes = {
   DASHBOARD: "dashboard",
   USER: "users",
-  USER_ADD: "users/add",
+  USER_ADD: "add",
   USER_EDIT: "users/:id/edit",
   LOCATIONS: "locations",
   LOCATIONS_ADD: "locations/add",
   LOCATIONS_EDIT: "locations/:id/edit",
   PROFILE: "profile",
-  BOOKING: "booking",
-  ADD_BOOKING: "booking/add",
+  TOURS: "tours",
+  ADD_TOUR: "add",
   EDIT_BOOKING: "booking/:id/edit",
   SETTING: "setting",
 };

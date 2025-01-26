@@ -53,11 +53,13 @@ export const Header: React.FC = () => {
     <header className="p-2 flex justify-between items-center relative">
       <div className="flex items-center">
         <div className="w-[50px] md:w-[60px] flex items-center">
-          <img
-            src="images/logo.png"
-            alt="Logo"
-            className="h-[52px] object-cover"
-          />
+          <Link to={PublicRoutes.HOME}>
+            <img
+              src="images/logo.png"
+              alt="Logo"
+              className="h-[52px] object-cover"
+            />
+          </Link>
         </div>
       </div>
 

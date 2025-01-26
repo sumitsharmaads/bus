@@ -16,6 +16,8 @@ import {
 } from "../components/auth";
 import { AuthContextProvider } from "../contexts/AuthContextProvider";
 import { Home } from "../pages/Home";
+import { AdminSettings } from "../pages/admin";
+import { AddBasicTourDetails } from "../components/Admin/tours";
 
 export const router = createHashRouter([
   {
@@ -70,11 +72,20 @@ export const router = createHashRouter([
         children: [
           {
             index: true,
-            element: <>hello</>,
+            element: <AdminSettings />,
           },
           {
             path: AdminRoutes.SETTING,
-            element: <>Settings</>,
+            element: <AdminSettings />,
+          },
+          {
+            path: AdminRoutes.TOURS,
+            children: [
+              {
+                path: AdminRoutes.ADD_TOUR,
+                element: <AddBasicTourDetails />,
+              },
+            ],
           },
         ],
       },

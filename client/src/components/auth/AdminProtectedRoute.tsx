@@ -7,6 +7,7 @@ export const AdminProtectedRoute: React.FC<{ children: React.ReactNode }> = ({
 }) => {
   const [loading, setLoading] = useState(true);
   const [token, setToken] = useState(false);
+
   useEffect(() => {
     setLoading(true);
     const handleTime = () => {

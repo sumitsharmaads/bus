@@ -110,7 +110,6 @@ const Profile: React.FC = () => {
           setLoading,
         }
       );
-      console.log(response);
     } catch (error) {}
   };
   return (

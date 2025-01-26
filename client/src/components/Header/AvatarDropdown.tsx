@@ -32,7 +32,7 @@ export const AvatarDropdown: React.FC<AvatarDropdown> = ({
   return (
     <Menu>
       <MenuHandler>
-        <Avatar src="images/public/avtar.jpg" />
+        <Avatar src="images/public/avtar.jpg" className="cursor-pointer" />
       </MenuHandler>
       <MenuList>
         <Link
