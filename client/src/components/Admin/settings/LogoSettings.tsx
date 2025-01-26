@@ -30,8 +30,9 @@ const LogoSettings: React.FC<{
         },
       });
       if (response.data.data) {
+        console.log("response.data.data", response.data.data);
         setLogoUrl({
-          url: response.data.data?.secure_url,
+          url: response.data.data?.url,
           id: response.data.data?.public_id,
         });
       }

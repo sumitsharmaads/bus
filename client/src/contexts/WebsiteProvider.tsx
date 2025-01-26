@@ -7,7 +7,7 @@ import React, {
 } from "react";
 import io from "socket.io-client";
 import { domain } from "../api/axiosInstance";
-import { websiteStorage } from "../db";
+import { websiteStorage, websiteStorageExpiry } from "../db";
 import { WebsiteInfoType } from "../types";
 import { get } from "../service";
 
@@ -22,20 +22,26 @@ export const WebsiteContextProvider: React.FC<{
   const [websiteInfo, setWebsiteInfo] = useState<WebsiteInfoType | null>(null);
 
   useEffect(() => {
-    const _websiteInfo = websiteStorage.getItem("website");
-    if (_websiteInfo) setWebsiteInfo(_websiteInfo);
-    else fetchWebsiteInfo();
-  }, []);
+    const loadWebsiteInfo = async () => {
+      try {
+        const cachedData = websiteStorage.getItem("website");
+        const lastUpdated = websiteStorageExpiry.getItem("");
+        const isDataValid = lastUpdated
+          ? Date.now() - new Date(lastUpdated).getTime() < 45 * 60 * 1000
+          : false;
 
-  const url = useMemo(() => {
-    return domain?.split("/api")[0];
-  }, []);
+        if (cachedData && isDataValid) {
+          setWebsiteInfo(cachedData);
+        } else {
+          await fetchWebsiteInfo();
+        }
+      } catch (error) {
+        console.error("Error loading website info:", error);
+      }
+    };
 
-  const socket = useMemo(() => {
-    return io(url, {
-      transports: ["websocket"],
-    });
-  }, [url]);
+    loadWebsiteInfo();
+  }, []);
 
   const fetchWebsiteInfo = async () => {
     try {
@@ -43,27 +49,16 @@ export const WebsiteContextProvider: React.FC<{
       if (response.data.result) {
         setWebsiteInfo(response.data.result);
         websiteStorage.setItem("website", response.data.result);
+        websiteStorageExpiry.setItem("", new Date().toISOString());
       } else {
         setWebsiteInfo(null);
         websiteStorage.setItem("website", null);
+        websiteStorageExpiry.removeItem("");
       }
     } catch (error) {
       console.error("Error fetching website info", error);
     }
   };
-
-  useEffect(() => {
-    if (!websiteInfo) return;
-
-    socket.on("website-updated", (updatedInfo: WebsiteInfoType) => {
-      setWebsiteInfo(updatedInfo);
-      websiteStorage.setItem("website", updatedInfo);
-    });
-
-    return () => {
-      socket.disconnect();
-    };
-  }, [websiteInfo, socket]);
 
   return (
     <WebsiteContext.Provider value={{ websiteInfo }}>
