@@ -8,17 +8,17 @@ import mongoSanitize from "express-mongo-sanitize";
 import xssClean from "xss-clean";
 import path from "path";
 
-import { currDir } from "./utils/rootDir.js";
+import { currDir } from "./server/utils/rootDir.js";
 
-import authUserRoutes from "./routes/auth.routes.js";
-import publicAuthRoutes from "./routes/public.routes.js";
-import placesRoutes from "./routes/places.routes.js";
-import imagesRoutes from "./routes/images.routes.js";
-import userRoutes from "./routes/user.routes.js";
-import websiteRoutes from "./routes/website.routes.js";
-import tourRoutes from "./routes/tour.routes.js";
+import authUserRoutes from "./server/routes/auth.routes.js";
+import publicAuthRoutes from "./server/routes/public.routes.js";
+import placesRoutes from "./server/routes/places.routes.js";
+import imagesRoutes from "./server/routes/images.routes.js";
+import userRoutes from "./server/routes/user.routes.js";
+import websiteRoutes from "./server/routes/website.routes.js";
+import tourRoutes from "./server/routes/tour.routes.js";
 
-import customCors from "./middlewares/cores.auth.middlewares.js";
+import customCors from "./server/middlewares/cores.auth.middlewares.js";
 
 const __dirname = currDir(import.meta.url);
 const app = express();
@@ -63,7 +63,7 @@ app.use("/api/v1/tours", tourRoutes);
 
 app.use(express.static(path.join(__dirname, "client/build")));
 app.get("*", (req, res) => {
-  res.sendFile(path.join(__dirname, "../client/build", "index.html"));
+  res.sendFile(path.join(__dirname, "client/build", "index.html"));
 });
 
 app.use((req, res, next) => {
