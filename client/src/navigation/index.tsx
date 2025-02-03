@@ -4,13 +4,14 @@ export const AdminRoutes = {
   USER_ADD: "add",
   USER_EDIT: "users/:id/edit",
   LOCATIONS: "locations",
-  LOCATIONS_ADD: "locations/add",
-  LOCATIONS_EDIT: "locations/:id/edit",
   PROFILE: "profile",
   TOURS: "tours",
   ADD_TOUR: "add",
   EDIT_BOOKING: "booking/:id/edit",
   SETTING: "setting",
+  TERMS: "terms",
+  FAQs: "FAQs",
+  BUS: "bus",
 };
 
 export const PublicRoutes = {

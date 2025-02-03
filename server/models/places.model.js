@@ -108,7 +108,7 @@ PlacesSchema.plugin(function (schema) {
       items = 10000,
       isCount = false,
       search,
-      sort = { city: 1 },
+      sort = { city: -1 },
     } = condition || {};
     const tempCondition = {};
     if (!Common.isNullOrEmpty(search)) {
@@ -122,7 +122,12 @@ PlacesSchema.plugin(function (schema) {
       if (isCount) {
         const count = await model.countDocuments(tempCondition);
         const result = await model
-          .find(tempCondition, { projection })
+          .find(
+            tempCondition,
+            projection && Object.keys(projection).length
+              ? projection
+              : undefined
+          )
           .limit(items)
           .skip((page - 1) * items)
           .sort(sort);
@@ -145,6 +150,51 @@ PlacesSchema.plugin(function (schema) {
     } catch (error) {
       console.log("failed to parse places", error);
       throw new Error("failed to get all places", error);
+    }
+  };
+
+  schema.statics.bulkImport = async function (places) {
+    try {
+      const skippedRecords = [];
+      const insertedRecords = [];
+
+      const session = await mongoose.startSession(); // Start a transaction
+      session.startTransaction();
+
+      for (const place of places) {
+        try {
+          // Ensure name and state comparison is case-insensitive
+          const existingPlace = await this.findOne({
+            name: { $regex: new RegExp(`^${place.name}$`, "i") },
+            state: { $regex: new RegExp(`^${place.state}$`, "i") },
+          }).session(session);
+
+          if (existingPlace) {
+            skippedRecords.push(place);
+          } else {
+            // Auto-increment ID based on highest existing ID
+            const highestId = await this.findOne()
+              .sort({ id: -1 })
+              .limit(1)
+              .session(session);
+            place.id = highestId ? highestId.id + 1 : 1;
+
+            const newPlace = await this.create([place], { session });
+            insertedRecords.push(newPlace);
+          }
+        } catch (innerError) {
+          console.error("Error processing place:", place, innerError);
+          skippedRecords.push(place); // If an error occurs, skip and continue
+        }
+      }
+
+      await session.commitTransaction();
+      session.endSession();
+
+      return { insertedRecords, skippedRecords };
+    } catch (error) {
+      console.error("Failed to bulk import places:", error);
+      throw new Error("Failed to bulk import places: " + error.message);
     }
   };
 });

@@ -4,7 +4,7 @@ import { SearchPlaces } from "./SearchPlaces";
 import { post } from "../../../service";
 import { useLoader } from "../../../contexts/LoaderContext";
 
-type BasicDetailsType = {
+export type BasicDetailsType = {
   tourname: string;
   image: {
     url: string;

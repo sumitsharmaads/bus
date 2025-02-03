@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import Common from "../utils/common.js";
 
 /**
  * Tour Schema for storing tour details.
@@ -18,6 +19,7 @@ import mongoose from "mongoose";
  * @property {boolean} isActive - Indicates if the tour is active.
  * @property {Date} createdAt - Auto-generated timestamp for when the tour was created.
  * @property {Date} updatedAt - Auto-generated timestamp for when the tour was last updated.
+ * @property {Number} status - 0 means draft and 1 means published
  */
 const GSchema = mongoose.Schema;
 const TourSchema = new GSchema(
@@ -79,6 +81,11 @@ const TourSchema = new GSchema(
       type: Boolean,
       default: true,
     },
+    status: {
+      type: Number,
+      enum: [1, 2],
+      default: 1,
+    },
   },
   {
     timestamps: true,
@@ -120,7 +127,85 @@ TourSchema.plugin(function (schema) {
       throw new Error("Failed to fetch upcoming tours: " + error.message);
     }
   };
+
+  schema.statics.getAll = async function (condition, countFlagOnly) {
+    /** @type {model} */
+    const model = this;
+    const {
+      isCount,
+      search,
+      status,
+      page = 1,
+      items = 10000,
+      sort = { startDate: -1 },
+      timeRangeName = "startDate",
+      startDate,
+      endDate,
+    } = condition || {};
+    const tempCondition = {};
+    if (!Common.isNullOrEmpty(search)) {
+      const filters = [];
+      for (const key in search) {
+        if (key === "places" || key === "source") {
+          filters.push({
+            [key]: { $elemMatch: { $regex: new RegExp(search[key], "i") } },
+          });
+        } else {
+          filters.push({ [key]: { $regex: new RegExp(search[key], "i") } });
+        }
+      }
+      tempCondition.$or = filters;
+    }
+    if (status || status === 0) {
+      tempCondition.status = status;
+    }
+    if (startDate || endDate) {
+      let timeRangeConditions = {};
+      if (startDate) {
+        timeRangeConditions[timeRangeName] = { $gte: new Date(startDate) };
+      }
+      if (endDate) {
+        timeRangeConditions[timeRangeName] =
+          timeRangeConditions[timeRangeName] || {};
+        timeRangeConditions[timeRangeName].$lte = new Date(endDate);
+      }
+      tempCondition = { ...tempCondition, ...timeRangeConditions };
+    }
+    try {
+      if (countFlagOnly) {
+        const count = await model.countDocuments(tempCondition);
+        return {
+          count,
+          users: null,
+        };
+      } else if (isCount) {
+        const count = await model.countDocuments(tempCondition);
+        const result = await model
+          .find(tempCondition)
+          .limit(items)
+          .skip((page - 1) * items)
+          .sort(sort);
+        return {
+          count,
+          result,
+        };
+      } else {
+        const result = await model
+          .find(tempCondition)
+          .limit(items)
+          .skip((page - 1) * items)
+          .sort(sort);
+        return {
+          count: null,
+          result,
+        };
+      }
+    } catch (error) {
+      throw new Error(`Failed to retrieve tours: ${error.message}`);
+    }
+  };
 });
+
 const Tour = mongoose.model("Tour", TourSchema);
 
 export default Tour;

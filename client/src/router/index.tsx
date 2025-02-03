@@ -16,8 +16,14 @@ import {
 } from "../components/auth";
 import { AuthContextProvider } from "../contexts/AuthContextProvider";
 import { Home } from "../pages/Home";
-import { AdminSettings } from "../pages/admin";
+import { AdminDashboard, AdminSettings } from "../pages/admin";
 import { AddBasicTourDetails } from "../components/Admin/tours";
+import Test from "../pages/Test";
+import TourListPage from "../components/Admin/tours/TourListPage";
+import PlacesAdminPage from "../pages/admin/PlacesAdminPage";
+import TermsAdminPage from "../pages/admin/TermsAdminPage";
+import FAQsAdminPage from "../pages/admin/FAQsAdminPage";
+import BusAdminPage from "../pages/admin/BusAdminPage";
 
 export const router = createHashRouter([
   {
@@ -50,6 +56,7 @@ export const router = createHashRouter([
       },
       { path: PublicRoutes.QUICK_INQUERY, element: <Inquiry /> },
       { path: PublicRoutes.SERVICES, element: <Services /> },
+      { path: "/test", element: <Test /> },
       {
         path: PublicRoutes.PROFILE,
         element: (
@@ -72,11 +79,31 @@ export const router = createHashRouter([
         children: [
           {
             index: true,
-            element: <AdminSettings />,
+            element: <AdminDashboard />,
+          },
+          {
+            path: AdminRoutes.DASHBOARD,
+            element: <AdminDashboard />,
           },
           {
             path: AdminRoutes.SETTING,
             element: <AdminSettings />,
+          },
+          {
+            path: AdminRoutes.LOCATIONS,
+            element: <PlacesAdminPage />,
+          },
+          {
+            path: AdminRoutes.TERMS,
+            element: <TermsAdminPage />,
+          },
+          {
+            path: AdminRoutes.FAQs,
+            element: <FAQsAdminPage />,
+          },
+          {
+            path: AdminRoutes.BUS,
+            element: <BusAdminPage />,
           },
           {
             path: AdminRoutes.TOURS,
@@ -84,6 +111,10 @@ export const router = createHashRouter([
               {
                 path: AdminRoutes.ADD_TOUR,
                 element: <AddBasicTourDetails />,
+              },
+              {
+                index: true,
+                element: <TourListPage />,
               },
             ],
           },

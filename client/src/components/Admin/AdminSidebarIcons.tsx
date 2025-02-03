@@ -19,6 +19,12 @@ import User from "../../utils/User";
 import { get } from "../../service";
 import { useLoader } from "../../contexts/LoaderContext";
 import { useState } from "react";
+import { AdminRoutes } from "../../navigation";
+import ForumOutlinedIcon from "@mui/icons-material/ForumOutlined";
+import TerminalOutlinedIcon from "@mui/icons-material/TerminalOutlined";
+import LocationCityOutlinedIcon from "@mui/icons-material/LocationCityOutlined";
+import DirectionsBusOutlinedIcon from "@mui/icons-material/DirectionsBusOutlined";
+import DashboardCustomizeOutlinedIcon from "@mui/icons-material/DashboardCustomizeOutlined";
 
 export const AdminSidebarIcons = ({
   viewport,
@@ -49,7 +55,7 @@ export const AdminSidebarIcons = ({
     <>
       <List>
         <Link
-          to="setting"
+          to={AdminRoutes.DASHBOARD}
           onClick={() => {
             if (viewport.mobileView || viewport.tabView)
               setIsDropdownOpen(false);
@@ -57,9 +63,9 @@ export const AdminSidebarIcons = ({
         >
           <ListItem className="w-full hover:bg-gray-100">
             <ListItemPrefix>
-              <Cog6ToothIcon className="h-5 w-5" />
+              <DashboardCustomizeOutlinedIcon />
             </ListItemPrefix>
-            Settings
+            Dashboard
           </ListItem>
         </Link>
         <Accordion
@@ -119,6 +125,76 @@ export const AdminSidebarIcons = ({
             </List>
           </AccordionBody>
         </Accordion>
+        <Link
+          to={AdminRoutes.BUS}
+          onClick={() => {
+            if (viewport.mobileView || viewport.tabView)
+              setIsDropdownOpen(false);
+          }}
+        >
+          <ListItem className="w-full hover:bg-gray-100">
+            <ListItemPrefix>
+              <DirectionsBusOutlinedIcon />
+            </ListItemPrefix>
+            Bus
+          </ListItem>
+        </Link>
+        <Link
+          to="locations"
+          onClick={() => {
+            if (viewport.mobileView || viewport.tabView)
+              setIsDropdownOpen(false);
+          }}
+        >
+          <ListItem className="w-full hover:bg-gray-100">
+            <ListItemPrefix>
+              <LocationCityOutlinedIcon />
+            </ListItemPrefix>
+            locations
+          </ListItem>
+        </Link>
+        <Link
+          to="terms"
+          onClick={() => {
+            if (viewport.mobileView || viewport.tabView)
+              setIsDropdownOpen(false);
+          }}
+        >
+          <ListItem className="w-full hover:bg-gray-100">
+            <ListItemPrefix>
+              <TerminalOutlinedIcon />
+            </ListItemPrefix>
+            Terms
+          </ListItem>
+        </Link>
+        <Link
+          to="setting"
+          onClick={() => {
+            if (viewport.mobileView || viewport.tabView)
+              setIsDropdownOpen(false);
+          }}
+        >
+          <ListItem className="w-full hover:bg-gray-100">
+            <ListItemPrefix>
+              <Cog6ToothIcon className="h-5 w-5" />
+            </ListItemPrefix>
+            Settings
+          </ListItem>
+        </Link>
+        <Link
+          to={AdminRoutes.FAQs}
+          onClick={() => {
+            if (viewport.mobileView || viewport.tabView)
+              setIsDropdownOpen(false);
+          }}
+        >
+          <ListItem className="w-full hover:bg-gray-100">
+            <ListItemPrefix>
+              <ForumOutlinedIcon />
+            </ListItemPrefix>
+            FAQs
+          </ListItem>
+        </Link>
         <ListItem
           onClick={handleLogOut}
           className="w-full hover:bg-gray-100 cursor-pointer"

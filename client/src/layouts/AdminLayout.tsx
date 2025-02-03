@@ -2,6 +2,63 @@ import { useEffect, useState } from "react";
 import { AdminSidebar } from "../components/Admin/AdminSidebar";
 import { AdminMobileSidebar } from "../components/Admin/AdminMobileSidebar";
 import { Outlet } from "react-router-dom";
+import { CssBaseline, ThemeProvider, createTheme } from "@mui/material";
+
+const adminTheme = createTheme({
+  palette: {
+    primary: {
+      main: "#C22A54", // Tailwind 'primary' color
+    },
+    secondary: {
+      main: "#202542", // Tailwind 'secondary' color
+    },
+    background: {
+      default: "#f8f9fa", // Light background for admin
+      paper: "#ffffff", // Paper background
+    },
+  },
+  typography: {
+    fontFamily: "'Poppins', 'Volkhov', sans-serif", // Tailwind fonts
+    h1: {
+      fontSize: "2.5rem",
+      fontWeight: 700,
+    },
+    h2: {
+      fontSize: "2rem",
+      fontWeight: 600,
+    },
+    body1: {
+      fontSize: "1rem",
+      color: "#202542", // Secondary text color
+    },
+    button: {
+      textTransform: "none", // Disable uppercase for buttons
+    },
+  },
+  components: {
+    MuiButton: {
+      styleOverrides: {
+        root: {
+          borderRadius: "0.5rem", // Match Tailwind's rounded-md
+          fontFamily: "'Poppins', sans-serif",
+          textTransform: "none",
+          padding: "8px 16px",
+        },
+        containedPrimary: {
+          color: "#ffffff",
+        },
+      },
+    },
+    MuiCard: {
+      styleOverrides: {
+        root: {
+          borderRadius: "0.75rem", // Match Tailwind's rounded-lg
+          boxShadow: "0 4px 6px rgba(0,0,0,0.1)", // Tailwind-style shadow-md
+        },
+      },
+    },
+  },
+});
 
 export const AdminLayout: React.FC = () => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -31,7 +88,8 @@ export const AdminLayout: React.FC = () => {
   };
 
   return (
-    <>
+    <ThemeProvider theme={adminTheme}>
+      <CssBaseline />
       <div className="px-2 h-[2px] bg-primary transition-all duration-300 ease-in-out" />
 
       <div
@@ -57,6 +115,6 @@ export const AdminLayout: React.FC = () => {
           <Outlet />
         </div>
       </div>
-    </>
+    </ThemeProvider>
   );
 };
