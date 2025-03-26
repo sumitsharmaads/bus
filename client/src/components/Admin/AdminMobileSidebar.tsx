@@ -31,7 +31,7 @@ export const AdminMobileSidebar: React.FC<{
           <button
             ref={buttonRef}
             onClick={toggleDropdown}
-            className="p-4 text-gray-600 absolute top-2 left-2 z-50"
+            className="p-2 text-gray-600 absolute top-1 left-2 z-50"
           >
             <Bars3Icon className="h-6 w-6" />
           </button>

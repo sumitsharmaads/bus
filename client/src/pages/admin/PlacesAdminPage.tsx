@@ -102,19 +102,21 @@ const PlacesAdminPage: React.FC = () => {
     name: "",
     state: "",
   });
+  const [pageCount, setPageCount] = useState(1);
   const [skippedRecords, setSkippedRecords] = useState<Place[]>([]);
-
+  const [openSampleModal, setOpenSampleModal] = useState(false);
   const [filterVisible, setFilterVisible] = useState<boolean>(true);
 
   useEffect(() => {
     fetchPlaces();
-  }, []);
+  }, [currentPage]);
 
   const fetchPlaces = async () => {
     try {
       const nonEmptyFilters = Object.fromEntries(
         Object.entries(filters).filter(([_, value]) => value.trim() !== "")
       );
+      console.log("nonEmptyFilters", nonEmptyFilters);
       const response = await post<{
         data: {
           count: number;
@@ -128,7 +130,11 @@ const PlacesAdminPage: React.FC = () => {
           items: itemsPerPage,
         },
       });
-      setPlaces(response.data.data.result);
+      if (response?.data?.data?.result) {
+        const { result, count } = response?.data?.data;
+        setPlaces(response.data.data.result);
+        setPageCount(Math.ceil((count || 0) / itemsPerPage));
+      }
     } catch (error) {
       console.error("Failed to fetch places:", error);
     }
@@ -295,6 +301,14 @@ const PlacesAdminPage: React.FC = () => {
             Download Skipped Records
           </Button>
         )}
+        <Button
+          variant="outlined"
+          color="primary"
+          startIcon={<Download />}
+          onClick={() => setOpenSampleModal(true)}
+        >
+          Sample Excel
+        </Button>
       </Box>
 
       <TableContainer component={Paper}>
@@ -334,7 +348,7 @@ const PlacesAdminPage: React.FC = () => {
       </TableContainer>
       <Box mt={4} display="flex" justifyContent="center">
         <Pagination
-          count={5}
+          count={pageCount}
           page={currentPage}
           onChange={(_, page) => setCurrentPage(page)}
           color="primary"
@@ -343,6 +357,60 @@ const PlacesAdminPage: React.FC = () => {
           showLastButton
         />
       </Box>
+      <Modal open={openSampleModal} onClose={() => setOpenSampleModal(false)}>
+        <Box
+          sx={{
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            width: 450,
+            bgcolor: "background.paper",
+            boxShadow: 24,
+            borderRadius: 2,
+            p: 4,
+          }}
+        >
+          <Typography variant="h6" gutterBottom>
+            Sample Excel Format
+          </Typography>
+          <Typography variant="body2" mb={2}>
+            Please use the following format when preparing the Excel file for
+            uploading city/place data:
+          </Typography>
+          <ul className="pl-5 text-sm mt-0 mb-4">
+            <li>
+              <b>id</b>: Unique identifier for the place (can be numeric or
+              text).
+            </li>
+            <li>
+              <b>state</b>: Select a value from the predefined dropdown list of
+              Indian states/UTs.
+            </li>
+            <li>
+              <b>name</b>: Name of the city/place (e.g., Mumbai).
+            </li>
+            <li>
+              <b>accentcity</b>: Local or regional name of the city, if
+              different (e.g., Bambai).
+            </li>
+            <li>
+              <b>latitude</b>: Geographic latitude of the location (optional).
+            </li>
+            <li>
+              <b>longitude</b>: Geographic longitude of the location (optional).
+            </li>
+          </ul>
+          <Button
+            variant="contained"
+            color="primary"
+            href="/files/places_sample_file.xlsx"
+            download
+          >
+            Download Sample File
+          </Button>
+        </Box>
+      </Modal>
     </div>
   );
 };

@@ -108,7 +108,7 @@ PlacesSchema.plugin(function (schema) {
       items = 10000,
       isCount = false,
       search,
-      sort = { city: -1 },
+      sort = { state: 1, name: 1 },
     } = condition || {};
     const tempCondition = {};
     if (!Common.isNullOrEmpty(search)) {
@@ -118,6 +118,7 @@ PlacesSchema.plugin(function (schema) {
       }
       tempCondition.$or = filters;
     }
+    console.log("tempCondition", tempCondition);
     try {
       if (isCount) {
         const count = await model.countDocuments(tempCondition);

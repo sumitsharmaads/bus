@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from "react";
-import { Outlet } from "react-router-dom";
+import React, { useEffect, useMemo, useState } from "react";
+import { Outlet, useLocation } from "react-router-dom";
 import { Header } from "../components";
 import { useWebsite } from "../contexts/WebsiteProvider";
 import { Footer } from "../components/Footer";
@@ -9,6 +9,7 @@ import { ArrowUpIcon } from "@heroicons/react/20/solid";
 
 export const PublicLayout: React.FC = () => {
   const { logout, updateUserInfo } = useAuth();
+  const location = useLocation();
   const [showScrollToTop, setShowScrollToTop] = useState(false);
 
   useEffect(() => {
@@ -34,13 +35,18 @@ export const PublicLayout: React.FC = () => {
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
+
+  const isAdminPage = useMemo(
+    () => location.pathname.match("/admin"),
+    [location.pathname]
+  );
   return (
     <div className="flex flex-col">
       <Header />
       <main className="flex-1">
         <Outlet />
       </main>
-      <Footer />
+      {!isAdminPage && <Footer />}
       {showScrollToTop && (
         <button
           onClick={scrollToTop}

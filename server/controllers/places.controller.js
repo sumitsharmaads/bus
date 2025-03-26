@@ -75,8 +75,14 @@ export const checkCityExists = async (req, res, next) => {
 };
 
 export const getAllPlaces = async (req, res) => {
+  console.log("req.body", req.body);
   try {
-    const { search = {}, page = 1, items = 10, isCount = true } = req.body;
+    const {
+      search = {},
+      page = 1,
+      items = 10,
+      isCount = true,
+    } = req?.body?.condition;
 
     const condition = {
       search,

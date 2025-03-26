@@ -24,6 +24,9 @@ import PlacesAdminPage from "../pages/admin/PlacesAdminPage";
 import TermsAdminPage from "../pages/admin/TermsAdminPage";
 import FAQsAdminPage from "../pages/admin/FAQsAdminPage";
 import BusAdminPage from "../pages/admin/BusAdminPage";
+import AdminUserList from "../pages/admin/AdminUserList";
+import { TourGuide } from "../pages/TourGuide";
+import AboutUs from "../pages/AboutUs";
 
 export const router = createHashRouter([
   {
@@ -41,6 +44,10 @@ export const router = createHashRouter([
       {
         path: PublicRoutes.HOME,
         element: <Home />,
+      },
+      {
+        path: PublicRoutes.ABOUT_US,
+        element: <AboutUs />,
       },
       {
         path: PublicRoutes.SIGNUP,
@@ -68,6 +75,19 @@ export const router = createHashRouter([
       {
         path: PublicRoutes.CONTACT,
         element: <Contact />,
+      },
+      {
+        path: PublicRoutes.TOUR_GUIDES,
+        children: [
+          {
+            index: true,
+            element: <TourGuide />,
+          },
+          {
+            path: ":id",
+            element: <>ANCD</>,
+          },
+        ],
       },
       {
         path: "/admin",
@@ -115,6 +135,19 @@ export const router = createHashRouter([
               {
                 index: true,
                 element: <TourListPage />,
+              },
+            ],
+          },
+          {
+            path: AdminRoutes.USER,
+            children: [
+              {
+                path: AdminRoutes.ADD_TOUR,
+                element: <AddBasicTourDetails />,
+              },
+              {
+                index: true,
+                element: <AdminUserList />,
               },
             ],
           },

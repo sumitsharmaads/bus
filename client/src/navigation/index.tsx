@@ -12,6 +12,9 @@ export const AdminRoutes = {
   TERMS: "terms",
   FAQs: "FAQs",
   BUS: "bus",
+  TOURISTPLACES: "touristplaces",
+  ADD_OURISTPLACES: "touristplaces/add",
+  EDIT_TOURISTPLACES: "touristplaces/:id/edit",
 };
 
 export const PublicRoutes = {
@@ -26,4 +29,5 @@ export const PublicRoutes = {
   SIGNUP: "/signup",
   FORGOT_PASSWORD: "/forgot-password",
   QUICK_INQUERY: "/inquery",
+  TOUR_GUIDES: "/tour-guide",
 };

@@ -326,7 +326,7 @@ UserSchema.plugin(function (schema) {
           .sort(sort);
         return {
           count,
-          result,
+          users: result,
         };
       } else {
         const result = await model
@@ -336,7 +336,7 @@ UserSchema.plugin(function (schema) {
           .sort(sort);
         return {
           count: null,
-          result,
+          users: result,
         };
       }
     } catch (error) {

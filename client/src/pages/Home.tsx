@@ -1,5 +1,7 @@
 import React from "react";
 import { UpcomingTours } from "../components/UpcomingTours";
+import { HomePlacesExplore, YatraBooking } from "../components";
+import { HomeCarousel } from "../components/HomeCarousel";
 
 export const Home: React.FC = () => {
   return (
@@ -67,6 +69,9 @@ export const Home: React.FC = () => {
       </section>
       <div className="h-10 bg-[#1A1D2E]"></div>
       <UpcomingTours />
+      <HomePlacesExplore />
+      <YatraBooking />
+      <HomeCarousel />
     </>
   );
 };

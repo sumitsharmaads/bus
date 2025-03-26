@@ -109,11 +109,12 @@ const TourListPage: React.FC = () => {
     status: "",
   });
   const [filterVisible, setFilterVisible] = useState(false);
-  const itemsPerPage = 10;
+  const [pageCount, setPageCount] = useState(1);
+  const itemsPerPage = 6;
 
   useEffect(() => {
     fetchTours();
-  }, [currentPage, searchFilters]);
+  }, [currentPage]);
 
   const fetchTours = async () => {
     try {
@@ -138,9 +139,10 @@ const TourListPage: React.FC = () => {
         search: filteredSearch,
         isCount: true,
       });
-      console.log(response.data);
       if (response?.data?.data?.result) {
-        setTours(response?.data?.data?.result ?? []);
+        const { result, count } = response?.data?.data;
+        setTours(result ?? []);
+        setPageCount(Math.ceil((count || 0) / itemsPerPage));
       }
     } catch (error) {
       console.error("Error fetching tours:", error);
@@ -363,7 +365,7 @@ const TourListPage: React.FC = () => {
 
       <Box mt={4} display="flex" justifyContent="center">
         <Pagination
-          count={5}
+          count={pageCount}
           page={currentPage}
           onChange={(_, page) => setCurrentPage(page)}
           color="primary"

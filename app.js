@@ -17,8 +17,9 @@ import imagesRoutes from "./server/routes/images.routes.js";
 import userRoutes from "./server/routes/user.routes.js";
 import websiteRoutes from "./server/routes/website.routes.js";
 import tourRoutes from "./server/routes/tour.routes.js";
-import faqroutes from "./server/routes/faq.routes.js";
+import faqRoutes from "./server/routes/faq.routes.js";
 import termsRoutes from "./server/routes/terms.routes.js";
+import busRoutes from "./server/routes/bus.routes.js";
 
 import customCors from "./server/middlewares/cores.auth.middlewares.js";
 
@@ -62,8 +63,9 @@ app.use("/api/v1/images", imagesRoutes);
 app.use("/api/v1/users", userRoutes);
 app.use("/api/v1/config", websiteRoutes);
 app.use("/api/v1/tours", tourRoutes);
-app.use("/api/v1/faqs", faqroutes);
+app.use("/api/v1/faqs", faqRoutes);
 app.use("/api/v1/terms", termsRoutes);
+app.use("/api/v1/buses", busRoutes);
 
 app.use(express.static(path.join(__dirname, "client/build")));
 app.get("*", (req, res) => {

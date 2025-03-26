@@ -6,6 +6,8 @@ import reportWebVitals from "./reportWebVitals";
 import { ThemeProvider } from "@material-tailwind/react";
 import { WebsiteContextProvider } from "./contexts/WebsiteProvider";
 import { SocialFixedDrawer } from "./components/SocialFixedDrawer";
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
 
 /**
  * https://github.com/creativetimofficial/material-tailwind-kit-react/blob/main/package.json

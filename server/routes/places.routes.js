@@ -7,14 +7,15 @@ import {
   getPlacesDetails,
   updatePlace,
 } from "../controllers/places.controller.js";
+import { validateAccessToken } from "../middlewares/accessjwt.auth.midlleware.js";
 
 const router = express.Router();
 
 router.post("/cities", getPlacesDetails);
-router.post("/add", addPlace);
-router.put("/:id", updatePlace);
+router.post("/add", validateAccessToken, addPlace);
+router.put("/:id", validateAccessToken, updatePlace);
 router.post("/check", checkCityExists);
-router.post("/admin/getAll", getAllPlaces);
-router.post("/upload", bulkUploadPlaces);
+router.post("/admin/getAll", validateAccessToken, getAllPlaces);
+router.post("/upload", validateAccessToken, bulkUploadPlaces);
 
 export default router;

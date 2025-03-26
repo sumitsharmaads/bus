@@ -55,3 +55,17 @@ export const updateUser = async (req, res, next) => {
     next(error);
   }
 };
+
+export const getAllUsers = async (req, res, next) => {
+  try {
+    const users = await User.getAll(req.body);
+    return res.status(200).json({
+      success: true,
+      status: 200,
+      message: "Fetched user informations",
+      result: users,
+    });
+  } catch (error) {
+    next(error);
+  }
+};

@@ -1,4 +1,9 @@
-import React, { useState, useEffect, ChangeEvent } from "react";
+import React, {
+  useState,
+  useEffect,
+  ChangeEvent,
+  ChangeEventHandler,
+} from "react";
 import {
   Table,
   TableBody,
@@ -17,9 +22,14 @@ import {
   InputLabel,
   IconButton,
   Paper,
+  SelectChangeEvent,
+  FormControlLabel,
+  Checkbox,
+  Grid,
 } from "@mui/material";
 import { Add, Edit, Delete, Save } from "@mui/icons-material";
 import axios from "axios";
+import { get, post, put } from "../../service";
 
 interface Bus {
   _id?: string;
@@ -52,7 +62,10 @@ const BusAdminPage: React.FC = () => {
 
   const fetchBuses = async () => {
     try {
-      const response = await axios.get("/api/buses/");
+      const response = await get<{
+        success: boolean;
+        buses: Bus[];
+      }>("buses");
       setBuses(response.data.buses);
     } catch (error) {
       console.error("Error fetching buses:", error);
@@ -80,18 +93,26 @@ const BusAdminPage: React.FC = () => {
     setEditingBus(null);
   };
 
-  const handleFormChange = (
-    e: ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  const handleSelectChange = (e: SelectChangeEvent<string>) => {
+    setFormValues((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+  };
+
+  const handleTextChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     setFormValues((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   };
 
+  const handleCheckboxChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const { name, checked } = e.target;
+    setFormValues((prev) => ({ ...prev, [name]: checked }));
+  };
   const handleSave = async () => {
     try {
       if (editingBus && editingBus._id) {
-        await axios.put(`/api/buses/update/${editingBus._id}`, formValues);
+        await put(`buses/update/${editingBus._id}`, formValues);
       } else {
-        await axios.post("/api/buses/add", formValues);
+        await post("buses/add", formValues);
       }
       fetchBuses();
       handleCloseModal();
@@ -99,18 +120,31 @@ const BusAdminPage: React.FC = () => {
       console.error("Error saving bus:", error);
     }
   };
+  const handleFacilitiesChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setFormValues((prev) => ({
+      ...prev,
+      facilities: prev.facilities.includes(value)
+        ? prev.facilities.filter((facility) => facility !== value)
+        : [...prev.facilities, value],
+    }));
+  };
 
   return (
     <div>
       <Typography variant="h4">Bus Management</Typography>
-      <Button
-        variant="contained"
-        color="primary"
-        startIcon={<Add />}
-        onClick={() => handleOpenModal()}
-      >
-        Add Bus
-      </Button>
+      <Grid container justifyContent="flex-end" className="mb-2">
+        <Grid item>
+          <Button
+            variant="contained"
+            color="primary"
+            startIcon={<Add />}
+            onClick={() => handleOpenModal()}
+          >
+            Add Bus
+          </Button>
+        </Grid>
+      </Grid>
       <TableContainer component={Paper}>
         <Table>
           <TableHead>
@@ -151,59 +185,110 @@ const BusAdminPage: React.FC = () => {
             top: "50%",
             left: "50%",
             transform: "translate(-50%, -50%)",
-            width: 400,
             bgcolor: "background.paper",
             boxShadow: 24,
             p: 4,
+            width: { xs: "90%", sm: "70%", md: "50%" },
+            maxHeight: "80%",
+            overflowY: "auto",
           }}
         >
           <Typography variant="h6" gutterBottom>
             {editingBus ? "Edit Bus" : "Add Bus"}
           </Typography>
-          <TextField
-            fullWidth
-            label="Bus Number"
-            name="busNumber"
-            value={formValues.busNumber}
-            // onChange={handleFormChange}
-            margin="normal"
+          <Grid container spacing={2}>
+            <Grid item xs={12} sm={6}>
+              <TextField
+                fullWidth
+                label="Bus Number"
+                name="busNumber"
+                value={formValues.busNumber}
+                onChange={handleTextChange}
+                margin="normal"
+              />
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <TextField
+                fullWidth
+                label="Bus Type"
+                name="busType"
+                value={formValues.busType}
+                onChange={handleTextChange}
+                margin="normal"
+              />
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <TextField
+                fullWidth
+                label="Seating Capacity"
+                name="seatingCapacity"
+                type="number"
+                value={formValues.seatingCapacity}
+                onChange={handleTextChange}
+                margin="normal"
+              />
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <TextField
+                fullWidth
+                label="Operator Name"
+                name="operatorName"
+                value={formValues.operatorName}
+                onChange={handleTextChange}
+                margin="normal"
+              />
+            </Grid>
+          </Grid>
+          <Grid item xs={12}>
+            <FormControl fullWidth margin="normal">
+              <InputLabel>Status</InputLabel>
+              <Select
+                name="status"
+                value={formValues.status}
+                onChange={handleSelectChange}
+              >
+                <MenuItem value="Active">Active</MenuItem>
+                <MenuItem value="Inactive">Inactive</MenuItem>
+              </Select>
+            </FormControl>
+          </Grid>
+          <FormControlLabel
+            control={
+              <Checkbox
+                checked={formValues.isSleeper}
+                onChange={handleCheckboxChange}
+                name="isSleeper"
+              />
+            }
+            label="Sleeper Bus"
           />
-          <TextField
-            fullWidth
-            label="Bus Type"
-            name="busType"
-            value={formValues.busType}
-            //onChange={handleFormChange}
-            margin="normal"
-          />
-          <TextField
-            fullWidth
-            label="Seating Capacity"
-            name="seatingCapacity"
-            type="number"
-            value={formValues.seatingCapacity}
-            // onChange={handleFormChange}
-            margin="normal"
-          />
-          <TextField
-            fullWidth
-            label="Operator Name"
-            name="operatorName"
-            value={formValues.operatorName}
-            // onChange={handleFormChange}
-            margin="normal"
-          />
-          <FormControl fullWidth margin="normal">
-            <InputLabel>Status</InputLabel>
-            <Select
-              name="status"
-              value={formValues.status}
-              //onChange={handleFormChange}
-            >
-              <MenuItem value="Active">Active</MenuItem>
-              <MenuItem value="Inactive">Inactive</MenuItem>
-            </Select>
-          </FormControl>
+          <Grid item xs={12}>
+            <Typography variant="subtitle2" gutterBottom>
+              Select Facilities
+            </Typography>
+            {[
+              "WiFi",
+              "AC",
+              "Charging Points",
+              "Reclining Seats",
+              "Restroom",
+              "Water Bottle",
+              "TV",
+              "Blankets",
+            ].map((facility) => (
+              <FormControlLabel
+                key={facility}
+                control={
+                  <Checkbox
+                    checked={formValues.facilities.includes(facility)}
+                    onChange={handleFacilitiesChange}
+                    value={facility}
+                  />
+                }
+                label={facility}
+              />
+            ))}
+          </Grid>
           <Box mt={2} display="flex" justifyContent="flex-end" gap={2}>
             <Button variant="outlined" onClick={handleCloseModal}>
               Cancel
