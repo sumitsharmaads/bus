@@ -3,7 +3,7 @@ import { UpcomingTours } from "../components/UpcomingTours";
 import { HomePlacesExplore, YatraBooking } from "../components";
 import { HomeCarousel } from "../components/HomeCarousel";
 
-export const Home: React.FC = () => {
+const Home: React.FC = () => {
   return (
     <>
       <section
@@ -75,3 +75,5 @@ export const Home: React.FC = () => {
     </>
   );
 };
+
+export default Home;

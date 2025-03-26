@@ -43,7 +43,7 @@ interface DashboardSummary {
   totalRevenue: number;
 }
 
-export const AdminDashboard: React.FC = () => {
+const AdminDashboard: React.FC = () => {
   const [dashboardData, setDashboardData] = useState<DashboardSummary | null>(
     null
   );
@@ -154,3 +154,5 @@ export const AdminDashboard: React.FC = () => {
     </Container>
   );
 };
+
+export default AdminDashboard;

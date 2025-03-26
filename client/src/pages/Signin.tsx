@@ -13,7 +13,7 @@ import { useLoader } from "../contexts/LoaderContext";
 import User from "../utils/User";
 import { tokenExpiryStorage } from "../db";
 
-export const SignIn: React.FC = () => {
+const SignIn: React.FC = () => {
   const { setLoading } = useLoader();
   const navigate = useNavigate();
   const [ispasswordType, setIsPasswordType] = useState<boolean>(true);
@@ -252,3 +252,5 @@ export const SignIn: React.FC = () => {
   }
   return <></>;
 };
+
+export default SignIn;

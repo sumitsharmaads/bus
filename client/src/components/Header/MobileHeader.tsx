@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { PublicRoutes } from "../../navigation";
 import User from "../../utils/User";
@@ -28,6 +28,23 @@ export const MobileHeader: React.FC<{
     toggleMenu(); // Close the menu when a link is clicked
   };
 
+  const isActive = useCallback(
+    (route: string) => {
+      return location.hash === `#${route}`;
+    },
+    [location.pathname]
+  );
+
+  const classname = (route: string, homeFlag?: boolean) => {
+    const homeRoute = isActive("/") || isActive("");
+    return `block p-2 hover:font-semibold active:font-semibold
+                ${
+                  isActive(route) || (homeFlag && homeRoute)
+                    ? "font-semibold text-[#C22A54]"
+                    : ""
+                }`;
+  };
+
   return (
     <div
       ref={ref}
@@ -38,35 +55,40 @@ export const MobileHeader: React.FC<{
       <div className="border-b-2 border-primary mb-2 animate-pulse" />
       <Link
         to={PublicRoutes.HOME}
-        className="block p-2 hover:underline"
+        className={classname(PublicRoutes.HOME, true)}
         onClick={handleLinkClick}
+        onMouseEnter={() => import("../../pages/Signup")}
       >
         Home
       </Link>
       <Link
-        to="/about"
-        className="block p-2 hover:underline"
+        to={PublicRoutes.ABOUT_US}
+        className={classname(PublicRoutes.ABOUT_US)}
         onClick={handleLinkClick}
+        onMouseEnter={() => import("../../pages/AboutUs")}
       >
         About
       </Link>
       <Link
         to={PublicRoutes.SERVICES}
-        className="block p-2 hover:underline"
+        className={classname(PublicRoutes.SERVICES)}
         onClick={handleLinkClick}
+        onMouseEnter={() => import("../../pages/Servies")}
       >
         Services
       </Link>
       <Link
         to={PublicRoutes.CONTACT}
-        className="block p-2 hover:underline"
+        className={classname(PublicRoutes.CONTACT)}
         onClick={handleLinkClick}
+        onMouseEnter={() => import("../../pages/Contact")}
       >
         Contact
       </Link>
       {mobileView && (
         <button
           className="p-2 text-primary hover:underline"
+          onMouseEnter={() => import("../../pages/Inquery")}
           onClick={() => navigate(PublicRoutes.QUICK_INQUERY)}
         >
           Inquery Now
@@ -80,6 +102,7 @@ export const MobileHeader: React.FC<{
                 <Link
                   to={PublicRoutes.LOGIN}
                   onClick={handleLinkClick}
+                  onMouseEnter={() => import("../../pages/Signin")}
                   className="px-4 py-2 rounded border-black border-spacing-1 border-[1px] items-center"
                 >
                   Sign In
@@ -89,6 +112,7 @@ export const MobileHeader: React.FC<{
                 <Link
                   to={PublicRoutes.SIGNUP}
                   onClick={handleLinkClick}
+                  onMouseEnter={() => import("../../pages/Signup")}
                   className="bg-[#212832] text-white px-4 py-2 rounded items-center"
                 >
                   Sign Up

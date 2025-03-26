@@ -34,7 +34,7 @@ export type WebsiteSettings = Omit<WebsiteInfoType, "id"> & {
   } | null;
 };
 
-export const AdminSettings: React.FC = () => {
+const AdminSettings: React.FC = () => {
   const { websiteInfo } = useWebsite();
   const [settings, setSettings] = useState<WebsiteSettings>({
     logo: null,
@@ -198,3 +198,5 @@ export const AdminSettings: React.FC = () => {
     </div>
   );
 };
+
+export default AdminSettings;

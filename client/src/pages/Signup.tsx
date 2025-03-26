@@ -9,7 +9,7 @@ import { emailRegex, nameRegex, passwordRegex } from "../utils";
 import { post } from "../service";
 import { useLoader } from "../contexts/LoaderContext";
 
-export const Signup: React.FC = () => {
+const Signup: React.FC = () => {
   const { setLoading } = useLoader();
   const [ispasswordType, setIsPasswordType] = useState<boolean>(true);
   const navigate = useNavigate();
@@ -234,3 +234,5 @@ export const Signup: React.FC = () => {
     </section>
   );
 };
+
+export default Signup;

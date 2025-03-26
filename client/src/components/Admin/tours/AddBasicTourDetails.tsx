@@ -18,7 +18,7 @@ export type BasicDetailsType = {
   places: string[];
 };
 
-export const AddBasicTourDetails = () => {
+const AddBasicTourDetails = () => {
   const { setLoading } = useLoader();
   const [basicDetails, setBasicDetails] = useState<BasicDetailsType>({
     tourname: "",
@@ -270,3 +270,5 @@ export const AddBasicTourDetails = () => {
     </div>
   );
 };
+
+export default AddBasicTourDetails;

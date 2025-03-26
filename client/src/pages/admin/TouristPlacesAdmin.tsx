@@ -17,7 +17,7 @@ type TouristPlacesAdmintype = {
   state: string;
 };
 
-export const TouristPlacesAdmin: React.FC = () => {
+const TouristPlacesAdmin: React.FC = () => {
   const [filterVisible, setFilterVisible] = useState(false);
   return (
     <Container maxWidth="lg">
@@ -43,10 +43,10 @@ export const TouristPlacesAdmin: React.FC = () => {
             {filterVisible ? <ExpandLess /> : <ExpandMore />}
           </IconButton>
         </Box>
-        <Collapse in={filterVisible} timeout="auto" unmountOnExit>
-            
-        </Collapse>
+        <Collapse in={filterVisible} timeout="auto" unmountOnExit></Collapse>
       </Paper>
     </Container>
   );
 };
+
+export default TouristPlacesAdmin;

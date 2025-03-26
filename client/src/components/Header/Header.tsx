@@ -49,6 +49,22 @@ export const Header: React.FC = () => {
 
   const toggleMenu = () => setMenuOpen((prev) => !prev);
 
+  const isActive = useCallback(
+    (route: string) => {
+      return location.hash === `#${route}`;
+    },
+    [location.pathname]
+  );
+
+  const classname = (route: string, homeFlag?: boolean) => {
+    const homeRoute = isActive("/") || isActive("");
+    return `relative inline-block font-poppins capitalize hover:font-semibold active:font-semibold
+              ${
+                isActive(route) || (homeFlag && homeRoute)
+                  ? "font-semibold text-[#C22A54]"
+                  : ""
+              }`;
+  };
   return (
     <header className="p-2 flex justify-between items-center relative">
       <div className="flex items-center">
@@ -67,25 +83,29 @@ export const Header: React.FC = () => {
         <nav className="flex space-x-4">
           <Link
             to={PublicRoutes.HOME}
-            className="text-normal font-poppins capitalize hover:underline active:font-semibold"
+            onMouseEnter={() => import("../../pages/Home")}
+            className={classname(PublicRoutes.HOME, true)}
           >
             Home
           </Link>
           <Link
             to={PublicRoutes.ABOUT_US}
-            className="text-normal font-poppins capitalize hover:underline active:font-semibold"
+            onMouseEnter={() => import("../../pages/AboutUs")}
+            className={classname(PublicRoutes.ABOUT_US)}
           >
             About
           </Link>
           <Link
             to={PublicRoutes.SERVICES}
-            className="text-normal font-poppins capitalize hover:underline active:font-semibold"
+            onMouseEnter={() => import("../../pages/Servies")}
+            className={classname(PublicRoutes.SERVICES)}
           >
             Services
           </Link>
           <Link
             to={PublicRoutes.CONTACT}
-            className="text-normal font-poppins capitalize hover:underline active:font-semibold"
+            onMouseEnter={() => import("../../pages/Contact")}
+            className={classname(PublicRoutes.CONTACT)}
           >
             Contact
           </Link>
@@ -102,12 +122,14 @@ export const Header: React.FC = () => {
               <>
                 <Link
                   to={PublicRoutes.LOGIN}
+                  onMouseEnter={() => import("../../pages/Signin")}
                   className="px-4 py-2 rounded border-black border-spacing-1 border-[1px]"
                 >
                   Sign In
                 </Link>
                 <Link
                   to={PublicRoutes.SIGNUP}
+                  onMouseEnter={() => import("../../pages/Signup")}
                   className="bg-[#212832] text-white px-4 py-2 rounded"
                 >
                   Sign Up

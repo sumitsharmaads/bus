@@ -1,140 +1,264 @@
+import { lazy, Suspense } from "react";
 import { Navigate, createHashRouter } from "react-router-dom";
 import { PublicRoutes, AdminRoutes } from "../navigation";
-import { NotFound } from "../components";
 import { AdminLayout, PublicLayout } from "../layouts";
-import Contact from "../pages/Contact";
-import { Signup } from "../pages/Signup";
-import { SignIn } from "../pages/Signin";
-import ForgotPassword from "../pages/ForgotPassword";
-import Inquiry from "../pages/Inquery";
-import Services from "../pages/Servies";
-import Profile from "../pages/Profile";
 import {
   AdminProtectedRoute,
   PreventLoginRoute,
   PrivateRoute,
 } from "../components/auth";
 import { AuthContextProvider } from "../contexts/AuthContextProvider";
-import { Home } from "../pages/Home";
-import { AdminDashboard, AdminSettings } from "../pages/admin";
-import { AddBasicTourDetails } from "../components/Admin/tours";
-import Test from "../pages/Test";
-import TourListPage from "../components/Admin/tours/TourListPage";
-import PlacesAdminPage from "../pages/admin/PlacesAdminPage";
-import TermsAdminPage from "../pages/admin/TermsAdminPage";
-import FAQsAdminPage from "../pages/admin/FAQsAdminPage";
-import BusAdminPage from "../pages/admin/BusAdminPage";
-import AdminUserList from "../pages/admin/AdminUserList";
-import { TourGuide } from "../pages/TourGuide";
-import AboutUs from "../pages/AboutUs";
+import { NotFound } from "../components";
+import DummyFallback from "../components/DummyFallback";
+
+// Lazy-loaded pages
+const Contact = lazy(() => import("../pages/Contact"));
+const Signup = lazy(() => import("../pages/Signup"));
+const SignIn = lazy(() => import("../pages/Signin"));
+const ForgotPassword = lazy(() => import("../pages/ForgotPassword"));
+const Inquiry = lazy(() => import("../pages/Inquery"));
+const Services = lazy(() => import("../pages/Servies"));
+const Profile = lazy(() => import("../pages/Profile"));
+const Home = lazy(() => import("../pages/Home"));
+const AdminDashboard = lazy(() => import("../pages/admin/AdminDashboard"));
+const AdminSettings = lazy(() => import("../pages/admin/Setttings"));
+const AddBasicTourDetails = lazy(
+  () => import("../components/Admin/tours/AddBasicTourDetails")
+);
+const Test = lazy(() => import("../pages/Test"));
+const TourListPage = lazy(
+  () => import("../components/Admin/tours/TourListPage")
+);
+const PlacesAdminPage = lazy(() => import("../pages/admin/PlacesAdminPage"));
+const TermsAdminPage = lazy(() => import("../pages/admin/TermsAdminPage"));
+const FAQsAdminPage = lazy(() => import("../pages/admin/FAQsAdminPage"));
+const BusAdminPage = lazy(() => import("../pages/admin/BusAdminPage"));
+const AdminUserList = lazy(() => import("../pages/admin/AdminUserList"));
+const TourGuide = lazy(() => import("../pages/TourGuide"));
+const AboutUs = lazy(() => import("../pages/AboutUs"));
+
+// Error boundary for routing
+const ErrorElement = () => (
+  <div className="w-screen h-screen flex items-center justify-center bg-red-100 text-red-600">
+    <h2 className="text-lg font-bold">
+      Something went wrong while loading this page.
+    </h2>
+  </div>
+);
 
 export const router = createHashRouter([
   {
     path: "/",
     element: (
       <AuthContextProvider>
-        <PublicLayout />
+        <Suspense fallback={<DummyFallback />}>
+          <PublicLayout />
+        </Suspense>
       </AuthContextProvider>
     ),
+    errorElement: <ErrorElement />,
     children: [
       {
         index: true,
-        element: <Home />,
+        element: (
+          <Suspense fallback={<DummyFallback />}>
+            <Home />
+          </Suspense>
+        ),
       },
       {
         path: PublicRoutes.HOME,
-        element: <Home />,
+        element: (
+          <Suspense fallback={<DummyFallback />}>
+            <Home />
+          </Suspense>
+        ),
       },
       {
         path: PublicRoutes.ABOUT_US,
-        element: <AboutUs />,
+        element: (
+          <Suspense fallback={<DummyFallback />}>
+            <AboutUs />
+          </Suspense>
+        ),
       },
       {
         path: PublicRoutes.SIGNUP,
-        element: <PreventLoginRoute element={<Signup />} />,
+        element: (
+          <PreventLoginRoute
+            element={
+              <Suspense fallback={<DummyFallback />}>
+                <Signup />
+              </Suspense>
+            }
+          />
+        ),
       },
       {
         path: PublicRoutes.LOGIN,
-        element: <PreventLoginRoute element={<SignIn />} />,
+        element: (
+          <PreventLoginRoute
+            element={
+              <Suspense fallback={<DummyFallback />}>
+                <SignIn />
+              </Suspense>
+            }
+          />
+        ),
       },
       {
         path: PublicRoutes.FORGOT_PASSWORD,
-        element: <PreventLoginRoute element={<ForgotPassword />} />,
+        element: (
+          <PreventLoginRoute
+            element={
+              <Suspense fallback={<DummyFallback />}>
+                <ForgotPassword />
+              </Suspense>
+            }
+          />
+        ),
       },
-      { path: PublicRoutes.QUICK_INQUERY, element: <Inquiry /> },
-      { path: PublicRoutes.SERVICES, element: <Services /> },
-      { path: "/test", element: <Test /> },
+      {
+        path: PublicRoutes.QUICK_INQUERY,
+        element: (
+          <Suspense fallback={<DummyFallback />}>
+            <Inquiry />
+          </Suspense>
+        ),
+      },
+      {
+        path: PublicRoutes.SERVICES,
+        element: (
+          <Suspense fallback={<DummyFallback />}>
+            <Services />
+          </Suspense>
+        ),
+      },
+      {
+        path: "/test",
+        element: (
+          <Suspense fallback={<DummyFallback />}>
+            <Test />
+          </Suspense>
+        ),
+      },
       {
         path: PublicRoutes.PROFILE,
         element: (
           <PrivateRoute>
-            <Profile />
+            <Suspense fallback={<DummyFallback />}>
+              <Profile />
+            </Suspense>
           </PrivateRoute>
         ),
       },
       {
         path: PublicRoutes.CONTACT,
-        element: <Contact />,
+        element: (
+          <Suspense fallback={<DummyFallback />}>
+            <Contact />
+          </Suspense>
+        ),
       },
       {
         path: PublicRoutes.TOUR_GUIDES,
         children: [
           {
             index: true,
-            element: <TourGuide />,
+            element: (
+              <Suspense fallback={<DummyFallback />}>
+                <TourGuide />
+              </Suspense>
+            ),
           },
-          {
-            path: ":id",
-            element: <>ANCD</>,
-          },
+          { path: ":id", element: <>ANCD</> },
         ],
       },
       {
         path: "/admin",
         element: (
           <AdminProtectedRoute>
-            <AdminLayout />
+            <Suspense fallback={<DummyFallback />}>
+              <AdminLayout />
+            </Suspense>
           </AdminProtectedRoute>
         ),
+        errorElement: <ErrorElement />,
         children: [
           {
             index: true,
-            element: <AdminDashboard />,
+            element: (
+              <Suspense fallback={<DummyFallback />}>
+                <AdminDashboard />
+              </Suspense>
+            ),
           },
           {
             path: AdminRoutes.DASHBOARD,
-            element: <AdminDashboard />,
+            element: (
+              <Suspense fallback={<DummyFallback />}>
+                <AdminDashboard />
+              </Suspense>
+            ),
           },
           {
             path: AdminRoutes.SETTING,
-            element: <AdminSettings />,
+            element: (
+              <Suspense fallback={<DummyFallback />}>
+                <AdminSettings />
+              </Suspense>
+            ),
           },
           {
             path: AdminRoutes.LOCATIONS,
-            element: <PlacesAdminPage />,
+            element: (
+              <Suspense fallback={<DummyFallback />}>
+                <PlacesAdminPage />
+              </Suspense>
+            ),
           },
           {
             path: AdminRoutes.TERMS,
-            element: <TermsAdminPage />,
+            element: (
+              <Suspense fallback={<DummyFallback />}>
+                <TermsAdminPage />
+              </Suspense>
+            ),
           },
           {
             path: AdminRoutes.FAQs,
-            element: <FAQsAdminPage />,
+            element: (
+              <Suspense fallback={<DummyFallback />}>
+                <FAQsAdminPage />
+              </Suspense>
+            ),
           },
           {
             path: AdminRoutes.BUS,
-            element: <BusAdminPage />,
+            element: (
+              <Suspense fallback={<DummyFallback />}>
+                <BusAdminPage />
+              </Suspense>
+            ),
           },
           {
             path: AdminRoutes.TOURS,
             children: [
               {
                 path: AdminRoutes.ADD_TOUR,
-                element: <AddBasicTourDetails />,
+                element: (
+                  <Suspense fallback={<DummyFallback />}>
+                    <AddBasicTourDetails />
+                  </Suspense>
+                ),
               },
               {
                 index: true,
-                element: <TourListPage />,
+                element: (
+                  <Suspense fallback={<DummyFallback />}>
+                    <TourListPage />
+                  </Suspense>
+                ),
               },
             ],
           },
@@ -143,11 +267,19 @@ export const router = createHashRouter([
             children: [
               {
                 path: AdminRoutes.ADD_TOUR,
-                element: <AddBasicTourDetails />,
+                element: (
+                  <Suspense fallback={<DummyFallback />}>
+                    <AddBasicTourDetails />
+                  </Suspense>
+                ),
               },
               {
                 index: true,
-                element: <AdminUserList />,
+                element: (
+                  <Suspense fallback={<DummyFallback />}>
+                    <AdminUserList />
+                  </Suspense>
+                ),
               },
             ],
           },

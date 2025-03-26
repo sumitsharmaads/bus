@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useCallback } from "react";
 import {
   Menu,
   MenuHandler,
@@ -29,6 +29,24 @@ export const AvatarDropdown: React.FC<AvatarDropdown> = ({
     }>("auth/logout", {}, { showSuccess: true, setLoading });
     navigate("/");
   };
+
+  const isActive = useCallback(
+    (route: string) => {
+      return location.hash === `#${route}`;
+    },
+    [location.pathname]
+  );
+
+  const classname = (route: string, homeFlag?: boolean) => {
+    const homeRoute = isActive("/") || isActive("");
+    return `text-normal font-poppins capitalize hover:font-semibold active:font-semibold
+                ${
+                  isActive(route) || (homeFlag && homeRoute)
+                    ? "font-semibold text-[#C22A54]"
+                    : ""
+                }`;
+  };
+
   return (
     <Menu>
       <MenuHandler>
@@ -37,14 +55,16 @@ export const AvatarDropdown: React.FC<AvatarDropdown> = ({
       <MenuList>
         <Link
           to={PublicRoutes.PROFILE}
-          className="text-normal font-poppins capitalize active:font-semibold"
+          onMouseEnter={() => import("../../pages/Profile")}
+          className={classname(PublicRoutes.PROFILE)}
         >
           <MenuItem className="mb-2">Profile</MenuItem>
         </Link>
         {User.isAdmin && (
           <Link
             to={"/admin"}
-            className="text-normal font-poppins capitalize active:font-semibold"
+            className={classname("/admin")}
+            onMouseEnter={() => import("../../pages/admin/AdminDashboard")}
           >
             <MenuItem className="mb-2">Admin</MenuItem>
           </Link>

@@ -21,7 +21,7 @@ const tourGuide = [
   },
 ];
 
-export const TourGuide = () => {
+const TourGuide = () => {
   return (
     <section>
       <div className="px-2 h-[2px] bg-primary transition-all duration-300 ease-in-out" />
@@ -73,3 +73,5 @@ export const TourGuide = () => {
     </section>
   );
 };
+
+export default TourGuide;
