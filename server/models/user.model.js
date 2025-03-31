@@ -56,6 +56,10 @@ const UserSchema = new GSchema(
       type: Boolean,
       default: false,
     },
+    createdByAdmin: {
+      type: Boolean,
+      default: false,
+    },
     gender: {
       type: String,
     },

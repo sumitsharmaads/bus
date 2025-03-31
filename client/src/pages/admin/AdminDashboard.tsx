@@ -55,8 +55,8 @@ const AdminDashboard: React.FC = () => {
 
   const fetchDashboardData = async () => {
     try {
-      const response = await axios.get("/api/dashboard/summary");
-      setDashboardData(response.data.data);
+      // const response = await axios.get("/api/dashboard/summary");
+      // setDashboardData(response.data.data);
     } catch (error) {
       console.error("Error fetching dashboard data:", error);
     } finally {

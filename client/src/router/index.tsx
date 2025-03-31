@@ -10,6 +10,10 @@ import {
 import { AuthContextProvider } from "../contexts/AuthContextProvider";
 import { NotFound } from "../components";
 import DummyFallback from "../components/DummyFallback";
+import { setLoader } from "./loaders/setLoader";
+import { TourTravelProvider } from "../contexts/TourTravelProvider";
+import TourStepper from "../components/Admin/tours/TourStepper";
+import AdminUserForm from "../pages/admin/AdminUserForm";
 
 // Lazy-loaded pages
 const Contact = lazy(() => import("../pages/Contact"));
@@ -36,6 +40,8 @@ const BusAdminPage = lazy(() => import("../pages/admin/BusAdminPage"));
 const AdminUserList = lazy(() => import("../pages/admin/AdminUserList"));
 const TourGuide = lazy(() => import("../pages/TourGuide"));
 const AboutUs = lazy(() => import("../pages/AboutUs"));
+const SEOAdminPage = lazy(() => import("../pages/admin/AdminSEODetailsList"));
+const AddSEO = lazy(() => import("../pages/admin/AddSeoDetails"));
 
 // Error boundary for routing
 const ErrorElement = () => (
@@ -60,6 +66,7 @@ export const router = createHashRouter([
     children: [
       {
         index: true,
+        loader: setLoader,
         element: (
           <Suspense fallback={<DummyFallback />}>
             <Home />
@@ -68,6 +75,7 @@ export const router = createHashRouter([
       },
       {
         path: PublicRoutes.HOME,
+        loader: setLoader,
         element: (
           <Suspense fallback={<DummyFallback />}>
             <Home />
@@ -76,6 +84,7 @@ export const router = createHashRouter([
       },
       {
         path: PublicRoutes.ABOUT_US,
+        loader: setLoader,
         element: (
           <Suspense fallback={<DummyFallback />}>
             <AboutUs />
@@ -84,6 +93,7 @@ export const router = createHashRouter([
       },
       {
         path: PublicRoutes.SIGNUP,
+        loader: setLoader,
         element: (
           <PreventLoginRoute
             element={
@@ -96,6 +106,7 @@ export const router = createHashRouter([
       },
       {
         path: PublicRoutes.LOGIN,
+        loader: setLoader,
         element: (
           <PreventLoginRoute
             element={
@@ -120,6 +131,7 @@ export const router = createHashRouter([
       },
       {
         path: PublicRoutes.QUICK_INQUERY,
+        loader: setLoader,
         element: (
           <Suspense fallback={<DummyFallback />}>
             <Inquiry />
@@ -128,6 +140,7 @@ export const router = createHashRouter([
       },
       {
         path: PublicRoutes.SERVICES,
+        loader: setLoader,
         element: (
           <Suspense fallback={<DummyFallback />}>
             <Services />
@@ -154,6 +167,7 @@ export const router = createHashRouter([
       },
       {
         path: PublicRoutes.CONTACT,
+        loader: setLoader,
         element: (
           <Suspense fallback={<DummyFallback />}>
             <Contact />
@@ -162,6 +176,7 @@ export const router = createHashRouter([
       },
       {
         path: PublicRoutes.TOUR_GUIDES,
+        loader: setLoader,
         children: [
           {
             index: true,
@@ -248,7 +263,19 @@ export const router = createHashRouter([
                 path: AdminRoutes.ADD_TOUR,
                 element: (
                   <Suspense fallback={<DummyFallback />}>
-                    <AddBasicTourDetails />
+                    <TourTravelProvider>
+                      <TourStepper />
+                    </TourTravelProvider>
+                  </Suspense>
+                ),
+              },
+              {
+                path: AdminRoutes.EDIT_TOUR,
+                element: (
+                  <Suspense fallback={<DummyFallback />}>
+                    <TourTravelProvider>
+                      <TourStepper />
+                    </TourTravelProvider>
                   </Suspense>
                 ),
               },
@@ -269,7 +296,15 @@ export const router = createHashRouter([
                 path: AdminRoutes.ADD_TOUR,
                 element: (
                   <Suspense fallback={<DummyFallback />}>
-                    <AddBasicTourDetails />
+                    <AdminUserForm />
+                  </Suspense>
+                ),
+              },
+              {
+                path: AdminRoutes.USER_EDIT,
+                element: (
+                  <Suspense fallback={<DummyFallback />}>
+                    <AdminUserForm />
                   </Suspense>
                 ),
               },
@@ -278,6 +313,35 @@ export const router = createHashRouter([
                 element: (
                   <Suspense fallback={<DummyFallback />}>
                     <AdminUserList />
+                  </Suspense>
+                ),
+              },
+            ],
+          },
+          {
+            path: AdminRoutes.SEO_LIST,
+            children: [
+              {
+                path: AdminRoutes.ADD_SEO,
+                element: (
+                  <Suspense fallback={<DummyFallback />}>
+                    <AddSEO />
+                  </Suspense>
+                ),
+              },
+              {
+                path: AdminRoutes.EDIT_SEO,
+                element: (
+                  <Suspense fallback={<DummyFallback />}>
+                    <AddSEO />
+                  </Suspense>
+                ),
+              },
+              {
+                index: true,
+                element: (
+                  <Suspense fallback={<DummyFallback />}>
+                    <SEOAdminPage />
                   </Suspense>
                 ),
               },

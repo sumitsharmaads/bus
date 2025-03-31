@@ -25,6 +25,7 @@ import TerminalOutlinedIcon from "@mui/icons-material/TerminalOutlined";
 import LocationCityOutlinedIcon from "@mui/icons-material/LocationCityOutlined";
 import DirectionsBusOutlinedIcon from "@mui/icons-material/DirectionsBusOutlined";
 import DashboardCustomizeOutlinedIcon from "@mui/icons-material/DashboardCustomizeOutlined";
+import ImageSearchIcon from "@mui/icons-material/ImageSearchOutlined";
 import PeopleIcon from "@mui/icons-material/People";
 
 export const AdminSidebarIcons = ({
@@ -110,7 +111,7 @@ export const AdminSidebarIcons = ({
                 </ListItem>
               </Link>
               <Link
-                to="tours/add"
+                to="users/add"
                 onClick={() => {
                   if (viewport.mobileView || viewport.tabView)
                     setIsDropdownOpen(false);
@@ -253,6 +254,63 @@ export const AdminSidebarIcons = ({
             FAQs
           </ListItem>
         </Link>
+        <Accordion
+          open={open === 3}
+          icon={
+            <ChevronDownIcon
+              strokeWidth={2.5}
+              className={`mx-auto h-4 w-4 transition-transform ${
+                open === 3 ? "rotate-180" : ""
+              }`}
+            />
+          }
+        >
+          <ListItem className="p-0" selected={open === 3}>
+            <AccordionHeader
+              onClick={() => handleOpen(3)}
+              className="border-b-0 p-3"
+            >
+              <ListItemPrefix>
+                <ImageSearchIcon className="h-5 w-5" />
+              </ListItemPrefix>
+              <Typography color="blue-gray" className="mr-auto font-normal">
+                SEO
+              </Typography>
+            </AccordionHeader>
+          </ListItem>
+          <AccordionBody className="py-1">
+            <List className="p-0">
+              <Link
+                to={AdminRoutes.SEO_LIST}
+                onClick={() => {
+                  if (viewport.mobileView || viewport.tabView)
+                    setIsDropdownOpen(false);
+                }}
+              >
+                <ListItem>
+                  <ListItemPrefix>
+                    <ChevronRightIcon strokeWidth={3} className="h-3 w-5" />
+                  </ListItemPrefix>
+                  SEO List
+                </ListItem>
+              </Link>
+              <Link
+                to={`${AdminRoutes.SEO_LIST}/${AdminRoutes.ADD_SEO}`}
+                onClick={() => {
+                  if (viewport.mobileView || viewport.tabView)
+                    setIsDropdownOpen(false);
+                }}
+              >
+                <ListItem>
+                  <ListItemPrefix>
+                    <ChevronRightIcon strokeWidth={3} className="h-3 w-5" />
+                  </ListItemPrefix>
+                  Add SEO
+                </ListItem>
+              </Link>
+            </List>
+          </AccordionBody>
+        </Accordion>
         <ListItem
           onClick={handleLogOut}
           className="w-full hover:bg-gray-100 cursor-pointer"

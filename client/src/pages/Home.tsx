@@ -2,6 +2,8 @@ import React from "react";
 import { UpcomingTours } from "../components/UpcomingTours";
 import { HomePlacesExplore, YatraBooking } from "../components";
 import { HomeCarousel } from "../components/HomeCarousel";
+import WithSEO from "../SEO/WithSEO";
+import TopDestinations from "../components/TopDestinations";
 
 const Home: React.FC = () => {
   return (
@@ -69,6 +71,7 @@ const Home: React.FC = () => {
       </section>
       <div className="h-10 bg-[#1A1D2E]"></div>
       <UpcomingTours />
+      <TopDestinations />
       <HomePlacesExplore />
       <YatraBooking />
       <HomeCarousel />
@@ -76,4 +79,4 @@ const Home: React.FC = () => {
   );
 };
 
-export default Home;
+export default WithSEO(Home, { title: "Dadhich Bus Services | Home" });

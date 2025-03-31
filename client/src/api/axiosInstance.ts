@@ -21,6 +21,19 @@ export const setAuthHandlers = (
   updateUserInfo = updateUserInfoHandler;
 };
 
+// --- Refresh Token Queue ---
+let isRefreshing = false;
+let subscribers: ((token: string) => void)[] = [];
+
+function onTokenRefreshed(token: string) {
+  subscribers.forEach((callback) => callback(token));
+  subscribers = [];
+}
+
+function addSubscriber(callback: (token: string) => void) {
+  subscribers.push(callback);
+}
+
 axiosInstance.interceptors.request.use(
   (request) => {
     request.withCredentials = true;
@@ -43,22 +56,38 @@ axiosInstance.interceptors.response.use(
     if (responseData?.status === 5001 && !originalRequest?._retry) {
       //adding concept of refresh token
       originalRequest._retry = true;
+      if (isRefreshing) {
+        return new Promise((resolve) => {
+          addSubscriber((newToken: string) => {
+            originalRequest.headers["Authorization"] = `Bearer ${newToken}`;
+            resolve(axiosInstance(originalRequest));
+          });
+        });
+      }
+      isRefreshing = true;
+
       try {
         const refreshToken = User.getToken();
         const response = await axios.get(`${domain}auth/refresh-token`);
-        const { token: newFreshToken } = response?.data?.result;
-        if (newFreshToken) {
+        const newToken = response?.data?.result?.token;
+        if (newToken) {
           if (updateUserInfo) {
-            updateUserInfo({ token: newFreshToken });
+            updateUserInfo({ token: newToken });
           } else {
-            User.updateUserInfo({ token: newFreshToken });
+            User.updateUserInfo({ token: newToken });
           }
+          axiosInstance.defaults.headers.common[
+            "Authorization"
+          ] = `Bearer ${newToken}`;
+          isRefreshing = false;
+
+          originalRequest.headers["Authorization"] = `Bearer ${newToken}`;
+          return axiosInstance(originalRequest);
+        } else {
+          throw new Error("No token received from refresh");
         }
-        axiosInstance.defaults.headers.common["Authorization"] = `Bearer ${
-          newFreshToken || refreshToken
-        }`;
-        return axiosInstance(originalRequest);
       } catch (refreshError) {
+        isRefreshing = false;
         if (logout) {
           logout();
         } else {
@@ -69,6 +98,7 @@ axiosInstance.interceptors.response.use(
       }
     }
     if (error?.response?.status === 401) {
+      isRefreshing = false;
       if (logout) {
         logout();
       } else {

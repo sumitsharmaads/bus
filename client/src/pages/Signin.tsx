@@ -12,6 +12,7 @@ import { post } from "../service";
 import { useLoader } from "../contexts/LoaderContext";
 import User from "../utils/User";
 import { tokenExpiryStorage } from "../db";
+import WithSEO from "../SEO/WithSEO";
 
 const SignIn: React.FC = () => {
   const { setLoading } = useLoader();
@@ -253,4 +254,4 @@ const SignIn: React.FC = () => {
   return <></>;
 };
 
-export default SignIn;
+export default WithSEO(SignIn, { title: "Dadhich Bus Services | SignIn" });

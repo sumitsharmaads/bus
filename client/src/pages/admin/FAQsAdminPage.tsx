@@ -79,7 +79,6 @@ const FAQsAdminPage: React.FC = () => {
           questions: FAQ[];
         };
       }>("faqs/update", { questions: faqs });
-      console.log("updatedData", updatedData.data.data.questions);
     } catch (error) {
       console.error("Error saving FAQs:", error);
     }

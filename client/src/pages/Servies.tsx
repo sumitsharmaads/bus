@@ -1,6 +1,7 @@
 import React from "react";
 import { BookBusCard, HeroSection, ServiceBox } from "../components/services";
 import { RentalServiceContextProvider } from "../contexts/RentealServiceContext";
+import WithSEO from "../SEO/WithSEO";
 
 const Services: React.FC = () => {
   return (
@@ -65,4 +66,4 @@ const Services: React.FC = () => {
   );
 };
 
-export default Services;
+export default WithSEO(Services, { title: "Dadhich Bus Services | Services" });

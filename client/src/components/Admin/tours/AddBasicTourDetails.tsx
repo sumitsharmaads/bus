@@ -1,8 +1,9 @@
 import { Input } from "@material-tailwind/react";
 import React, { useState, useCallback, useMemo } from "react";
-import { SearchPlaces } from "./SearchPlaces";
 import { post } from "../../../service";
 import { useLoader } from "../../../contexts/LoaderContext";
+import { ItenarySections } from "./components/ItenarySections";
+import { Checkbox, FormControlLabel, Grid, Typography } from "@mui/material";
 
 export type BasicDetailsType = {
   tourname: string;
@@ -30,7 +31,6 @@ const AddBasicTourDetails = () => {
     destination: "",
     places: [],
   });
-  console.log("hello");
   const handleOnchange = useCallback(
     (name: keyof BasicDetailsType, value: any) => {
       setBasicDetails((prev) => ({
@@ -128,145 +128,202 @@ const AddBasicTourDetails = () => {
       <h1 className="text-2xl font-semibold text-gray-800 mb-6">
         Tour Details
       </h1>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div>
-          <Input
-            crossOrigin=""
-            className="bg-white"
-            label="Tour Name"
-            color="blue"
-            type="text"
-            value={basicDetails.tourname}
-            onChange={(e) => handleOnchange("tourname", e.target.value)}
-          />
-        </div>
-        <div>
-          <Input
-            crossOrigin=""
-            type="number"
-            className="bg-white"
-            value={basicDetails.minfair}
-            onChange={(e) => handleOnchange("minfair", e.target.value)}
-            label="Minimum Fare"
-            color="blue"
-          />
-        </div>
-        <div className="col-span-1 md:col-span-2">
-          <label className="block font-semibold mb-1">Upload Logo</label>
-          <input
-            type="file"
-            accept="image/*"
-            onChange={handleImageUpload}
-            className="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 focus:outline-none"
-          />
-          {basicDetails.image?.url && (
-            <div className="mt-4">
-              <img
-                src={basicDetails.image.url}
-                alt="Tour Logo"
-                className="w-32 h-32 object-cover rounded-md border"
-              />
+      <section className="bg-white p-6 rounded-lg shadow-md mb-3">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div>
+            <Input
+              crossOrigin=""
+              className="bg-white"
+              label="Tour Name"
+              color="blue"
+              type="text"
+              value={basicDetails.tourname}
+              onChange={(e) => handleOnchange("tourname", e.target.value)}
+            />
+          </div>
+          <div>
+            <Input
+              crossOrigin=""
+              type="number"
+              className="bg-white"
+              value={basicDetails.minfair}
+              onChange={(e) => handleOnchange("minfair", e.target.value)}
+              label="Minimum Fare"
+              color="blue"
+            />
+          </div>
+          <div className="col-span-1 md:col-span-2">
+            <label className="block font-semibold mb-1">Upload Logo</label>
+            <input
+              type="file"
+              accept="image/*"
+              onChange={handleImageUpload}
+              className="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 focus:outline-none"
+            />
+            {basicDetails.image?.url && (
+              <div className="mt-4">
+                <img
+                  src={basicDetails.image.url}
+                  alt="Tour Logo"
+                  className="w-32 h-32 object-cover rounded-md border"
+                />
+              </div>
+            )}
+          </div>
+          <div className="col-span-1 md:col-span-2">
+            <Grid item xs={12} className="!bg-white" md={12} lg={12}>
+              <Typography variant="subtitle2" gutterBottom>
+                <b> Select Inclusive (*)</b>
+              </Typography>
+              {[
+                "Transfer",
+                "Flight",
+                "Sightseeing",
+                "Hotel",
+                "Meal",
+                "Bus",
+                "Guide",
+              ].map((facility) => (
+                <FormControlLabel
+                  key={facility}
+                  control={
+                    <Checkbox
+                      // checked={itenary.toggles.includes(facility)}
+                      //onChange={(e) => handleToggleChange(index, e.target.value)}
+                      value={facility}
+                    />
+                  }
+                  label={facility}
+                />
+              ))}
+            </Grid>
+          </div>
+          <div className="col-span-1 md:col-span-2">
+            <Grid item xs={12} className="!bg-white">
+              <Typography variant="subtitle2" gutterBottom>
+                <b> Tour Type (*)</b>
+              </Typography>
+              {[
+                "Family",
+                "Adventure",
+                "Devotional",
+                "Group",
+                "Hills",
+                "Budget",
+              ].map((facility) => (
+                <FormControlLabel
+                  key={facility}
+                  control={
+                    <Checkbox
+                      // checked={itenary.toggles.includes(facility)}
+                      //onChange={(e) => handleToggleChange(index, e.target.value)}
+                      value={facility}
+                    />
+                  }
+                  label={facility}
+                />
+              ))}
+            </Grid>
+          </div>
+          {/* <div className="col-span-1 md:col-span-2">
+            <SearchPlaces
+              value={basicDetails.destination}
+              handleChange={(name, value) => handleChange(name, value)}
+              label="Destination"
+              name="destination"
+              className="bg-white"
+            />
+          </div> */}
+          {/* <div>
+            <SearchPlaces
+              value={""}
+              handleChange={(name, value) => handleChange(name, value)}
+              label="Source"
+              name="source"
+              className="bg-white"
+            />
+            <div className="flex flex-wrap gap-2 mt-2">
+              {basicDetails.source &&
+                basicDetails.source.length > 0 &&
+                basicDetails.source.map((item, index) => (
+                  <div
+                    key={index}
+                    className="relative flex items-center justify-center bg-blue-100 text-blue-700 rounded-full px-3 py-1 shadow-md"
+                  >
+                    <span>{item}</span>
+                    <button
+                      onClick={() => handleRemoveFromList("source", item)}
+                      className="absolute top-0 -right-1 bg-red-500 text-white w-4 h-4 flex items-center justify-center rounded-full text-xs"
+                    >
+                      ×
+                    </button>
+                  </div>
+                ))}
             </div>
-          )}
-        </div>
-        <div className="col-span-1 md:col-span-2">
-          <SearchPlaces
-            value={basicDetails.destination}
-            handleChange={(name, value) => handleChange(name, value)}
-            label="Destination"
-            name="destination"
-            className="bg-white"
-          />
-        </div>
-        <div>
-          <SearchPlaces
-            value={""}
-            handleChange={(name, value) => handleChange(name, value)}
-            label="Source"
-            name="source"
-            className="bg-white"
-          />
-          <div className="flex flex-wrap gap-2 mt-2">
-            {basicDetails.source &&
-              basicDetails.source.length > 0 &&
-              basicDetails.source.map((item, index) => (
-                <div
-                  key={index}
-                  className="relative flex items-center justify-center bg-blue-100 text-blue-700 rounded-full px-3 py-1 shadow-md"
-                >
-                  <span>{item}</span>
-                  <button
-                    onClick={() => handleRemoveFromList("source", item)}
-                    className="absolute top-0 -right-1 bg-red-500 text-white w-4 h-4 flex items-center justify-center rounded-full text-xs"
+          </div>
+          <div>
+            <SearchPlaces
+              value={""}
+              handleChange={(name, value) => handleChange(name, value)}
+              label="Places"
+              name="places"
+              className="bg-white"
+            />
+            <div className="flex flex-wrap gap-2 mt-2">
+              {basicDetails.places &&
+                basicDetails.places.length > 0 &&
+                basicDetails.places.map((item, index) => (
+                  <div
+                    key={index}
+                    className="relative flex items-center justify-center bg-blue-100 text-blue-700 rounded-full px-3 py-1 shadow-md"
                   >
-                    ×
-                  </button>
-                </div>
-              ))}
+                    <span>{item}</span>
+                    <button
+                      onClick={() => handleRemoveFromList("places", item)}
+                      className="absolute top-0 -right-1 bg-red-500 text-white w-4 h-4 flex items-center justify-center rounded-full text-xs"
+                    >
+                      ×
+                    </button>
+                  </div>
+                ))}
+            </div>
+          </div> */}
+          <div>
+            <Input
+              crossOrigin=""
+              type="datetime-local"
+              color="blue"
+              label="Start Date"
+              value={basicDetails.startDate || ""}
+              onChange={(e) => handleOnchange("startDate", e.target.value)}
+              className="bg-white"
+            />
+          </div>
+          <div>
+            <Input
+              crossOrigin=""
+              type="date"
+              color="blue"
+              label="Return Date"
+              value={basicDetails.endDate || ""}
+              onChange={(e) => handleOnchange("endDate", e.target.value)}
+              className="bg-white"
+            />
+          </div>
+          <div className="col-span-1 md:col-span-2">
+            <label className="block font-semibold mb-1">Duration</label>
+            <p>{calculateDaysNights}</p>
           </div>
         </div>
-        <div>
-          <SearchPlaces
-            value={""}
-            handleChange={(name, value) => handleChange(name, value)}
-            label="Places"
-            name="places"
-            className="bg-white"
-          />
-          <div className="flex flex-wrap gap-2 mt-2">
-            {basicDetails.places &&
-              basicDetails.places.length > 0 &&
-              basicDetails.places.map((item, index) => (
-                <div
-                  key={index}
-                  className="relative flex items-center justify-center bg-blue-100 text-blue-700 rounded-full px-3 py-1 shadow-md"
-                >
-                  <span>{item}</span>
-                  <button
-                    onClick={() => handleRemoveFromList("places", item)}
-                    className="absolute top-0 -right-1 bg-red-500 text-white w-4 h-4 flex items-center justify-center rounded-full text-xs"
-                  >
-                    ×
-                  </button>
-                </div>
-              ))}
-          </div>
+        <div className="flex justify-end mt-4">
+          <button
+            onClick={saveChanges}
+            className="px-4 py-2 bg-green-500 text-white rounded-md mr-2"
+          >
+            Save
+          </button>
         </div>
-        <div>
-          <Input
-            crossOrigin=""
-            type="datetime-local"
-            color="blue"
-            label="Start Date"
-            value={basicDetails.startDate || ""}
-            onChange={(e) => handleOnchange("startDate", e.target.value)}
-            className="bg-white"
-          />
-        </div>
-        <div>
-          <Input
-            crossOrigin=""
-            type="date"
-            color="blue"
-            label="Return Date"
-            value={basicDetails.endDate || ""}
-            onChange={(e) => handleOnchange("endDate", e.target.value)}
-            className="bg-white"
-          />
-        </div>
-        <div className="col-span-1 md:col-span-2">
-          <label className="block font-semibold mb-1">Duration</label>
-          <p>{calculateDaysNights}</p>
-        </div>
-      </div>
-      <div className="flex justify-end mt-4">
-        <button
-          onClick={saveChanges}
-          className="px-4 py-2 bg-green-500 text-white rounded-md mr-2"
-        >
-          Save
-        </button>
-      </div>
+      </section>
     </div>
   );
 };

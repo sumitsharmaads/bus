@@ -6,9 +6,10 @@ import DateRangeIcon from "@mui/icons-material/DateRange";
 export const YatraBooking: React.FC = () => {
   return (
     <section className="bg-gray-100 p-6 rounded-lg shadow-md max-w-5xl mx-auto mt-3 mb-3">
-      <h2 className="text-3xl flex d-flex justify-center text-center md:text-left  font-[700]  text-gray-700 font-['Volkhov']">
-        Why <span className="text-red-600 font-bold mr-1">DHADHICH</span> Bus{" "}
-        Service?
+      <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-700 font-['Volkhov'] text-center md:text-left flex flex-wrap justify-center md:justify-start">
+        Why&nbsp;
+        <span className="text-red-600 font-extrabold mr-1">DHADHICH</span>
+        Bus Service?
       </h2>
       <div className="flex flex-col md:flex-row items-center">
         {/* Left Section - Text */}
@@ -65,7 +66,7 @@ export const YatraBooking: React.FC = () => {
             Traveling in All Over India
           </div>
           <div className="relative w-full h-[300px] flex items-center justify-center">
-            <div className="relative w-full h-full sm:w-[80%] sm:h-[80%] bg-white rounded-xl shadow-lg p-2 flex items-center justify-center">
+            <div className="relative w-full h-full sm:w-[100%] sm:h-[80%] bg-white rounded-xl shadow-lg p-2 flex items-center justify-center">
               <img
                 src="images/public/home/83c0dfa55bef9edd54a6a90efc5d2fd7.png"
                 alt="Destination 1  "

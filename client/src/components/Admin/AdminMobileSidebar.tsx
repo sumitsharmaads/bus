@@ -40,12 +40,12 @@ export const AdminMobileSidebar: React.FC<{
         {/* Dropdown Sidebar */}
         {isDropdownOpen && (
           <div
-            className={`absolute left-0 max-w-[220px] w-full bg-white shadow-lg overflow-y-auto z-50 transform transition-transform duration-300 ease-in-out ${
+            className={`absolute left-0 max-w-[230px] w-full bg-white shadow-lg overflow-y-auto overflow-x-hidden z-50 transform transition-transform duration-300 ease-in-out ${
               isDropdownOpen ? "translate-y-0" : "-translate-y-full"
             }`}
             style={{
               top: dropdownStyles.top, // Dynamically set top position
-              height: `calc(100vh - ${dropdownStyles.top}px)`, // Take remaining height
+              height: `calc(100vh - ${dropdownStyles.top}px - 5rem)`, // Take remaining height
             }}
           >
             <div className="p-4 flex items-center justify-between">

@@ -93,7 +93,7 @@ export const AdminLayout: React.FC = () => {
       <div className="px-2 h-[2px] bg-primary transition-all duration-300 ease-in-out" />
 
       <div
-        className={`flex h-screen bg-gray-100 ${
+        className={`flex h-[calc(100vh-5rem)] bg-gray-100 overflow-y-hidden ${
           viewport.mobileView || viewport.tabView ? "flex-col" : ""
         }`}
       >

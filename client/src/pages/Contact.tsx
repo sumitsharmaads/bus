@@ -1,4 +1,5 @@
 import { ContactForm, ContactInfo } from "../components/Contact";
+import WithSEO from "../SEO/WithSEO";
 
 const Contact: React.FC = () => {
   return (
@@ -27,4 +28,4 @@ const Contact: React.FC = () => {
   );
 };
 
-export default Contact;
+export default WithSEO(Contact, { title: "Dadhich Bus Services | Contact" });

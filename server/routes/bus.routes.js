@@ -7,13 +7,14 @@ import {
   deleteBus,
 } from "../controllers/bus.controller.js";
 import { validateAccessToken } from "../middlewares/accessjwt.auth.midlleware.js";
+import { isAdmin } from "../middlewares/roles.middleware.js";
 
 const router = express.Router();
 
-router.get("/", getBuses);
+router.get("/", validateAccessToken, getBuses);
 router.get("/:id", getBus);
-router.post("/add", validateAccessToken, addBus);
-router.put("/update/:id", validateAccessToken, updateBus);
-router.delete("/delete/:id", validateAccessToken, deleteBus);
+router.post("/add", validateAccessToken, isAdmin, addBus);
+router.put("/update/:id", validateAccessToken, isAdmin, updateBus);
+router.delete("/delete/:id", validateAccessToken, isAdmin, deleteBus);
 
 export default router;

@@ -22,24 +22,47 @@ import Common from "../utils/common.js";
  * @property {Number} status - 0 means draft and 1 means published
  */
 const GSchema = mongoose.Schema;
+const SourceItemSchema = new GSchema({
+  location: {
+    _id: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "places",
+      required: true,
+    },
+    name: String,
+    state: String,
+  },
+  fare: { type: Number, required: true },
+  onBoarding: { type: [String], default: [] },
+});
+
+const ItenarySchema = new GSchema({
+  title: { type: String, required: true },
+  shortDescription: { type: String },
+  toggles: { type: [String], default: [] },
+  sightseeing: { type: [String], default: [] },
+  order: { type: Number },
+});
+
+const placesSchema = new GSchema({
+  _id: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "places",
+    required: true,
+  },
+  name: String,
+  state: String,
+  id: Number,
+});
 const TourSchema = new GSchema(
   {
-    source: {
-      type: [String],
-      required: true,
-    },
-    destination: {
-      type: String,
-      required: true,
-    },
+    source: { type: [SourceItemSchema], required: true },
     tourname: {
       type: String,
       required: true,
     },
-    places: {
-      type: [String],
-      required: true,
-    },
+    description: { type: String },
+    places: { type: [placesSchema], required: true },
     image: {
       url: String,
       id: String,
@@ -61,18 +84,17 @@ const TourSchema = new GSchema(
     ],
     bus: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "bus", // Reference to bus document
+      ref: "Bus", // Reference to bus document
     },
-    hotel: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "hotel", // Reference to hotel documents
-      },
-    ],
-    details: {
+    captin: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "details", // Reference to details documents
+      ref: "users",
     },
+    inclusive: { type: [String], required: true },
+    type: { type: [String], required: true },
+    capacity: { type: Number, required: true },
+    days: Number,
+    night: Number,
     minfair: {
       type: String,
       required: true,
@@ -80,6 +102,12 @@ const TourSchema = new GSchema(
     isActive: {
       type: Boolean,
       default: true,
+    },
+    itenary: [ItenarySchema],
+    seo: {
+      title: String,
+      description: String,
+      keywords: String,
     },
     status: {
       type: Number,
@@ -93,14 +121,12 @@ const TourSchema = new GSchema(
 );
 
 TourSchema.plugin(function (schema) {
-  schema.statics.add = async function (data) {
+  TourSchema.statics.add = async function (data) {
     try {
-      const tourDocs = new this({
-        ...data,
-      });
-      return await tourDocs.save();
+      const tour = new this(data);
+      return await tour.save();
     } catch (error) {
-      throw new Error("Failed to save OTP: " + error.message);
+      throw new Error("Failed to create tour: " + error.message);
     }
   };
   schema.statics.updateBasicInfo = async function (id, data) {
@@ -202,6 +228,51 @@ TourSchema.plugin(function (schema) {
       }
     } catch (error) {
       throw new Error(`Failed to retrieve tours: ${error.message}`);
+    }
+  };
+
+  schema.statics.updatePatch = async function (id, data) {
+    try {
+      const result = await this.findByIdAndUpdate(
+        id,
+        { $set: data },
+        { new: true }
+      );
+      if (!result) throw new Error("Tour not found");
+      return result;
+    } catch (error) {
+      throw new Error("Patch update failed: " + error.message);
+    }
+  };
+
+  schema.statics.updatePut = async function (id, data) {
+    try {
+      const result = await this.findOneAndReplace({ _id: id }, data, {
+        new: true,
+        overwrite: true,
+      });
+      if (!result) throw new Error("Tour not found");
+      return result;
+    } catch (error) {
+      throw new Error("Put update failed: " + error.message);
+    }
+  };
+
+  schema.statics.getById = async function (id) {
+    try {
+      return await this.findById(id).populate("bus").populate("captin").exec();
+    } catch (error) {
+      throw new Error("Failed to get tour: " + error.message);
+    }
+  };
+
+  schema.statics.deleteById = async function (id) {
+    try {
+      const deleted = await this.findByIdAndDelete(id);
+      if (!deleted) throw new Error("Tour not found");
+      return deleted;
+    } catch (error) {
+      throw new Error("Failed to delete tour: " + error.message);
     }
   };
 });

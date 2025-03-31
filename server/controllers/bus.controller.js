@@ -2,7 +2,8 @@ import Bus from "../models/bus.model.js";
 
 export const getBuses = async (req, res) => {
   try {
-    const buses = await Bus.getAllBuses();
+    const { q } = req.query;
+    const buses = await Bus.getAllBuses(q);
     res.status(200).json({ success: true, buses });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });

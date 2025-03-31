@@ -69,3 +69,69 @@ export const getAllUsers = async (req, res, next) => {
     next(error);
   }
 };
+
+export const createUserByAdmin = async (req, res, next) => {
+  try {
+    const userData = req.body;
+    userData.createdByAdmin = true;
+
+    const existing = await User.findOne({
+      $or: [
+        { email: userData.email },
+        // { username: userData.username },
+        { phone: userData.phone },
+      ],
+    });
+
+    if (existing) {
+      return res.status(400).json({
+        success: false,
+        message: "User with same email, username or phone already exists.",
+      });
+    }
+
+    const newUser = await User.register(userData);
+
+    return res.status(201).json({
+      success: true,
+      message: "User created successfully by admin",
+      data: newUser,
+    });
+  } catch (error) {
+    return next(error);
+  }
+};
+
+export const updateUserByAdmin = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const updatedData = req.body;
+
+    const updatedUser = await User.updateUser(id, updatedData);
+
+    return res.status(200).json({
+      success: true,
+      message: "User updated successfully",
+      data: updatedUser,
+    });
+  } catch (error) {
+    return next(error);
+  }
+};
+
+export const getUserById = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const user = await User.findById(id).select(
+      "fullname email username phone gender roleType"
+    );
+    if (!user) {
+      return res
+        .status(404)
+        .json({ success: false, message: "User not found" });
+    }
+    return res.status(200).json({ success: true, data: user });
+  } catch (error) {
+    return next(error);
+  }
+};
