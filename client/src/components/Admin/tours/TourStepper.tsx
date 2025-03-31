@@ -11,11 +11,11 @@ import AddSEODetails from "./components/AddSEODetails";
 import FinalizeTours from "./components/FinalizeTours";
 import { useParams } from "react-router-dom";
 import { get } from "../../../service";
-import { TourTravelType } from "../types";
+import { TourTravelsActionsType, TourTravelType } from "../types";
 
 const TourStepper: React.FC = () => {
   const { id } = useParams();
-  const { state } = useCreateTours();
+  const { state, dispatch } = useCreateTours();
 
   useEffect(() => {
     if (id) {
@@ -24,9 +24,16 @@ const TourStepper: React.FC = () => {
   }, [id]);
 
   const fetchTour = async () => {
+    const tempId = state?.tours?._id || id;
     const response = await get<{
       result: TourTravelType["tours"];
-    }>(`tours/${id}`);
+    }>(`tours/${tempId}`);
+    if (response.data.result) {
+      dispatch({
+        type: TourTravelsActionsType.GET_TOURS,
+        payload: response.data.result,
+      });
+    }
   };
   const steps = useMemo(
     () => [
