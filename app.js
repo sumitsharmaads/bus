@@ -34,6 +34,10 @@ app.use(
     crossOriginEmbedderPolicy: true,
   })
 );
+app.use((req, res, next) => {
+  res.setHeader("Cross-Origin-Opener-Policy", "same-origin");
+  next();
+});
 app.use(mongoSanitize());
 app.use(xssClean());
 app.use(compression());

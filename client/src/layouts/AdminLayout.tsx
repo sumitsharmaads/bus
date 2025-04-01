@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { AdminSidebar } from "../components/Admin/AdminSidebar";
 import { AdminMobileSidebar } from "../components/Admin/AdminMobileSidebar";
-import { Outlet } from "react-router-dom";
+import { Outlet, useLocation } from "react-router-dom";
 import { CssBaseline, ThemeProvider, createTheme } from "@mui/material";
 
 const adminTheme = createTheme({
@@ -61,6 +61,7 @@ const adminTheme = createTheme({
 });
 
 export const AdminLayout: React.FC = () => {
+  const location = useLocation();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [viewport, setViewport] = useState({
     mobileView: false,
@@ -88,7 +89,7 @@ export const AdminLayout: React.FC = () => {
   };
 
   return (
-    <ThemeProvider theme={adminTheme}>
+    <ThemeProvider theme={adminTheme} key={location.pathname}>
       <CssBaseline />
       <div className="px-2 h-[2px] bg-primary transition-all duration-300 ease-in-out" />
 

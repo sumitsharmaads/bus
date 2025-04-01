@@ -44,16 +44,25 @@ const ItenarySchema = new GSchema({
   order: { type: Number },
 });
 
-const placesSchema = new GSchema({
-  _id: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "places",
-    required: true,
+const placesSchema = new GSchema(
+  {
+    _id: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "places",
+      required: true,
+    },
+    name: String,
+    state: String,
+    id: {
+      type: mongoose.Schema.Types.Mixed,
+      required: false,
+    },
   },
-  name: String,
-  state: String,
-  id: Number,
-});
+  {
+    id: false, // ✅ disables Mongoose's default `.id` virtual
+    _id: false, // optional, only if this is a subdocument and you want to skip auto _id
+  }
+);
 const TourSchema = new GSchema(
   {
     source: { type: [SourceItemSchema], required: true },

@@ -191,6 +191,9 @@ export const router = createHashRouter([
       },
       {
         path: "/admin",
+        handle: {
+          key: "admin-layout",
+        },
         element: (
           <AdminProtectedRoute>
             <Suspense fallback={<DummyFallback />}>
