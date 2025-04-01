@@ -83,7 +83,7 @@ export const BasicTour = () => {
           setBasicDetails((prev) => ({
             ...prev,
             image: {
-              url: response.data.data?.url,
+              url: response.data.data?.secure_url,
               id: response.data.data?.public_id,
             },
           }));
