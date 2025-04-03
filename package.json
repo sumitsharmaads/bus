@@ -9,7 +9,7 @@
     "build": "npm run install-server && cd client && npm install && npm run build",
     "start": "node index.js",
     "dev": "nodemon index.js",
-    "heroku-postbuild": "cd client && npm install && npm run build"
+    "heroku-postbuild": "cd client && npm install --include=dev && npm run build"
   },
   "keywords": [
     "dadhich",
