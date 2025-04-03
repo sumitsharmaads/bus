@@ -129,6 +129,14 @@ const TourSchema = new GSchema(
   }
 );
 
+TourSchema.index({ "places.name": 1 });
+TourSchema.index({ "places.state": 1 });
+TourSchema.index({ minfair: 1 });
+TourSchema.index({ night: 1 });
+TourSchema.index({ inclusive: 1 });
+TourSchema.index({ type: 1 });
+TourSchema.index({ description: 1 });
+
 TourSchema.plugin(function (schema) {
   TourSchema.statics.add = async function (data) {
     try {
@@ -282,6 +290,187 @@ TourSchema.plugin(function (schema) {
       return deleted;
     } catch (error) {
       throw new Error("Failed to delete tour: " + error.message);
+    }
+  };
+
+  schema.statics.getSateBasedData = async function () {
+    const now = new Date();
+    try {
+      const stateCount = await this.aggregate([
+        {
+          $match: {
+            status: 2,
+            startDate: { $gte: now },
+          },
+        },
+        { $unwind: "$places" },
+        {
+          $group: {
+            _id: "$places.state",
+            count: { $sum: 1 },
+          },
+        },
+        {
+          $project: {
+            _id: 0,
+            state: "$_id",
+            count: 1,
+          },
+        },
+      ]);
+      if (!deleted) throw new Error("Unabale to find state wise data");
+      return stateCount;
+    } catch (error) {
+      throw new Error("Failed to retrieve data " + error.message);
+    }
+  };
+
+  schema.statics.serachTour = async function (queryString) {
+    try {
+      if (!queryString.trim()) {
+        return [];
+      }
+      const regex = new RegExp(queryString, "i");
+      const now = new Date();
+      const tours = await Tour.aggregate([
+        {
+          $match: {
+            status: 2,
+            startDate: { $gte: now },
+            $or: [
+              { tourname: { $regex: regex } },
+              { description: { $regex: regex } },
+              { "places.name": { $regex: regex } },
+              { "places.state": { $regex: regex } },
+            ],
+          },
+        },
+        {
+          $project: {
+            _id: 1,
+            tourname: 1,
+            description: 1,
+            minfair: { $toDouble: "$minfair" }, // in case stored as string
+            days: "$days",
+            night: "$night",
+            places: {
+              $map: {
+                input: "$places",
+                as: "p",
+                in: "$$p.state",
+              },
+            },
+          },
+        },
+        { $sort: { minfair: 1 } },
+        { $limit: 20 }, // Optional: limit for autocomplete
+      ]);
+      if (!tours) throw new Error("Unabale to retrieve data");
+    } catch (error) {
+      throw new Error("Failed to retrieve data " + error.message);
+    }
+  };
+
+  schema.statics.filterTours = async function (filters) {
+    try {
+      const {
+        places,
+        minPrice,
+        maxPrice,
+        minNights,
+        maxNights,
+        inclusive,
+        type,
+        page = 1,
+        limit = 10,
+        sortBy = "minfair",
+        sortOrder = "asc",
+      } = filters;
+
+      const now = new Date();
+      const match = {
+        status: 2,
+        startDate: { $gte: now },
+      };
+
+      if (places) {
+        const regex = new RegExp(places, "i");
+        match.$or = [{ "places.name": regex }, { "places.state": regex }];
+      }
+
+      if (minPrice !== undefined || maxPrice !== undefined) {
+        match.minfair = {};
+        if (minPrice !== undefined) match.minfair.$gte = parseFloat(minPrice);
+        if (maxPrice !== undefined) match.minfair.$lte = parseFloat(maxPrice);
+      }
+
+      if (minNights !== undefined || maxNights !== undefined) {
+        match.night = {};
+        if (minNights !== undefined) match.night.$gte = parseInt(minNights);
+        if (maxNights !== undefined) match.night.$lte = parseInt(maxNights);
+      }
+
+      if (inclusive && inclusive.length) {
+        match.inclusive = { $all: inclusive };
+      }
+
+      if (type && type.length) {
+        match.type = { $in: type };
+      }
+
+      const skip = (page - 1) * limit;
+
+      const sortField = sortBy === "night" ? "night" : "minfair";
+      const sort = {
+        [sortField]: sortOrder === "asc" ? 1 : -1,
+      };
+
+      const pipeline = [
+        {
+          $addFields: {
+            minfair: {
+              $cond: [
+                { $isNumber: "$minfair" },
+                "$minfair",
+                { $toDouble: "$minfair" },
+              ],
+            },
+          },
+        },
+        { $match: match },
+        {
+          $facet: {
+            result: [
+              { $sort: sort },
+              { $skip: skip },
+              { $limit: limit },
+              {
+                $project: {
+                  _id: 1,
+                  tourname: 1,
+                  minfair: 1,
+                  night: 1,
+                  days: 1,
+                  places: 1,
+                  inclusive: 1,
+                  type: 1,
+                  image: 1,
+                },
+              },
+            ],
+            totalCount: [{ $count: "count" }],
+          },
+        },
+      ];
+
+      const [data] = await this.aggregate(pipeline);
+      return {
+        result: data.result,
+        total: data.totalCount[0]?.count || 0,
+      };
+    } catch (err) {
+      console.error("Tour.filterTours() error:", err.message);
+      throw new Error("Failed to filter tours. Please try again later.");
     }
   };
 });

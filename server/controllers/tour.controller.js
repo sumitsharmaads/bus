@@ -162,3 +162,28 @@ export const deleteTour = async (req, res) => {
     });
   }
 };
+
+export const serachTourByName = async (req, res, next) => {
+  try {
+    const { q = "" } = req.query;
+    if (!q.trim()) {
+      return res.status(200).json({ success: true, data: [] });
+    }
+    const data = await Tour.serachTour(q);
+    return res.status(200).json({ success: true, data });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: "Something went wrong during search",
+    });
+  }
+};
+
+export const getStateWiseData = async (req, res, next) => {
+  try {
+    const data = await Tour.getSateBasedData();
+    return res.status(200).json({ success: true, data });
+  } catch (error) {
+    return next(createError(500, error.message));
+  }
+};

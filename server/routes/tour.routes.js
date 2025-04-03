@@ -4,7 +4,9 @@ import {
   createTour,
   deleteTour,
   getAllAdminTours,
+  getStateWiseData,
   getTourById,
+  serachTourByName,
   upcomingTours,
   updateTourPatch,
   updateTourPut,
@@ -24,5 +26,6 @@ router.get("/:id", getTourById);
 router.patch("/:id", validateAccessToken, isAdmin, updateTourPatch);
 router.put("/:id", validateAccessToken, isAdmin, updateTourPut);
 router.delete("/:id", validateAccessToken, isAdmin, deleteTour);
-
+router.get("/state-breakup", getStateWiseData);
+router.get("/smartSearch", serachTourByName);
 export default router;

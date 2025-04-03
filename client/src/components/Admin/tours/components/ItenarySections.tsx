@@ -5,11 +5,16 @@ import {
   Box,
   Button,
   Checkbox,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
   FormControlLabel,
   Grid,
   IconButton,
   Paper,
   TextField,
+  Tooltip,
   Typography,
 } from "@mui/material";
 import {
@@ -19,6 +24,7 @@ import {
   Save,
   ArrowBack,
   ArrowForward,
+  ContentCopy,
 } from "@mui/icons-material";
 import { useMemo, useState } from "react";
 import {
@@ -40,21 +46,38 @@ export const ItenarySections: React.FC = () => {
   const [sightseeingInputs, setSightseeingInputs] = useState<
     Record<number, string>
   >({});
+  const [copyDialogOpen, setCopyDialogOpen] = useState(false);
+  const [copyFromIndex, setCopyFromIndex] = useState<number | null>(null);
 
   const handleAccordionChange = (index: number) => {
     setExpandedIndex(expandedIndex === index ? false : index);
   };
 
   const handleAddItenary = () => {
-    const last = itenaries[itenaries.length - 1];
-    if (!last || (last.title && last.toggles.length > 0)) {
-      const newList = [
+    setCopyDialogOpen(true); // Open dialog to choose copy or new itinerary
+  };
+
+  const handleConfirmCopy = () => {
+    const order = itenaries?.length;
+    if (copyFromIndex !== null) {
+      setItenaries([
         ...itenaries,
-        { title: "", shortDescription: "", toggles: [], sightseeing: [] },
-      ];
-      setItenaries(newList);
-      setExpandedIndex(newList.length - 1);
+        { ...itenaries[copyFromIndex], order: order + 1 },
+      ]);
+    } else {
+      setItenaries([
+        ...itenaries,
+        {
+          title: "",
+          shortDescription: "",
+          toggles: [],
+          sightseeing: [],
+          order: order + 1,
+        },
+      ]);
     }
+    setCopyDialogOpen(false);
+    setCopyFromIndex(null);
   };
 
   const handleDeleteItenary = (index: number) => {
@@ -113,6 +136,8 @@ export const ItenarySections: React.FC = () => {
     () => !(itenaries?.length === (state.tours?.days || 1)),
     [itenaries]
   );
+
+  const disableAddButton = itenaries.length >= (state.tours?.days || 1);
   return (
     <Paper elevation={3} sx={{ p: 3, mt: 4 }}>
       <Typography variant="subtitle2" color="textSecondary" mb={1}>
@@ -136,6 +161,7 @@ export const ItenarySections: React.FC = () => {
           startIcon={<Add />}
           onClick={handleAddItenary}
           size="small"
+          disabled={disableAddButton}
         >
           Add Itinerary
         </Button>
@@ -149,18 +175,7 @@ export const ItenarySections: React.FC = () => {
           sx={{ mb: 2 }}
         >
           <AccordionSummary expandIcon={<ExpandMore />}>
-            <TextField
-              type="number"
-              label="Day Number"
-              variant="outlined"
-              size="small"
-              value={itenary.order ?? ""}
-              onClick={(e) => e.stopPropagation()}
-              onChange={(e) =>
-                handleChange(index, "order", Number(e.target.value))
-              }
-              sx={{ width: "100%" }}
-            />
+            <Typography variant="subtitle2">Day {index + 1}</Typography>
           </AccordionSummary>
           <AccordionDetails>
             <Grid container spacing={2}>
@@ -211,7 +226,6 @@ export const ItenarySections: React.FC = () => {
                   />
                 ))}
               </Grid>
-
               {itenary.toggles.includes("Sightseeing") && (
                 <Grid item xs={12}>
                   <Typography variant="subtitle2" gutterBottom>
@@ -269,8 +283,7 @@ export const ItenarySections: React.FC = () => {
                   </Box>
                 </Grid>
               )}
-
-              <Grid item xs={12} display="flex" justifyContent="flex-end">
+              {/* <Grid item xs={12} display="flex" justifyContent="flex-end">
                 <IconButton
                   size="small"
                   color="error"
@@ -278,12 +291,11 @@ export const ItenarySections: React.FC = () => {
                 >
                   <Delete fontSize="small" />
                 </IconButton>
-              </Grid>
+              </Grid> */}
             </Grid>
           </AccordionDetails>
         </Accordion>
       ))}
-
       {/* Bottom Button Group */}
       <Box display="flex" justifyContent="space-between" mt={3}>
         {/* Left: Back */}
@@ -310,7 +322,7 @@ export const ItenarySections: React.FC = () => {
               size="small"
               onClick={() => dispatch({ type: TourTravelsActionsType.NEXT })}
             >
-              SKIP
+              Save Changes
             </Button>
           )}
           <Button
@@ -329,6 +341,40 @@ export const ItenarySections: React.FC = () => {
           </Button>
         </Box>
       </Box>
+      {/* Copy Itinerary Dialog */}
+      <Dialog open={copyDialogOpen} onClose={() => setCopyDialogOpen(false)}>
+        <DialogTitle>Copy from Previous Itinerary?</DialogTitle>
+        <DialogContent>
+          <Typography>Select a day to copy or create a new one:</Typography>
+          {itenaries.length > 0 &&
+            itenaries.map((_, index) => (
+              <Button
+                key={index}
+                variant="outlined"
+                size="small"
+                startIcon={<ContentCopy />}
+                onClick={() => setCopyFromIndex(index)}
+                sx={{ m: 1 }}
+              >
+                Copy Day {index + 1}
+              </Button>
+            ))}
+          <Button
+            variant="contained"
+            size="small"
+            onClick={() => setCopyFromIndex(null)}
+            sx={{ m: 1 }}
+          >
+            Create New
+          </Button>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setCopyDialogOpen(false)}>Cancel</Button>
+          <Button onClick={handleConfirmCopy} variant="contained">
+            Confirm
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Paper>
   );
 };

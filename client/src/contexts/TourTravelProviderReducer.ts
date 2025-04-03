@@ -11,10 +11,11 @@ import {
   TourTravelType,
 } from "../components/Admin/types";
 
-export const initialToursState: TourTravelType = {
+export const initialToursState: TourTravelType = Object.freeze({
   tours: null,
   steps: 0,
-};
+});
+
 export type TourTravelProviderActions =
   | {
       type: TourTravelsActionsType.BASIC_DETAILS;
@@ -53,6 +54,10 @@ export function createToursReducer(
 ): TourTravelType {
   switch (actions.type) {
     case TourTravelsActionsType.BASIC_DETAILS: {
+      console.log(
+        "ourTravelsActionsType.BASIC_DETAILS",
+        TourTravelsActionsType.BASIC_DETAILS
+      );
       const { steps, tours } = state;
       return {
         tours: { ...(tours || {}), ...actions.payload },
@@ -60,12 +65,17 @@ export function createToursReducer(
       };
     }
     case TourTravelsActionsType.BACK: {
+      console.log("ourTravelsActionsType.BACK", TourTravelsActionsType.BACK);
       return {
         ...state,
         steps: state.steps - 1,
       };
     }
     case TourTravelsActionsType.SOURCE_DETAILS: {
+      console.log(
+        "ourTravelsActionsType.SOURCE_DETAILS",
+        TourTravelsActionsType.SOURCE_DETAILS
+      );
       const { steps, tours } = state;
       return {
         tours: { ...(tours || {}), ...actions.payload },
@@ -73,6 +83,10 @@ export function createToursReducer(
       };
     }
     case TourTravelsActionsType.ITENARY: {
+      console.log(
+        "ourTravelsActionsType.ITENARY",
+        TourTravelsActionsType.ITENARY
+      );
       const { steps, tours } = state;
       return {
         tours: { ...(tours || {}), ...actions.payload },
@@ -80,6 +94,10 @@ export function createToursReducer(
       };
     }
     case TourTravelsActionsType.BUS_CAPTIN: {
+      console.log(
+        "ourTravelsActionsType.BUS_CAPTIN",
+        TourTravelsActionsType.BUS_CAPTIN
+      );
       const { steps, tours } = state;
       return {
         tours: { ...(tours || {}), ...actions.payload },
@@ -87,6 +105,7 @@ export function createToursReducer(
       };
     }
     case TourTravelsActionsType.SEO: {
+      console.log("ourTravelsActionsType.SEO", TourTravelsActionsType.SEO);
       const { steps, tours } = state;
       return {
         tours: { ...(tours || {}), ...actions.payload },
@@ -94,6 +113,7 @@ export function createToursReducer(
       };
     }
     case TourTravelsActionsType.NEXT: {
+      console.log("ourTravelsActionsType.NEXT", TourTravelsActionsType.NEXT);
       const { steps } = state;
       return {
         ...state,
@@ -101,13 +121,22 @@ export function createToursReducer(
       };
     }
     case TourTravelsActionsType.GET_TOURS: {
-      const { steps } = state;
-      return {
-        steps,
+      console.log(
+        "ourTravelsActionsType.GET_TOURS",
+        TourTravelsActionsType.GET_TOURS
+      );
+      //console.log("act", actions.payload);
+      const newState = {
+        ...state,
         tours: { ...actions.payload },
       };
+      return newState;
     }
     case TourTravelsActionsType.UPDATE_ID: {
+      console.log(
+        "ourTravelsActionsType.UPDATE_ID",
+        TourTravelsActionsType.UPDATE_ID
+      );
       const { tours } = state;
       return {
         ...state,

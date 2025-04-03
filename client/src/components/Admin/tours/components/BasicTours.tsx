@@ -20,6 +20,10 @@ import {
 } from "@mui/material";
 import { getTourDayNight } from "../../../../utils";
 import { ArrowForward, Save } from "@mui/icons-material";
+import { DatePicker } from "@mui/x-date-pickers/DatePicker";
+import { DateTimePicker } from "@mui/x-date-pickers/DateTimePicker";
+import { ReactDatePicker, ReactDateTimePicker } from "../../../../common";
+import dayjs from "dayjs";
 
 const getBasicDefaults = (
   input?: Partial<BasicTourInterface>
@@ -43,6 +47,9 @@ export const BasicTour = () => {
     getBasicDefaults(state.tours || {})
   );
 
+  useEffect(() => {
+    setBasicDetails(getBasicDefaults(state.tours || {}));
+  }, [state]);
   useEffect(() => {
     if (basicDetails.startDate && basicDetails.endDate) {
       const { days, nights } = getTourDayNight(
@@ -288,19 +295,22 @@ export const BasicTour = () => {
               ))}
             </Grid>
           </div>
-          <div>
-            <Input
-              crossOrigin=""
-              type="datetime-local"
-              color="blue"
+          <div className="w-full h-full">
+            <ReactDateTimePicker
               label="Start Date"
-              value={basicDetails.startDate || ""}
-              onChange={(e) => handleOnchange("startDate", e.target.value)}
-              className="bg-white"
+              value={
+                basicDetails.startDate ? new Date(basicDetails.startDate) : null
+              }
+              onChange={(value) => handleOnchange("startDate", value)}
+              maxDateTime={
+                basicDetails.endDate
+                  ? new Date(basicDetails.endDate)
+                  : undefined
+              }
             />
           </div>
           <div>
-            <Input
+            {/* <Input
               crossOrigin=""
               type="date"
               color="blue"
@@ -308,6 +318,18 @@ export const BasicTour = () => {
               value={basicDetails.endDate || ""}
               onChange={(e) => handleOnchange("endDate", e.target.value)}
               className="bg-white"
+            /> */}
+            <ReactDateTimePicker
+              label={"Return Date"}
+              value={
+                basicDetails.endDate ? new Date(basicDetails.endDate) : null
+              }
+              onChange={(value) => handleOnchange("endDate", value)}
+              minDateTime={
+                basicDetails.startDate
+                  ? new Date(basicDetails.startDate)
+                  : undefined
+              }
             />
           </div>
           <div className="col-span-1 md:col-span-2">

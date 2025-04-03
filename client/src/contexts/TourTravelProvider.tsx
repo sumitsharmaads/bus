@@ -39,28 +39,28 @@ export const TourTravelProvider: React.FC<{
 }> = ({ children }) => {
   const { id } = useParams();
   const [state, dispatch] = useReducer(createToursReducer, initialToursState);
-
-  const isEdit = useMemo(() => Boolean(state.tours?._id), [state?.tours?._id]);
-
-  const isPusblished = useMemo(() => Boolean(), []);
-
-  useEffect(() => {
-    if (id) {
-      fetchTour();
-    }
-  }, [id]);
-
+  console.log("state", state);
   const fetchTour = async () => {
     const response = await get<{
       result: TourTravelType["tours"];
     }>(`tours/${id || state?.tours?._id}`);
-    if (response.data.result) {
+    if (response?.data?.result) {
+      console.log("iam called");
       dispatch({
         type: TourTravelsActionsType.GET_TOURS,
-        payload: response.data.result,
+        payload: { ...response.data.result },
       });
     }
   };
+
+  useEffect(() => {
+    if (id && id?.toString() && id?.toString().length > 9) {
+      fetchTour();
+    }
+  }, [id]);
+
+  const isEdit = useMemo(() => Boolean(state.tours?._id), [state?.tours?._id]);
+  const isPusblished = useMemo(() => Boolean(), []);
 
   return (
     <TourTravelContext.Provider

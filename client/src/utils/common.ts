@@ -39,7 +39,7 @@ export const getTourDayNight = (
   const start = new Date(startDate);
   const end = new Date(endDate);
 
-  if (isNaN(start.getTime()) || isNaN(end.getTime()) || end <= start) {
+  if (isNaN(start.getTime()) || isNaN(end.getTime())) {
     return { days: 0, nights: 0, label: "Invalid date range" };
   }
 
@@ -55,7 +55,7 @@ export const getTourDayNight = (
   const diffDays =
     Math.floor((endDay.getTime() - startDay.getTime()) / msInDay) + 1;
 
-  const nights = diffDays - 1;
+  const nights = diffDays - 1 >= 0 ? diffDays - 1 : 0;
 
   return {
     days: diffDays,
@@ -65,3 +65,22 @@ export const getTourDayNight = (
     }`,
   };
 };
+
+// const getTourDayNight = (start: Date | string, end: Date) => {
+//   const startDay = new Date(start);
+//   const endDay = new Date(end.getFullYear(), end.getMonth(), end.getDate());
+
+//   const msInDay = 1000 * 60 * 60 * 24;
+//   const diffDays =
+//     Math.floor((endDay.getTime() - startDay.getTime()) / msInDay) + 1;
+
+//   const nights = diffDays - 1 >= 0 ? diffDays - 1 : 0; // Ensures nights is at least 0
+
+//   return {
+//     days: diffDays,
+//     nights,
+//     label: `${diffDays} Day${diffDays > 1 ? "s" : ""} / ${nights} Night${
+//       nights !== 1 ? "s" : ""
+//     }`,
+//   };
+// };
