@@ -34,4 +34,6 @@ export const PublicRoutes = {
   FORGOT_PASSWORD: "/forgot-password",
   QUICK_INQUERY: "/inquery",
   TOUR_GUIDES: "/tour-guide",
+  TOURS: "/tours",
+  TOURS_DETAILS: "/tour/:id",
 };

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import { UpcomingTours } from "../components/UpcomingTours";
 import { HomePlacesExplore, YatraBooking } from "../components";
 import { HomeCarousel } from "../components/HomeCarousel";
@@ -13,7 +13,99 @@ import DirectionsBusIcon from "@mui/icons-material/DirectionsBus";
 import HotelIcon from "@mui/icons-material/Hotel";
 import VolunteerActivismIcon from "@mui/icons-material/VolunteerActivism";
 import ForestIcon from "@mui/icons-material/Forest";
+import TempleHinduIcon from "@mui/icons-material/TempleHindu";
 import PlanMyTourModal from "../components/Admin/tours/components/PlanMyTourModal";
+import SearchTourBar from "../components/SearchTourBar";
+
+import { ChevronLeft, ChevronRight } from "@mui/icons-material";
+import TourCategorySlider from "./admin/TourCategories";
+import { Box } from "@mui/material";
+import HelpWidget from "./HelpWidget";
+
+const categories = [
+  {
+    name: "Family Tours",
+    icon: <FamilyRestroomIcon />,
+    bg: "bg-pink-200",
+  },
+  {
+    name: "Devotional Yatra",
+    icon: <TempleHinduIcon />,
+    bg: "bg-yellow-100",
+  },
+  {
+    name: "Hill Stations",
+    icon: <TerrainIcon />,
+    bg: "bg-blue-200",
+  },
+  {
+    name: "Weekend Getaways",
+    icon: <WeekendIcon />,
+    bg: "bg-green-200",
+  },
+  {
+    name: "Adventure Trips",
+    icon: <DirectionsBusIcon />,
+    bg: "bg-purple-200",
+  },
+];
+
+const TourCategories: React.FC = () => {
+  const scrollRef = useRef<HTMLDivElement | null>(null);
+
+  const scroll = (direction: "left" | "right") => {
+    if (scrollRef.current) {
+      const scrollAmount = scrollRef.current.offsetWidth * 0.8;
+      scrollRef.current.scrollBy({
+        left: direction === "left" ? -scrollAmount : scrollAmount,
+        behavior: "smooth",
+      });
+    }
+  };
+
+  return (
+    <Box className="relative w-full overflow-hidden px-4 py-8 bg-gray-50">
+      <div className="max-w-7xl mx-auto">
+        <h2 className="text-3xl font-bold text-center mb-10">
+          Explore Tour Types
+        </h2>
+        <div className="relative">
+          {/* Left Scroll Button */}
+          <button
+            onClick={() => scroll("left")}
+            className="absolute left-0 top-1/2 transform -translate-y-1/2 z-10 p-2 bg-white shadow-md hover:bg-gray-100 rounded-full"
+          >
+            <ChevronLeft className="h-6 w-6 text-gray-700" />
+          </button>
+
+          {/* Categories Scrollable Wrapper */}
+          <div
+            ref={scrollRef}
+            className="flex overflow-x-auto scroll-smooth space-x-6 pb-4 scrollbar-hide"
+          >
+            {categories.map((category, i) => (
+              <Box
+                key={i}
+                className={`min-w-[180px] h-[120px] rounded-2xl shadow-md flex flex-col justify-center items-center ${category.bg}`}
+              >
+                <Box className="text-rose-600 text-3xl">{category.icon}</Box>
+                <span className="font-medium text-sm p-4">{category.name}</span>
+              </Box>
+            ))}
+          </div>
+
+          {/* Right Scroll Button */}
+          <button
+            onClick={() => scroll("right")}
+            className="absolute right-0 top-1/2 transform -translate-y-1/2 z-10 p-2 bg-white shadow-md hover:bg-gray-100 rounded-full"
+          >
+            <ChevronRight className="h-6 w-6 text-gray-700" />
+          </button>
+        </div>
+      </div>
+    </Box>
+  );
+};
 
 const Home: React.FC = () => {
   const [openTourForm, setOpenTourForm] = useState(false);
@@ -49,8 +141,7 @@ const Home: React.FC = () => {
           <div className="bg-[#202542] bg-opacity-90 p-4 rounded-full flex items-center w-full max-w-lg">
             {/* Destination Input */}
             <div className="flex flex-col items-start relative flex-grow">
-              <label className="text-white text-sm">Destination</label>
-              <div className="flex items-center">
+              <div className="flex items-center w-full">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   className="h-5 w-5 text-white absolute left-3 pointer-events-none"
@@ -65,73 +156,18 @@ const Home: React.FC = () => {
                     d="M3 10h4l3 10h4l3-8h4"
                   />
                 </svg>
-                <input
-                  type="text"
-                  placeholder="Enter destination"
-                  className="pl-10 pr-4 py-2 w-full bg-transparent text-white placeholder-white outline-none border-b-[2px] border-primary"
-                />
+                <SearchTourBar />
               </div>
             </div>
-
-            {/* Search Button */}
-            <button className="ml-4 px-4 py-2 bg-[#C22A54] text-white rounded-full shadow-md hover:bg-[#E53E3E] transition">
-              Search
-            </button>
           </div>
         </div>
       </section>
       <div className="h-10 bg-[#1A1D2E]"></div>
       <UpcomingTours />
       <TopDestinations />
-      {/* LIMITED SPOTS SECTION */}
-      <section className="max-w-6xl mx-auto px-4 md:px-8 py-16">
-        <div className="bg-gradient-to-r from-[#C22A54] to-[#E53E3E] rounded-3xl p-8 md:p-12 text-white shadow-xl">
-          <div className="flex flex-col md:flex-row justify-between items-center gap-6">
-            <div>
-              <h2 className="text-3xl font-bold">
-                ⏳ Hurry! Only <span className="underline">6 spots</span> left
-                for <span className="italic">Kedarnath Yatra</span>
-              </h2>
-              <p className="text-sm mt-2">
-                Trip starts on <strong>08 Apr, 2025</strong>. Book before it's
-                full!
-              </p>
-            </div>
-            <button className="bg-white text-[#C22A54] px-6 py-3 mt-4 md:mt-0 rounded-full font-semibold hover:bg-gray-100 transition">
-              Book Your Spot →
-            </button>
-          </div>
-        </div>
-      </section>
 
       {/* TOUR CATEGORIES */}
-      <section className="bg-[#F9FAFB] py-16 px-4">
-        <div className="max-w-7xl mx-auto">
-          <h2 className="text-3xl font-bold text-center mb-10">
-            Explore Tour Types
-          </h2>
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6 text-center">
-            {[
-              { icon: <FamilyRestroomIcon />, label: "Family Tours" },
-              { icon: <TempleBuddhistIcon />, label: "Devotional Yatra" },
-              { icon: <TerrainIcon />, label: "Hill Stations" },
-              { icon: <WeekendIcon />, label: "Weekend Getaways" },
-              { icon: <DirectionsBusIcon />, label: "Adventure Trips" },
-              { icon: <HotelIcon />, label: "Luxury Packages" },
-              { icon: <VolunteerActivismIcon />, label: "Pilgrimage" },
-              { icon: <ForestIcon />, label: "Wildlife Tours" },
-            ].map((item, i) => (
-              <div
-                key={i}
-                className="bg-white hover:bg-[#F4F4F5] rounded-xl shadow p-6 flex flex-col items-center transition duration-300 hover:shadow-xl"
-              >
-                <div className="text-[#C22A54] text-3xl mb-2">{item.icon}</div>
-                <span className="font-medium text-sm">{item.label}</span>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
+      <TourCategories />
 
       {/* REGIONS */}
       <section className="bg-white py-16 px-4">
@@ -157,97 +193,49 @@ const Home: React.FC = () => {
         </div>
       </section>
 
-      {/* BOOKING STEPS */}
-      <section className="bg-[#F9FAFB] py-16 px-4">
-        <div className="max-w-7xl mx-auto">
-          <h2 className="text-3xl font-bold text-center mb-10">
-            How to Book a Tour
-          </h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
-            {[
-              {
-                step: "1",
-                title: "Select Tour",
-                desc: "Choose from upcoming or featured tours.",
-              },
-              {
-                step: "2",
-                title: "Fill Details",
-                desc: "Tell us your travel info & preferences.",
-              },
-              {
-                step: "3",
-                title: "Confirm Booking",
-                desc: "Get instant confirmation & updates.",
-              },
-            ].map((item, i) => (
-              <div
-                key={i}
-                className="bg-white p-6 rounded-xl shadow-md hover:shadow-lg transition"
-              >
-                <div className="text-4xl text-[#C22A54] font-bold mb-2">
-                  {item.step}
-                </div>
-                <h4 className="font-semibold text-lg mb-1">{item.title}</h4>
-                <p className="text-sm text-gray-600">{item.desc}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-      {/* <HomePlacesExplore /> */}
+      {/* BOOKING STEPS & HomePlacesExplore  */}
       <YatraBooking />
-      {/* PLAN MY TOUR CTA */}
-      {/* <section className="bg-[#F9FAFB] py-16 px-4">
-        <div className="max-w-4xl mx-auto text-center">
-          <h2 className="text-3xl font-bold mb-6">Want a Customized Tour?</h2>
-          <p className="text-gray-700 mb-6">
-            Can’t find a tour that suits your needs? Let us plan a personalized
-            journey just for you.
-          </p>
-          <button className="bg-[#C22A54] text-white px-6 py-3 rounded-full font-medium hover:bg-[#E53E3E] transition">
-            Plan My Tour
-          </button>
-        </div>
-      </section> */}
-
-      <section className="py-16 px-4 bg-white">
-        <div className="max-w-3xl mx-auto bg-[#FDF2F8] border border-[#C22A54]/20 rounded-2xl shadow p-10 text-center">
-          <h2 className="text-3xl font-bold mb-4 text-[#C22A54]">
-            Want a Customized Tour?
+      <section className="py-16 px-4 bg-[#F5FAFB]">
+        <div className="max-w-4xl mx-auto flex flex-col items-center justify-center bg-[#E1F4F6] rounded-xl shadow-lg p-10 text-center">
+          <div className="flex justify-center mb-6">
+            {/* Icon for Plan Your Own Tour */}
+            <div className="p-4 bg-white rounded-full">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-6 w-6 text-[#00A6A6]"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M14 5l7 7-7 7M5 19l7-7-7-7"
+                />
+              </svg>
+            </div>
+          </div>
+          <h2 className="text-3xl sm:text-4xl font-semibold text-[#00A6A6] mb-4">
+            Plan Your Own Tour
           </h2>
-          <p className="text-gray-700 mb-6">
-            Tell us your preferences and we’ll help plan a perfect journey, just
-            for you.
+          <p className="text-gray-600 mb-6 text-lg">
+            Customize your trip according to your preferences
           </p>
           <button
-            className="bg-[#C22A54] text-white px-6 py-3 rounded-full font-medium hover:bg-[#E53E3E] transition"
+            className="bg-[#00A6A6] text-white px-8 py-3 rounded-full font-medium text-lg hover:bg-[#007E7E] transition duration-300"
             onClick={() => setOpenTourForm(true)}
           >
-            Plan My Tour
+            Get Started
           </button>
         </div>
       </section>
-
-      {/* <section className="py-16 px-4 bg-white">
-        <div className="max-w-5xl mx-auto p-10 rounded-xl bg-gradient-to-br from-[#fff] to-[#FFF0F3] shadow text-center">
-          <h2 className="text-3xl font-bold mb-4 text-[#C22A54]">
-            Let Us Help You Plan
-          </h2>
-          <p className="text-gray-700 mb-6">
-            Still not sure what to book? We'll help craft the perfect tour for
-            your journey.
-          </p>
-          <button className="bg-[#C22A54] text-white px-6 py-3 rounded-full font-medium hover:bg-[#E53E3E] transition">
-            Plan My Tour
-          </button>
-        </div>
-      </section> */}
       <HomeCarousel />
       <PlanMyTourModal
         open={openTourForm}
         onClose={() => setOpenTourForm(false)}
       />
+      <HelpWidget />
     </>
   );
 };

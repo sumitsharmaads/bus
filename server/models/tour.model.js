@@ -161,10 +161,34 @@ TourSchema.plugin(function (schema) {
   TourSchema.statics.getUpcomingTours = async function () {
     try {
       const currentDate = new Date();
-      const tours = await this.find({ startDate: { $gte: currentDate } })
-        .sort({ startDate: 1 })
-        .limit(4)
-        .select("image startDate duration tourname destination");
+
+      const tours = await this.aggregate([
+        {
+          $match: {
+            startDate: { $gte: currentDate },
+            status: 2,
+          },
+        },
+        { $sort: { startDate: 1 } },
+        { $limit: 4 },
+        {
+          $project: {
+            image: 1,
+            startDate: 1,
+            tourname: 1,
+            days: 1,
+            night: 1,
+            places: {
+              $map: {
+                input: "$places",
+                as: "place",
+                in: "$$place.name",
+              },
+            },
+          },
+        },
+      ]);
+
       return tours;
     } catch (error) {
       throw new Error("Failed to fetch upcoming tours: " + error.message);
@@ -303,11 +327,22 @@ TourSchema.plugin(function (schema) {
             startDate: { $gte: now },
           },
         },
-        { $unwind: "$places" },
+        {
+          $project: {
+            states: {
+              $map: {
+                input: "$places",
+                as: "p",
+                in: "$$p.state",
+              },
+            },
+          },
+        },
+        { $unwind: "$states" },
         {
           $group: {
-            _id: "$places.state",
-            count: { $sum: 1 },
+            _id: "$states",
+            count: { $sum: 1 }, // now this counts tour per state
           },
         },
         {
@@ -318,21 +353,25 @@ TourSchema.plugin(function (schema) {
           },
         },
       ]);
-      if (!deleted) throw new Error("Unabale to find state wise data");
+
       return stateCount;
     } catch (error) {
-      throw new Error("Failed to retrieve data " + error.message);
+      throw new Error(
+        "Failed to retrieve state-wise tour data: " + error.message
+      );
     }
   };
 
-  schema.statics.serachTour = async function (queryString) {
+  schema.statics.searchTour = async function (queryString) {
+    console.log("inside searchTour method", queryString);
     try {
       if (!queryString.trim()) {
         return [];
       }
+
       const regex = new RegExp(queryString, "i");
       const now = new Date();
-      const tours = await Tour.aggregate([
+      const tours = await this.aggregate([
         {
           $match: {
             status: 2,
@@ -346,13 +385,29 @@ TourSchema.plugin(function (schema) {
           },
         },
         {
+          $unwind: "$source", // Unwind the source array to process each source individually
+        },
+        {
+          $addFields: {
+            price: {
+              $cond: [
+                { $in: ["$source.fare", [0, NaN, undefined]] }, // If source fare is 0, NaN, or undefined
+                "$minfair", // Use minfair as price
+                "$source.fare", // Otherwise, use the source fare
+              ],
+            },
+          },
+        },
+        {
           $project: {
-            _id: 1,
+            _id: 1, // Only return necessary fields
             tourname: 1,
-            description: 1,
-            minfair: { $toDouble: "$minfair" }, // in case stored as string
-            days: "$days",
-            night: "$night",
+            //description: 1,
+            minfair: { $toDouble: "$minfair" },
+            price: 1, // Include calculated price based on source fare or minfair
+            sourceName: "$source.location.name", // Include the source name
+            days: 1,
+            night: 1,
             places: {
               $map: {
                 input: "$places",
@@ -362,12 +417,19 @@ TourSchema.plugin(function (schema) {
             },
           },
         },
-        { $sort: { minfair: 1 } },
-        { $limit: 20 }, // Optional: limit for autocomplete
+        {
+          $sort: { price: 1 }, // Sort by price (either source fare or minfair)
+        },
+        {
+          $limit: 20, // Limit the results for autocomplete
+        },
       ]);
-      if (!tours) throw new Error("Unabale to retrieve data");
+
+      if (!tours) throw new Error("Unable to retrieve data");
+      return tours;
     } catch (error) {
-      throw new Error("Failed to retrieve data " + error.message);
+      console.log("searchTour error", error);
+      throw new Error("Failed to retrieve data: " + error.message);
     }
   };
 

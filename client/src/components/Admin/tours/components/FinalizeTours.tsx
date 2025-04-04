@@ -15,6 +15,7 @@ import { TourTravelsActionsType, TourTravelType } from "../../types";
 import { post, put, remove } from "../../../../service";
 import { successPopup } from "../../../../utils/errors/alerts";
 import { useNavigate } from "react-router-dom";
+import dayjs from "dayjs";
 
 const FinalizeTours = () => {
   const { state, dispatch, isEdit, fetchTour, isPusblished } = useCreateTours();
@@ -63,7 +64,7 @@ const FinalizeTours = () => {
       navigate("/admin/tours");
     }
   };
-
+  console.log("tours object", tour);
   return (
     <Box className="w-full" p={2}>
       {/* Basic Tour Info */}
@@ -83,7 +84,10 @@ const FinalizeTours = () => {
               <b>Capacity:</b> {tour.capacity}
             </Grid>
             <Grid item xs={12} sm={6}>
-              <b>Dates:</b> {tour.startDate} to {tour.endDate}
+              <Typography>
+                <b>Dates:</b> {dayjs(tour.startDate).format("DD MMM YYYY")} to{" "}
+                {dayjs(tour.endDate).format("DD MMM YYYY")}
+              </Typography>
             </Grid>
             <Grid item xs={12}>
               <b>Description:</b> {tour.description}
@@ -104,9 +108,9 @@ const FinalizeTours = () => {
                 Day {index + 1}: {item.title}
               </Typography>
               <Typography>{item.shortDescription}</Typography>
-              <Typography>Options: {item.toggles.join(", ")}</Typography>
+              <Typography>Options: {item?.toggles?.join(", ")}</Typography>
               <Typography>
-                Sightseeing: {item.sightseeing?.join(", ")}
+                Sightseeing: {item?.sightseeing?.join(", ")}
               </Typography>
               <Divider sx={{ my: 1 }} />
             </Box>
@@ -121,7 +125,7 @@ const FinalizeTours = () => {
         </AccordionSummary>
         <AccordionDetails>
           <Typography fontWeight={600}>Sources:</Typography>
-          {tour.source?.map((src, i) => (
+          {tour?.source?.map((src, i) => (
             <Box key={i} mb={1}>
               <Typography>
                 📍 {src.location?.name}, {src.location?.state}
@@ -134,7 +138,7 @@ const FinalizeTours = () => {
           ))}
           <Divider sx={{ my: 2 }} />
           <Typography fontWeight={600}>Places:</Typography>
-          {tour.places?.map((place, i) => (
+          {tour?.places?.map((place, i) => (
             <Typography key={i}>
               🏞️ {place.name}, {place.state}
             </Typography>
@@ -148,7 +152,7 @@ const FinalizeTours = () => {
           <Typography fontWeight={600}>4. Bus & Captain Info</Typography>
         </AccordionSummary>
         <AccordionDetails>
-          {tour.bus && (
+          {tour?.bus && (
             <>
               <Typography>
                 <b>Bus Number:</b> {tour.bus.busNumber}
@@ -161,7 +165,7 @@ const FinalizeTours = () => {
               </Typography>
             </>
           )}
-          {tour.captin && (
+          {tour?.captin && (
             <>
               <Divider sx={{ my: 1 }} />
               <Typography>

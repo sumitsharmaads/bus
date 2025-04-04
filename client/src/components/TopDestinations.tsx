@@ -1,21 +1,125 @@
 import { ChevronLeft, ChevronRight } from "@mui/icons-material";
-import React, { useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
+import { get } from "../service";
+import { useNavigate } from "react-router-dom";
 //import { ChevronLeft, ChevronRight } from "lucide-react"; // or use @heroicons/react
 
-const destinations = [
-  { name: "TAMIL NADU", listings: 15, image: "/images/tamilnadu.jpg" },
-  { name: "GUJARAT", listings: 14, image: "/images/gujarat.jpg" },
-  { name: "ASSAM", listings: 13, image: "/images/assam.jpg" },
-  { name: "SIKKIM", listings: 19, image: "/images/sikkim.jpg" },
-  { name: "MEGHALAYA", listings: 16, image: "/images/meghalaya.jpg" },
-  { name: "RAJASTHAN", listings: 23, image: "/images/rajasthan.jpg" },
-  { name: "UTTAR PRADESH", listings: 16, image: "/images/uttarpradesh.jpg" },
-  { name: "WEST BENGAL", listings: 16, image: "/images/westbengal.jpg" },
+type destinationType = {
+  name: string;
+  listings: number;
+  image: string;
+  state: string;
+};
+const destinations: destinationType[] = [
+  {
+    name: "Punjab",
+    listings: 0,
+    image: "images/states/punjab.jpg",
+    state: "Punjab",
+  },
+  {
+    name: "Haryana",
+    listings: 0,
+    image: "images/states/haryana.jpg",
+    state: "Haryana",
+  },
+  {
+    name: "Delhi",
+    listings: 0,
+    image: "images/states/delhi.jpg",
+    state: "Delhi",
+  },
+  {
+    name: "Rajasthan",
+    listings: 0,
+    image: "images/states/rajasthan.jpg",
+    state: "Rajasthan",
+  },
+  {
+    name: "Bihar",
+    listings: 0,
+    image: "images/states/bihar.jpg",
+    state: "Bihar",
+  },
+  {
+    name: "Uttar Pradesh",
+    listings: 0,
+    image: "images/states/uttar_pardesh.jpg",
+    state: "Uttar Pradesh",
+  },
+  {
+    name: "Paschim Bengal",
+    listings: 0,
+    image: "images/states/pachim_bengal.jpg",
+    state: "Paschim Bengal",
+  },
+  {
+    name: "Uttrakhand",
+    listings: 0,
+    image: "images/states/uttrakhand.jpg",
+    state: "Uttrakhand",
+  },
+  {
+    name: "Himachal Pradesh",
+    listings: 0,
+    image: "images/states/himachal_pardesh.jpg",
+    state: "Himachal Pradesh",
+  },
+  {
+    name: "Jammu and Kashmir",
+    listings: 0,
+    image: "images/states/jammu_kashmir.jpg",
+    state: "Jammu and Kashmir",
+  },
 ];
 
 const TopDestinations = () => {
+  const navigate = useNavigate();
   const scrollRef = useRef<HTMLDivElement | null>(null);
+  const [data, setData] = useState<destinationType[]>([]);
 
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await get<{
+          success: boolean;
+          data: {
+            state: string;
+            count: number;
+          }[];
+        }>("tours/state-breakup");
+
+        if (response?.data?.data) {
+          // new RegExp(`\\b${item.state.split(" ")[0]}\\b`, "i").test(
+          //   destination.state
+          // )
+          const updatedData = destinations.map((destination) => {
+            const stateData = response.data.data.find((item) =>
+              new RegExp(item.state, "i").test(destination.state)
+            );
+            if (stateData) {
+              destination.listings = stateData.count;
+            } else {
+              destination.listings = 0;
+            }
+
+            return destination;
+          });
+          updatedData.sort((a, b) => b.listings - a.listings);
+          console.log("updatedData", updatedData);
+          setData(updatedData);
+        }
+      } catch (error) {
+        console.error("Error fetching state data:", error);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  const handleViewAll = () => {
+    navigate("/tours");
+  };
   const scroll = (direction: "left" | "right") => {
     if (scrollRef.current) {
       const scrollAmount = scrollRef.current.offsetWidth * 0.8;
@@ -32,7 +136,10 @@ const TopDestinations = () => {
         <h2 className="text-2xl sm:text-3xl font-bold text-gray-800">
           Explore Top <span className="text-red-600">Destinations</span>
         </h2>
-        <button className="border border-gray-400 text-gray-700 px-4 py-1 rounded-full text-sm hover:bg-gray-100 transition">
+        <button
+          className="border border-gray-400 text-gray-700 px-4 py-1 rounded-full text-sm hover:bg-gray-100 transition"
+          onClick={() => handleViewAll()}
+        >
           View all
         </button>
       </div>
@@ -61,7 +168,7 @@ const TopDestinations = () => {
         ref={scrollRef}
         className="flex space-x-4 overflow-x-auto scroll-smooth scrollbar-hide pb-2 scrollbar-thin scrollbar-track-transparent scrollbar-thumb-transparent hide-scrollbar"
       >
-        {destinations.map((item, index) => (
+        {data.map((item, index) => (
           <div
             key={index}
             className="min-w-[180px] sm:min-w-[200px] md:min-w-[220px] lg:min-w-[250px] rounded-xl overflow-hidden relative shadow-md flex-shrink-0 group hover:scale-105 transition-transform"

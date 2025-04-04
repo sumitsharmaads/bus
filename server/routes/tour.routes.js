@@ -6,7 +6,7 @@ import {
   getAllAdminTours,
   getStateWiseData,
   getTourById,
-  serachTourByName,
+  searchTourByName,
   upcomingTours,
   updateTourPatch,
   updateTourPut,
@@ -18,14 +18,15 @@ const router = express.Router();
 
 //router.post("/", validateAccessToken, addTour);
 router.get("/upcoming-tours", upcomingTours);
-router.post("/admin/getAll", validateAccessToken, isAdmin, getAllAdminTours);
+router.get("/state-breakup", getStateWiseData);
+router.get("/smartSearch", searchTourByName);
+router.get("/:id", getTourById);
 
 router.post("/", validateAccessToken, isAdmin, createTour);
+router.post("/admin/getAll", validateAccessToken, isAdmin, getAllAdminTours);
 //router.get("/", filterTours); // supports query filters
-router.get("/:id", getTourById);
 router.patch("/:id", validateAccessToken, isAdmin, updateTourPatch);
 router.put("/:id", validateAccessToken, isAdmin, updateTourPut);
 router.delete("/:id", validateAccessToken, isAdmin, deleteTour);
-router.get("/state-breakup", getStateWiseData);
-router.get("/smartSearch", serachTourByName);
+
 export default router;

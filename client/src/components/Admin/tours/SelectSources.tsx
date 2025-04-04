@@ -191,9 +191,12 @@ const SelectSourcesDynamic: React.FC<Props> = ({ value, onSave }) => {
               fullWidth
               label="Fare"
               type="number"
-              value={source.fare}
+              value={source.fare == 0 ? "" : source.fare}
               onChange={(e) =>
-                handleFareChange(index, parseFloat(e.target.value))
+                handleFareChange(
+                  index,
+                  e.target.value ? parseFloat(e.target.value) : 0
+                )
               }
               variant="outlined"
               margin="dense"

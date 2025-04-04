@@ -42,6 +42,9 @@ const TourGuide = lazy(() => import("../pages/TourGuide"));
 const AboutUs = lazy(() => import("../pages/AboutUs"));
 const SEOAdminPage = lazy(() => import("../pages/admin/AdminSEODetailsList"));
 const AddSEO = lazy(() => import("../pages/admin/AddSeoDetails"));
+const TestwithChat = lazy(() => import("../pages/TourListWithChatWidget"));
+const TourDetails = lazy(() => import("../pages/TourDetailPage"));
+const PublicTourListPage = lazy(() => import("../pages/TourListPage"));
 
 // Error boundary for routing
 const ErrorElement = () => (
@@ -148,10 +151,44 @@ export const router = createHashRouter([
         ),
       },
       {
+        path: PublicRoutes.TOURS,
+        loader: setLoader,
+        element: (
+          <Suspense fallback={<DummyFallback />}>
+            <PublicTourListPage />
+          </Suspense>
+        ),
+      },
+      {
+        path: PublicRoutes.TOURS_DETAILS,
+        loader: setLoader,
+        element: (
+          <Suspense fallback={<DummyFallback />}>
+            <TourDetails />
+          </Suspense>
+        ),
+      },
+      {
         path: "/test",
         element: (
           <Suspense fallback={<DummyFallback />}>
             <Test />
+          </Suspense>
+        ),
+      },
+      {
+        path: "/test1",
+        element: (
+          <Suspense fallback={<DummyFallback />}>
+            <TestwithChat />
+          </Suspense>
+        ),
+      },
+      {
+        path: "/tourDetails",
+        element: (
+          <Suspense fallback={<DummyFallback />}>
+            <TourDetails />
           </Suspense>
         ),
       },

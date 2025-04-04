@@ -171,7 +171,7 @@ const SlideInMobileFilter: React.FC<{ open: boolean; onClose: () => void }> = ({
 };
 
 // Main TourList Component
-const TourList: React.FC = () => {
+const TourListPage: React.FC = () => {
   const [tours, setTours] = useState([...Array(10).keys()]);
   const [hasMore, setHasMore] = useState(true);
   const [selectedCategory, setSelectedCategory] = useState("All");
@@ -472,4 +472,4 @@ const TourList: React.FC = () => {
   );
 };
 
-export default TourList;
+export default TourListPage;

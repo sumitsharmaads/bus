@@ -62,6 +62,14 @@ export const MobileHeader: React.FC<{
         Home
       </Link>
       <Link
+        to={PublicRoutes.TOURS}
+        className={classname(PublicRoutes.TOURS, true)}
+        onClick={handleLinkClick}
+        onMouseEnter={() => import("../../pages/TourListPage")}
+      >
+        Book Tours
+      </Link>
+      <Link
         to={PublicRoutes.ABOUT_US}
         className={classname(PublicRoutes.ABOUT_US)}
         onClick={handleLinkClick}
