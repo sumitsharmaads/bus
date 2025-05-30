@@ -27,11 +27,11 @@ export const validateAccessToken = async (req, res, next) => {
   }
   const user = refreshTokenInDB.userId;
 
-  const _uuid = req.cookies["uuid"];
+  //const _uuid = req.cookies["uuid"];
   const options = {
     algorithms: ["HS256"],
     issuer: "DADHICH BUS",
-    audience: _uuid,
+    // audience: _uuid,
   };
 
   try {
@@ -49,15 +49,15 @@ export const validateAccessToken = async (req, res, next) => {
       return invalidSessionError(res, next, "You are not authenticated!");
     }
 
-    const isUuidValid = await bcrypt.compare(
-      `${decoded.id.toString()}${process.env.UUID_KEY}`,
-      _uuid
-    );
+    // const isUuidValid = await bcrypt.compare(
+    //   `${decoded.id.toString()}${process.env.UUID_KEY}`,
+    //   _uuid
+    // );
 
-    if (!isUuidValid) {
-      console.log("validateAccessToken: UUID does not match");
-      return invalidSessionError(res, next, "You are not authenticated!", 403);
-    }
+    // if (!isUuidValid) {
+    //   console.log("validateAccessToken: UUID does not match");
+    //   return invalidSessionError(res, next, "You are not authenticated!", 403);
+    // }
 
     if (makeString(decoded?.id) !== makeString(user?._id)) {
       return invalidSessionError(

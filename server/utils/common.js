@@ -15,7 +15,7 @@ export const generateAccessToken = (user, uuid) => {
   const signInOptions = {
     algorithm: "HS256",
     issuer: "DADHICH BUS",
-    audience: `${uuid}`,
+    // audience: `${uuid}`,
     expiresIn: process.env.ACCESS_TOKEN_EXPIRATION,
   };
   return jwt.sign(

@@ -2,11 +2,12 @@ export const AdminRoutes = {
   DASHBOARD: "dashboard",
   USER: "users",
   USER_ADD: "add",
-  USER_EDIT: "users/:id/edit",
+  USER_EDIT: ":id/edit",
   LOCATIONS: "locations",
   PROFILE: "profile",
   TOURS: "tours",
   ADD_TOUR: "add",
+  EDIT_TOUR: ":id/edit",
   EDIT_BOOKING: "booking/:id/edit",
   SETTING: "setting",
   TERMS: "terms",
@@ -15,6 +16,9 @@ export const AdminRoutes = {
   TOURISTPLACES: "touristplaces",
   ADD_OURISTPLACES: "touristplaces/add",
   EDIT_TOURISTPLACES: "touristplaces/:id/edit",
+  SEO_LIST: "seo",
+  ADD_SEO: "add",
+  EDIT_SEO: ":id/edit",
 };
 
 export const PublicRoutes = {
@@ -30,4 +34,6 @@ export const PublicRoutes = {
   FORGOT_PASSWORD: "/forgot-password",
   QUICK_INQUERY: "/inquery",
   TOUR_GUIDES: "/tour-guide",
+  TOURS: "/tours",
+  TOURS_DETAILS: "/tour/:id",
 };

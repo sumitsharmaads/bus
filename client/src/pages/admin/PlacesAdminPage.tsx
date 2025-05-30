@@ -116,7 +116,6 @@ const PlacesAdminPage: React.FC = () => {
       const nonEmptyFilters = Object.fromEntries(
         Object.entries(filters).filter(([_, value]) => value.trim() !== "")
       );
-      console.log("nonEmptyFilters", nonEmptyFilters);
       const response = await post<{
         data: {
           count: number;

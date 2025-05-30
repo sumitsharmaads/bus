@@ -16,7 +16,7 @@ export const refreshToken = async function (req, res, next) {
   console.log("Controller: inside refreshToken");
   const { signedCookies } = req;
   const { refreshToken } = signedCookies;
-  const _uuid = req.cookies["uuid"];
+  //const _uuid = req.cookies["uuid"];
   const currentDate = new Date();
   if (!refreshToken) {
     console.error("refreshToken: Refresh token is missing in request cookies");
@@ -29,18 +29,18 @@ export const refreshToken = async function (req, res, next) {
       return next(createError(401, "Invalid token"));
     }
     const user = refreshTokenInDb.userId;
-    const isUuidValid = await bcrypt.compare(
-      `${user._id.toString()}${process.env.UUID_KEY}`,
-      _uuid
-    );
+    // const isUuidValid = await bcrypt.compare(
+    //   `${user._id.toString()}${process.env.UUID_KEY}`,
+    //   _uuid
+    // );
     const tokenExpiryDate = new Date(refreshTokenInDb.expiryDate);
-    if (!isUuidValid) {
-      console.log("refresh token: UUID does not match");
-      return next(createError(403, "Invalid token. Access forbidden."));
-    }
+    // if (!isUuidValid) {
+    //   console.log("refresh token: UUID does not match");
+    //   return next(createError(403, "Invalid token. Access forbidden."));
+    // }
     const timeDifference = tokenExpiryDate.getTime() - currentDate.getTime();
-    const uuid = createUUID(user._id);
-    const newAccessToken = generateAccessToken({ _id: user._id }, uuid);
+    //const uuid = createUUID(user._id);
+    const newAccessToken = generateAccessToken({ _id: user._id });
     const accessTokenExpiry = getExpirationDate(
       process.env.ACCESS_TOKEN_EXPIRATION
     );
@@ -61,36 +61,40 @@ export const refreshToken = async function (req, res, next) {
       sameSite: process.env.Environment !== "development" ? "None" : "Lax",
     };
     if (refrehToken) {
-      return res
-        .cookie("uuid", uuid, cookiesOption)
-        .cookie("refreshToken", refrehToken, {
-          ...cookiesOption,
-          signed: true,
-          maxAge: REFRESH_TOKEN_EXPIRY_UTIL,
-        })
-        .status(200)
-        .json({
-          success: true,
-          status: 200,
-          message: "Validated user",
-          result: {
-            token: newAccessToken,
-            expiryTime: accessTokenExpiry,
-          },
-        });
+      return (
+        res
+          //.cookie("uuid", uuid, cookiesOption)
+          .cookie("refreshToken", refrehToken, {
+            ...cookiesOption,
+            signed: true,
+            maxAge: REFRESH_TOKEN_EXPIRY_UTIL,
+          })
+          .status(200)
+          .json({
+            success: true,
+            status: 200,
+            message: "Validated user",
+            result: {
+              token: newAccessToken,
+              expiryTime: accessTokenExpiry,
+            },
+          })
+      );
     } else {
-      return res
-        .cookie("uuid", uuid, cookiesOption)
-        .status(200)
-        .json({
-          success: true,
-          status: 200,
-          message: "Validated user",
-          result: {
-            token: newAccessToken,
-            expiryTime: accessTokenExpiry,
-          },
-        });
+      return (
+        res
+          //.cookie("uuid", uuid, cookiesOption)
+          .status(200)
+          .json({
+            success: true,
+            status: 200,
+            message: "Validated user",
+            result: {
+              token: newAccessToken,
+              expiryTime: accessTokenExpiry,
+            },
+          })
+      );
     }
   } catch (error) {
     console.error("refreshToken: Error in refreshToken function:", error);

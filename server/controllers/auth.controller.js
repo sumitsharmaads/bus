@@ -221,12 +221,12 @@ export const verifyOtp = async (req, res, next) => {
       return next(createError(400, "Invalid OTP, please retry again."));
     }
 
-    const uuid = createUUID(existingUser?._id);
-    if (!uuid || uuid instanceof Error) {
-      console.log("Error: Failed to create UUID.");
-      return next(createError(500, "Internal Server Error."));
-    }
-    const accessToken = generateAccessToken(existingUser, uuid);
+    // const uuid = createUUID(existingUser?._id);
+    // if (!uuid || uuid instanceof Error) {
+    //   console.log("Error: Failed to create UUID.");
+    //   return next(createError(500, "Internal Server Error."));
+    // }
+    const accessToken = generateAccessToken(existingUser);
     const refreshToken = generateRefreshToken(existingUser);
     const accessTokenExpiry = getExpirationDate(
       process.env.ACCESS_TOKEN_EXPIRATION
@@ -246,25 +246,27 @@ export const verifyOtp = async (req, res, next) => {
       delete existingUser[fieldName];
     }
 
-    return res
-      .clearCookie("hash-id")
-      .cookie("uuid", uuid, cookiesOption)
-      .cookie("refreshToken", refreshToken, {
-        ...cookiesOption,
-        signed: true,
-        maxAge: REFRESH_TOKEN_EXPIRY_UTIL,
-      })
-      .status(200)
-      .json({
-        success: true,
-        status: 200,
-        message: "OTP verified successfully.",
-        result: {
-          token: accessToken,
-          user: existingUser,
-          expiryTime: accessTokenExpiry,
-        },
-      });
+    return (
+      res
+        .clearCookie("hash-id")
+        //.cookie("uuid", uuid, cookiesOption)
+        .cookie("refreshToken", refreshToken, {
+          ...cookiesOption,
+          signed: true,
+          maxAge: REFRESH_TOKEN_EXPIRY_UTIL,
+        })
+        .status(200)
+        .json({
+          success: true,
+          status: 200,
+          message: "OTP verified successfully.",
+          result: {
+            token: accessToken,
+            user: existingUser,
+            expiryTime: accessTokenExpiry,
+          },
+        })
+    );
   } catch (error) {
     console.error("verifyOtp:Error during OTP verification:", error);
     return next(

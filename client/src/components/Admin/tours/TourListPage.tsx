@@ -24,6 +24,7 @@ import {
   CircularProgress,
   useMediaQuery,
   useTheme,
+  Chip,
 } from "@mui/material";
 import {
   Edit,
@@ -33,10 +34,16 @@ import {
   FilterAlt,
   ExpandMore,
   ExpandLess,
+  LocationOn,
+  AccessTime,
+  PeopleAlt,
 } from "@mui/icons-material";
+import EventIcon from "@mui/icons-material/Event";
 import axios from "axios";
 import { post } from "../../../service";
 import { BasicDetailsType } from "./AddBasicTourDetails";
+import { TourTravelType } from "../types";
+import { Link } from "react-router-dom";
 
 const AutocompleteField: React.FC<{
   label: string;
@@ -97,7 +104,7 @@ const TourListPage: React.FC = () => {
   const theme = useTheme();
   // const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
-  const [tours, setTours] = useState<TourListDetailsType[]>([]);
+  const [tours, setTours] = useState<TourTravelType["tours"][]>([]);
 
   const [currentPage, setCurrentPage] = useState(1);
   const [searchFilters, setSearchFilters] = useState({
@@ -130,7 +137,7 @@ const TourListPage: React.FC = () => {
 
       const response = await post<{
         data: {
-          result: TourListDetailsType[];
+          result: TourTravelType["tours"][];
           count: number;
         };
       }>("/tours/admin/getAll", {
@@ -300,63 +307,157 @@ const TourListPage: React.FC = () => {
       </Paper>
 
       <Grid container spacing={3}>
-        {tours.map((tour: any) => (
-          <Grid item xs={12} sm={6} md={4} key={tour.id}>
-            <Card elevation={5} sx={{ borderRadius: 2, overflow: "hidden" }}>
-              <Box sx={{ display: "flex", alignItems: "center", padding: 2 }}>
-                <Avatar
-                  src={tour.image?.url}
-                  alt={tour.tourname}
-                  sx={{ width: 56, height: 56, mr: 2 }}
+        {/* {tours.map((tour) => (
+          <Grid item xs={12} sm={6} md={4} key={tour?._id}>
+            <Card elevation={3} sx={{ borderRadius: 3 }}>
+              {tour?.image?.url && (
+                <Box
+                  sx={{
+                    height: 180,
+                    background: `url(${tour?.image.url}) center/cover no-repeat`,
+                  }}
                 />
-                <Typography variant="h6" fontWeight={600} className="font-bold">
-                  {tour.tourname}
-                </Typography>
-              </Box>
+              )}
               <CardContent>
-                <Typography variant="body2" color="text.secondary">
-                  Destination: {tour.destination}
-                </Typography>
-                <Typography variant="body2" color="text.secondary">
-                  Minimum Fare: {tour.minfair}
-                </Typography>
-                <Typography variant="body2" color="text.secondary">
-                  Duration: {tour.startDate} - {tour.endDate}
-                </Typography>
-                <Typography
-                  variant="body2"
-                  fontWeight={600}
-                  color={
-                    tour.status === "Published"
-                      ? "success.main"
-                      : "warning.main"
-                  }
-                >
-                  Status: {tour.status}
-                </Typography>
+                <Stack spacing={1}>
+                  <Typography variant="h6" fontWeight={600}>
+                    {tour?.tourname}
+                  </Typography>
+
+                  <Typography variant="body2">
+                    <strong>Places:</strong>{" "}
+                    {tour?.places?.map((p) => p.name).join(", ")}
+                  </Typography>
+
+                  <Typography variant="body2">
+                    <strong>Dates:</strong> {tour?.startDate?.slice(0, 10)} -{" "}
+                    {tour?.endDate?.slice(0, 10)}
+                  </Typography>
+                  <Typography variant="body2">
+                    <strong>Days/Nights:</strong> {tour?.days} Days /{" "}
+                    {tour?.night} Nights
+                  </Typography>
+                  <Typography variant="body2">
+                    <strong>Capacity:</strong> {tour?.capacity} people
+                  </Typography>
+
+                  <Typography variant="body2">
+                    <strong>Min Fare:</strong> ₹{tour?.minfair}
+                  </Typography>
+
+                  <Chip
+                    label={tour?.status === 1 ? "Draft" : "Published"}
+                    color={tour?.status === 1 ? "warning" : "success"}
+                    variant="outlined"
+                    size="small"
+                  />
+                </Stack>
               </CardContent>
-              <CardActions sx={{ justifyContent: "space-between", padding: 2 }}>
-                <Button variant="outlined" color="primary" startIcon={<Edit />}>
+
+              <CardActions
+                sx={{ justifyContent: "space-between", px: 2, pb: 2 }}
+              >
+                <Button startIcon={<Edit />} variant="outlined">
                   Edit
                 </Button>
-                {tour.status === "Draft" && (
+                {tour?.status === 1 && (
                   <Button
+                    startIcon={<Delete />}
                     variant="outlined"
                     color="error"
-                    startIcon={<Delete />}
                   >
                     Delete
                   </Button>
                 )}
-                <Button
-                  variant="outlined"
-                  color={tour.status === "Published" ? "warning" : "success"}
-                  startIcon={
-                    tour.status === "Published" ? <Unpublished /> : <Publish />
-                  }
-                >
-                  {tour.status === "Published" ? "Unpublish" : "Publish"}
-                </Button>
+                {tour?.status === 1 && (
+                  <Button
+                    startIcon={<Publish />}
+                    variant="outlined"
+                    color={"success"}
+                  >
+                    {"Publish"}
+                  </Button>
+                )}
+              </CardActions>
+            </Card>
+          </Grid>
+        ))} */}
+        {tours.map((tour) => (
+          <Grid item xs={12} sm={6} md={4} key={tour?._id}>
+            <Card elevation={4} sx={{ borderRadius: 4, overflow: "hidden" }}>
+              {tour?.image?.url && (
+                <Box
+                  sx={{
+                    height: 180,
+                    backgroundImage: `url(${tour?.image.url})`,
+                    backgroundSize: "cover",
+                    backgroundPosition: "center",
+                  }}
+                />
+              )}
+              <CardContent>
+                <Typography variant="h6" fontWeight={700} gutterBottom>
+                  {tour?.tourname}
+                </Typography>
+
+                <Typography variant="body2" color="text.secondary">
+                  <LocationOn
+                    fontSize="small"
+                    sx={{ verticalAlign: "middle", mr: 0.5 }}
+                  />
+                  {tour?.places?.map((p) => p.name).join(", ")}
+                </Typography>
+
+                <Stack direction="row" spacing={2} mt={1} alignItems="center">
+                  <Typography variant="body2">
+                    <EventIcon fontSize="small" sx={{ mr: 0.5 }} />
+                    {tour?.startDate?.slice(0, 10)} -{" "}
+                    {tour?.endDate?.slice(0, 10)}
+                  </Typography>
+                </Stack>
+
+                <Stack direction="row" spacing={2} mt={1} alignItems="center">
+                  <Typography variant="body2">
+                    <AccessTime fontSize="small" sx={{ mr: 0.5 }} />
+                    {tour?.days} Days / {tour?.night} Nights
+                  </Typography>
+                  <Typography variant="body2">
+                    <PeopleAlt fontSize="small" sx={{ mr: 0.5 }} />
+                    {tour?.capacity} People
+                  </Typography>
+                </Stack>
+
+                <Typography variant="h6" mt={1} color="error.main">
+                  ₹{tour?.minfair?.toLocaleString("en-IN")}
+                </Typography>
+              </CardContent>
+
+              <CardActions
+                sx={{ justifyContent: "space-between", px: 2, pb: 2 }}
+              >
+                <Link to={`${tour?._id}/edit`}>
+                  <Button startIcon={<Edit />} variant="outlined">
+                    Edit
+                  </Button>
+                </Link>
+                {tour?.status === 1 && (
+                  <Button
+                    startIcon={<Delete />}
+                    variant="outlined"
+                    color="error"
+                  >
+                    Delete
+                  </Button>
+                )}
+                {tour?.status === 1 && (
+                  <Button
+                    startIcon={<Publish />}
+                    variant="outlined"
+                    color={"success"}
+                  >
+                    {"Publish"}
+                  </Button>
+                )}
               </CardActions>
             </Card>
           </Grid>

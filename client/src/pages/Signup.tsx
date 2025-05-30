@@ -8,6 +8,7 @@ import { LabelError } from "../common";
 import { emailRegex, nameRegex, passwordRegex } from "../utils";
 import { post } from "../service";
 import { useLoader } from "../contexts/LoaderContext";
+import WithSEO from "../SEO/WithSEO";
 
 const Signup: React.FC = () => {
   const { setLoading } = useLoader();
@@ -235,4 +236,4 @@ const Signup: React.FC = () => {
   );
 };
 
-export default Signup;
+export default WithSEO(Signup, { title: "Dadhich Bus Services | Signup" });

@@ -36,8 +36,8 @@ export const AuthContextProvider: React.FC<{ children: React.ReactNode }> = ({
     const storedExpiration = tokenExpiryStorage.getItem("");
     if (storedExpiration) {
       const expirationDate = new Date(storedExpiration).getTime();
-      const currentTime = Date.now();
-      return expirationDate - currentTime; // Remaining time in ms
+      const currentTime = new Date().getTime();
+      return expirationDate - currentTime;
     }
     return 0;
   };
@@ -75,7 +75,6 @@ export const AuthContextProvider: React.FC<{ children: React.ReactNode }> = ({
     const timer = setInterval(() => {
       const remainingTime = calculateRemainingTime();
       if (remainingTime <= 10000) {
-        console.log("this is called");
         // Call refresh token if time is less than or equal to 10 seconds
         refreshAccessToken();
       }
@@ -91,7 +90,6 @@ export const AuthContextProvider: React.FC<{ children: React.ReactNode }> = ({
     if (document.visibilityState === "visible") {
       const remainingTime = calculateRemainingTime();
       if (remainingTime <= 10000) {
-        console.log("this is called beacuse visisble");
         refreshAccessToken();
       }
     }
@@ -102,7 +100,6 @@ export const AuthContextProvider: React.FC<{ children: React.ReactNode }> = ({
    */
   useEffect(() => {
     if (User.isLogin) {
-      console.log("this is called beacuse useEffect");
       const timer = startTokenCheckTimer(); // Start the timer for periodic checks
 
       document.addEventListener("visibilitychange", handleVisibilityChange);

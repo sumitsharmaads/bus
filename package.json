@@ -8,7 +8,8 @@
     "install-server": "npm install",
     "build": "npm run install-server && cd client && npm install && npm run build",
     "start": "node index.js",
-    "dev": "nodemon index.js"
+    "dev": "nodemon index.js",
+    "heroku-postbuild": "cd client && npm install --include=dev && npm run build"
   },
   "keywords": [
     "dadhich",
@@ -44,5 +45,8 @@
   },
   "devDependencies": {
     "nodemon": "^3.1.7"
-  }
+  },
+  "engines": {
+  "node": "20.x"
+}
 }

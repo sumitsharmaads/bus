@@ -2,6 +2,7 @@ import React from "react";
 import { FaqAndTerms } from "../components/FaqAndTerms";
 import { Link } from "react-router-dom";
 import { PublicRoutes } from "../navigation";
+import WithSEO from "../SEO/WithSEO";
 // replace with actual image path
 
 const AboutUs: React.FC = () => {
@@ -130,4 +131,4 @@ const AboutUs: React.FC = () => {
   );
 };
 
-export default AboutUs;
+export default WithSEO(AboutUs, { title: "Dadhich Bus Services | About US" });

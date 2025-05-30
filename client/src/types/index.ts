@@ -73,3 +73,14 @@ export type SuccessResponse<T> = {
   message: string;
   data: T;
 };
+
+export interface SEOInterface {
+  _id?: string;
+  route: string;
+  title: string;
+  description?: string;
+  keywords?: string;
+  canonical?: string;
+  image?: string;
+  url?: string;
+}

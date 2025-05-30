@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { AdminSidebar } from "../components/Admin/AdminSidebar";
 import { AdminMobileSidebar } from "../components/Admin/AdminMobileSidebar";
-import { Outlet } from "react-router-dom";
+import { Outlet, useLocation } from "react-router-dom";
 import { CssBaseline, ThemeProvider, createTheme } from "@mui/material";
 
 const adminTheme = createTheme({
@@ -61,6 +61,7 @@ const adminTheme = createTheme({
 });
 
 export const AdminLayout: React.FC = () => {
+  const location = useLocation();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [viewport, setViewport] = useState({
     mobileView: false,
@@ -88,12 +89,12 @@ export const AdminLayout: React.FC = () => {
   };
 
   return (
-    <ThemeProvider theme={adminTheme}>
+    <ThemeProvider theme={adminTheme} key={location.pathname}>
       <CssBaseline />
       <div className="px-2 h-[2px] bg-primary transition-all duration-300 ease-in-out" />
 
       <div
-        className={`flex h-screen bg-gray-100 ${
+        className={`flex h-[calc(100vh-5rem)] bg-gray-100 overflow-y-hidden ${
           viewport.mobileView || viewport.tabView ? "flex-col" : ""
         }`}
       >
@@ -111,7 +112,7 @@ export const AdminLayout: React.FC = () => {
             toggleDropdown={toggleDropdown}
           />
         </div>
-        <div className="flex-1 p-6 overflow-y-auto">
+        <div className="flex-1 sm:p-0 sm:pt-10 sm:pb-0 sm:px-0 md:px-6 md:py-4 lg:p-6 overflow-y-auto">
           <Outlet />
         </div>
       </div>

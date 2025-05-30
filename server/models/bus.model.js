@@ -30,9 +30,13 @@ BusSchema.statics.updateBus = async function (id, data) {
   }
 };
 
-BusSchema.statics.getAllBuses = async function () {
+BusSchema.statics.getAllBuses = async function (search) {
   try {
-    return await this.find();
+    const query = {};
+    if (search) {
+      query.busNumber = { $regex: new RegExp(search, "i") }; // case-insensitive
+    }
+    return await this.find(query);
   } catch (error) {
     throw new Error("Failed to fetch buses: " + error.message);
   }

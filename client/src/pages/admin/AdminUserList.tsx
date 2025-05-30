@@ -27,7 +27,7 @@ import { Link } from "react-router-dom";
 import { ExpandLess, ExpandMore, FilterAlt } from "@mui/icons-material";
 import { post } from "../../service";
 
-interface User {
+export interface User {
   _id: string;
   email: string;
   username: string;
@@ -51,7 +51,7 @@ interface Condition {
     fullname?: string;
     username?: string;
   };
-  roleTypes?: number;
+  roleType?: number;
   access?: number;
 }
 
@@ -104,7 +104,7 @@ const AdminUserList: React.FC = () => {
     if (filters.roleType) {
       condition = {
         ...condition,
-        roleTypes: Number(filters.roleType),
+        roleType: Number(filters.roleType),
       };
     }
     if (filters.access) {
@@ -334,7 +334,7 @@ const AdminUserList: React.FC = () => {
                   <Button
                     variant="outlined"
                     component={Link}
-                    to={`/edit-user/${user._id}`}
+                    to={`${user._id}/edit`}
                   >
                     Edit
                   </Button>

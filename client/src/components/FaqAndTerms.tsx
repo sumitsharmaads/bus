@@ -76,7 +76,7 @@ export const FaqAndTerms: React.FC = () => {
   return (
     <div className="max-w-6xl mx-auto mt-20 px-4">
       {/* FAQ Section */}
-      <div className="mb-12">
+      <div className="mb-12" id="faq-section">
         <h2 className="text-3xl font-semibold text-gray-800 text-start mb-8">
           Frequently Asked Questions
         </h2>
@@ -125,7 +125,7 @@ export const FaqAndTerms: React.FC = () => {
       </div>
 
       {/* Terms and Conditions Section */}
-      <div>
+      <div id="term-condition">
         <h2 className="text-3xl font-semibold text-gray-800 text-start mb-8">
           Terms & Conditions
         </h2>

@@ -6,6 +6,7 @@ import { LabelError } from "../common";
 import { post } from "../service";
 import { useLoader } from "../contexts/LoaderContext";
 import { useNavigate } from "react-router-dom";
+import WithSEO from "../SEO/WithSEO";
 
 type InqueryStateType = {
   name: string;
@@ -176,4 +177,4 @@ const Inquiry: React.FC = () => {
   );
 };
 
-export default Inquiry;
+export default WithSEO(Inquiry, { title: "Dadhich Bus Services | Inquery" });

@@ -20,6 +20,7 @@ import tourRoutes from "./server/routes/tour.routes.js";
 import faqRoutes from "./server/routes/faq.routes.js";
 import termsRoutes from "./server/routes/terms.routes.js";
 import busRoutes from "./server/routes/bus.routes.js";
+import seoRoutes from "./server/routes/seo.routes.js";
 
 import customCors from "./server/middlewares/cores.auth.middlewares.js";
 
@@ -33,6 +34,10 @@ app.use(
     crossOriginEmbedderPolicy: true,
   })
 );
+app.use((req, res, next) => {
+  res.setHeader("Cross-Origin-Opener-Policy", "same-origin");
+  next();
+});
 app.use(mongoSanitize());
 app.use(xssClean());
 app.use(compression());
@@ -66,6 +71,7 @@ app.use("/api/v1/tours", tourRoutes);
 app.use("/api/v1/faqs", faqRoutes);
 app.use("/api/v1/terms", termsRoutes);
 app.use("/api/v1/buses", busRoutes);
+app.use("/api/v1/seo", seoRoutes);
 
 app.use(express.static(path.join(__dirname, "client/build")));
 app.get("*", (req, res) => {
