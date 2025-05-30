@@ -93,7 +93,7 @@ export const Header: React.FC = () => {
             onMouseEnter={() => import("../../pages/TourListPage")}
             className={classname(PublicRoutes.TOURS)}
           >
-            Book Tours
+            Tours
           </Link>
           <Link
             to={PublicRoutes.ABOUT_US}

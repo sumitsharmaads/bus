@@ -112,7 +112,7 @@ export const AdminLayout: React.FC = () => {
             toggleDropdown={toggleDropdown}
           />
         </div>
-        <div className="flex-1 p-6 overflow-y-auto">
+        <div className="flex-1 sm:p-0 sm:pt-10 sm:pb-0 sm:px-0 md:px-6 md:py-4 lg:p-6 overflow-y-auto">
           <Outlet />
         </div>
       </div>

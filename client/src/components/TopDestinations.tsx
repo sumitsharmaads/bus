@@ -137,10 +137,10 @@ const TopDestinations = () => {
           Explore Top <span className="text-red-600">Destinations</span>
         </h2>
         <button
-          className="border border-gray-400 text-gray-700 px-4 py-1 rounded-full text-sm hover:bg-gray-100 transition"
+          className="bg-[#C22A54] text-white px-6 py-3 rounded-full text-sm font-semibold hover:bg-[#E53E3E] transition-all ease-in-out duration-300"
           onClick={() => handleViewAll()}
         >
-          View all
+          View All
         </button>
       </div>
 

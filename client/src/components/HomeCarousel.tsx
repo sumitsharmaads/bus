@@ -22,7 +22,7 @@ const settings = {
 
 export const HomeCarousel = () => {
   return (
-    <section className="py-10 bg-white max-w-5xl mx-auto px-2">
+    <section className="py-10 bg-white max-w-5xl mx-auto px-2 overflow-hidden">
       <h2 className="text-3xl font-bold font-['Volkhov']">
         Pick Your Comfort: AC and Non-AC Bus Rides
       </h2>

@@ -59,7 +59,7 @@ export const Footer: React.FC = () => {
           </h4>
           <ul className="space-y-3 text-sm">
             <li>
-              <Link to={PublicRoutes.HOME} className="hover:text-[#E53E3E]">
+              <Link to={PublicRoutes.TOURS} className="hover:text-[#E53E3E]">
                 Tour Packages
               </Link>
             </li>
@@ -108,12 +108,18 @@ export const Footer: React.FC = () => {
               </Link>
             </li>
             <li>
-              <Link to={PublicRoutes.HOME} className="hover:text-[#E53E3E]">
+              <Link
+                to={`${PublicRoutes.ABOUT_US}#faq-section`}
+                className="hover:text-[#E53E3E]"
+              >
                 FAQ
               </Link>
             </li>
             <li>
-              <Link to={PublicRoutes.HOME} className="hover:text-[#E53E3E]">
+              <Link
+                to={`${PublicRoutes.ABOUT_US}#term-condition`}
+                className="hover:text-[#E53E3E]"
+              >
                 Terms & Conditions
               </Link>
             </li>

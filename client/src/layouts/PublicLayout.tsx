@@ -36,12 +36,25 @@ export const PublicLayout: React.FC = () => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
+  useEffect(() => {
+    const sectionId = location.hash;
+    if (sectionId) {
+      const sectionElement = document.querySelector(sectionId);
+      if (sectionElement) {
+        sectionElement.scrollIntoView({ behavior: "smooth" });
+      }
+    } else {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+  }, [location]);
+
   const isAdminPage = useMemo(
     () => location.pathname.match("/admin"),
     [location.pathname]
   );
+
   return (
-    <div className="flex flex-col">
+    <div className="flex flex-col" id="mainContent">
       <Header />
       <main className="flex-1">
         <Outlet />

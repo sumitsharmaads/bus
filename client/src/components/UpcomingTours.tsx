@@ -57,7 +57,10 @@ export const UpcomingTours: React.FC = () => {
                 <div className="relative">
                   {/* Image Tag */}
                   <img
-                    src={tour?.image?.url}
+                    src={
+                      tour?.image?.url ||
+                      "/images/public/home/6f58de3c4b3d1d5d94614fd604778a4c.png"
+                    }
                     alt={tour.tourname}
                     className="w-full h-48 object-cover"
                     crossOrigin={"anonymous"}
