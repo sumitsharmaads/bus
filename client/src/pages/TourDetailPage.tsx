@@ -213,10 +213,7 @@ const TourDetailPage: React.FC = () => {
 
         {/* ========== Mobile/Tablet: Booking Box BEFORE Content ========== */}
         <div className="block lg:hidden mb-8">
-          <BookingSidebar
-            {...data}
-            contact={data?.captin?.phone?.toString() || ""}
-          />
+          {data && <BookingSidebar {...data} />}
         </div>
 
         {/* ===================== Main Content Grid ===================== */}
@@ -255,14 +252,7 @@ const TourDetailPage: React.FC = () => {
           {/* RIGHT: Sticky Booking Box (desktop only) */}
           <div className="hidden lg:block">
             <div className="sticky top-24">
-              <BookingSidebar
-                places={data?.places}
-                source={data?.source}
-                night={data?.night}
-                days={data?.days}
-                minfair={data?.minfair}
-                contact={data?.captin?.phone?.toString() || ""}
-              />
+              {data && <BookingSidebar {...data} />}
             </div>
           </div>
         </div>

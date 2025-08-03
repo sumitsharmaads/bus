@@ -9,22 +9,16 @@ import PhoneIcon from "@mui/icons-material/Phone";
 import HelpOutlineIcon from "@mui/icons-material/HelpOutline";
 import { Tour } from "../TourDetailPage";
 import { useWebsite } from "../../contexts/WebsiteProvider";
+import moment from "moment";
 
-const BookingSidebar = (params: {
-  source?: Tour["source"];
-  places?: Tour["places"];
-  days?: number;
-  night?: number;
-  minfair?: number | string;
-  contact?: string;
-}) => {
+const BookingSidebar = (params: Tour) => {
   const { websiteInfo } = useWebsite();
   return (
     <div className="bg-white border border-gray-200 rounded-2xl shadow-lg p-5 space-y-4 w-full sticky top-24 z-10">
       {/* Destination & Duration */}
       <div className="flex justify-between items-start">
         <div className="flex flex-col text-sm text-gray-700">
-          <div className="flex items-center gap-2 font-semibold">
+          <div className="flex items-center gap-2 font-semibold text-xs">
             <LocationOnIcon fontSize="small" className="text-[#C22A54]" />
             <span>
               From:{" "}
@@ -32,6 +26,7 @@ const BookingSidebar = (params: {
             </span>
           </div>
           <p className="text-xs mt-1 text-gray-500">
+            <LocationOnIcon fontSize="small" className="text-[#C22A54]" />
             <strong>
               <b>To:</b>
             </strong>{" "}
@@ -48,6 +43,17 @@ const BookingSidebar = (params: {
 
       {/* Session Info */}
       <div className="text-sm text-gray-700 space-y-2">
+        <div className="flex items-center text-xs text-gray-600 gap-1.5">
+          <CalendarMonthIcon
+            sx={{ fontSize: 15, mt: "-1px", color: "text-gray-500" }}
+          />{" "}
+          <span>{moment(params.startDate).format("DD MMM YYYY, hh:mm A")}</span>{" "}
+          -
+          <CalendarMonthIcon
+            sx={{ fontSize: 15, mt: "-1px", color: "text-gray-500" }}
+          />{" "}
+          <span>{moment(params.endDate).format("DD MMM YYYY, hh:mm A")}</span>
+        </div>
         <div className="flex items-center gap-2">
           <CheckCircleIcon fontSize="small" className="text-green-600" />
           Best Months: Jan - Dec
@@ -96,7 +102,7 @@ const BookingSidebar = (params: {
         <div className="grid grid-cols-2 gap-3 pt-3">
           <a
             className="bg-white text-[#C22A54] hover:text-[#691930]/10 font-semibold text-sm rounded-lg py-2 flex justify-center items-center gap-1 transition-all duration-300"
-            href={`tel:${websiteInfo?.phone || params.contact}`}
+            href={`tel:${params.captin?.phone || websiteInfo?.phone}`}
           >
             <PhoneIcon fontSize="small" /> Call
           </a>
