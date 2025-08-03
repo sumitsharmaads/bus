@@ -120,7 +120,7 @@ const TourDetailPage: React.FC = () => {
       }
       return inclusive;
     });
-  }, []);
+  }, [data]);
 
   useEffect(() => {
     if (isValidObjectId(id)) {
