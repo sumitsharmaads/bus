@@ -3,6 +3,7 @@ import LocationOnIcon from "@mui/icons-material/LocationOn";
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import clsx from "clsx";
+import { Tour } from "./TourDetailPage";
 
 interface ItineraryItem {
   title: string;
@@ -41,14 +42,14 @@ const badgeColor = {
   Sightseeing: "bg-purple-100 text-purple-700",
 };
 
-const ItinerarySection: React.FC = () => {
+const ItinerarySection = ({ itenary }: { itenary: Tour["itenary"] }) => {
   return (
     <section className="mt-12">
       <h2 className="text-2xl font-semibold text-gray-800 mb-6">
         Day-wise Itinerary
       </h2>
       <div className="space-y-10">
-        {itineraryData.map((item, index) => (
+        {itenary?.map((item, index) => (
           <div
             key={index}
             className="relative bg-white rounded-xl shadow-md p-6 border border-gray-200 flex flex-col md:flex-row gap-4"
