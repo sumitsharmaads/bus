@@ -45,7 +45,7 @@ export const AddCaptinBus: React.FC = () => {
       items: 50,
       page: 1,
       search: {},
-      roleTypes: 2,
+      roleTypes: { $in: [0, 2] },
     };
     const response = await post<{
       result: {

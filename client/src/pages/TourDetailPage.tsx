@@ -19,6 +19,8 @@ import BookingSidebar from "./admin/BookingSlideBox";
 import { useParams } from "react-router-dom";
 import { isValidObjectId } from "../utils";
 import { get } from "../service";
+import { TourOptions } from "../components/TourList/TourOptions";
+import { useWebsite } from "../contexts/WebsiteProvider";
 
 const tour = {
   tourName: "Kedarnath yatra",
@@ -103,7 +105,9 @@ const BookingBox = () => (
 );
 
 const TourDetailPage: React.FC = () => {
+  const { websiteInfo } = useWebsite();
   const [data, setData] = useState<Tour | null>(null);
+  const [optionsDialogOpen, setOptionsDialogOpen] = useState(false);
   const { id } = useParams();
 
   const inclusiveData: {
@@ -140,108 +144,139 @@ const TourDetailPage: React.FC = () => {
   if (!tour) {
     return <div>Loading...</div>;
   }
+  const handleOpenOptionsDialog = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setOptionsDialogOpen(true);
+  };
+
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-8 pb-20">
-      {/* ===================== Hero Section ===================== */}
-      <section className="relative w-full mb-12">
-        <img
-          src={
-            data?.image?.url ||
-            "/images/public/home/6f58de3c4b3d1d5d94614fd604778a4c.png"
-          }
-          alt={data?.tourname}
-          className="w-full h-[45vh] sm:h-[60vh] md:h-[65vh] object-cover rounded-2xl shadow-lg"
-        />
-        {/* Tour Name and Types (with Icons) */}
-        <div className="absolute top-16 left-4 sm:left-6 md:left-8 text-white">
-          <h1 className="text-4xl sm:text-5xl font-bold">{data?.tourname}</h1>
-          <div className="flex gap-3 mt-2">
-            {data?.type?.map((type) => (
-              <span
-                key={type}
-                className="bg-[#C22A54] text-white rounded-full px-3 py-1 text-sm"
-              >
-                {type}
-              </span>
-            ))}
-          </div>
-        </div>
-        {/* Floating Booking Box - Responsive */}
-        <div className="absolute top-4 right-4 sm:top-6 sm:right-6 md:top-auto md:bottom-10 md:right-12 w-44 sm:w-56 bg-white text-gray-800 rounded-xl shadow-xl p-4 flex flex-col items-center justify-center gap-3 border border-gray-200">
-          <div className="flex justify-between w-full text-xs sm:text-sm text-center text-[#C22A54]">
-            <div className="flex flex-col items-center">
-              <PhoneIcon fontSize="small" />
-              <span className="mt-1">Call</span>
-            </div>
-            <div className="flex flex-col items-center">
-              <HelpOutlineIcon fontSize="small" />
-              <span className="mt-1">Query</span>
-            </div>
-          </div>
-          <div className="text-center">
-            <p className="text-lg sm:text-xl font-bold text-[#C22A54]">
-              ₹ {data?.minfair}
-            </p>
-            <p className="text-xs text-gray-500">per person</p>
-          </div>
-          <button className="bg-[#C22A54] hover:bg-[#a92044] text-white text-sm rounded-full px-4 py-1.5 w-full flex items-center justify-center gap-1">
-            <ShoppingCartIcon fontSize="small" />
-            Book Now
-          </button>
-        </div>
-      </section>
-
-      {/* ========== Mobile/Tablet: Booking Box BEFORE Content ========== */}
-      <div className="block lg:hidden mb-8">
-        <BookingSidebar {...data} />
-      </div>
-
-      {/* ===================== Main Content Grid ===================== */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        {/* LEFT: Tour Content */}
-        <div className="lg:col-span-2 space-y-10">
-          {/* ===================== About Section ===================== */}
-          <section>
-            <AboutTourSection description={data?.description || ""} />
-          </section>
-
-          {/* ===================== Inclusions Section ===================== */}
-          <section>
-            <h3 className="text-xl font-semibold mb-4 text-gray-800">
-              Inclusions
-            </h3>
-            <div className="w-full bg-white rounded-2xl shadow-md p-6 flex flex-wrap sm:flex-nowrap justify-between items-center text-center gap-6">
-              {inclusiveData.map((item) => (
-                <div
-                  key={item.label}
-                  className={`flex flex-col items-center justify-center ${
-                    item.highlight ? "text-blue-700" : "text-gray-700"
-                  } hover:text-[#C22A54] transition-all duration-300 ease-in-out w-1/2 sm:w-auto flex-1`}
+    <>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-8 pb-20">
+        {/* ===================== Hero Section ===================== */}
+        <section className="relative w-full mb-12">
+          <img
+            src={
+              data?.image?.url ||
+              "/images/public/home/6f58de3c4b3d1d5d94614fd604778a4c.png"
+            }
+            alt={data?.tourname}
+            className="w-full h-[45vh] sm:h-[60vh] md:h-[65vh] object-cover rounded-2xl shadow-lg"
+          />
+          {/* Tour Name and Types (with Icons) */}
+          <div className="absolute top-16 left-4 sm:left-6 md:left-8 text-white bg-black/40 p-4 rounded-lg backdrop-blur-sm">
+            <h1 className="text-4xl sm:text-5xl font-bold">{data?.tourname}</h1>
+            <div className="flex gap-3 mt-2">
+              {data?.type?.map((type) => (
+                <span
+                  key={type}
+                  className="bg-[#C22A54] text-white rounded-full px-3 py-1 text-sm"
                 >
-                  <div className="text-3xl mb-1">{item.icon}</div>
-                  <span className="text-sm font-medium">{item.label}</span>
-                </div>
+                  {type}
+                </span>
               ))}
             </div>
-          </section>
+          </div>
+          {/* Floating Booking Box - Responsive */}
+          <div className="absolute bottom-[-44px] right-4 sm:top-6 sm:right-6 md:top-auto md:bottom-10 md:right-12 w-44 sm:w-56 bg-white text-gray-800 rounded-xl shadow-xl p-4 flex flex-col items-center justify-center gap-3 border border-gray-200">
+            <div className="flex justify-between w-full text-xs sm:text-sm text-center text-[#C22A54]">
+              <a
+                className="flex flex-col items-center"
+                href={`tel:${websiteInfo?.phone || data?.captin?.phone}`}
+              >
+                <PhoneIcon fontSize="small" />
+                <span className="mt-1">Call</span>
+              </a>
+              <div className="flex flex-col items-center">
+                <HelpOutlineIcon fontSize="small" />
+                <span className="mt-1">Query</span>
+              </div>
+            </div>
+            <div className="text-center">
+              <p className="text-lg sm:text-xl font-bold text-[#C22A54]">
+                ₹ {data?.minfair}
+              </p>
+              <p className="text-xs text-gray-500">per person</p>
+            </div>
 
-          {/* =======================Itenary */}
-          <ItinerarySection itenary={data?.itenary || []} />
+            {data?.source && data.source.length > 1 && (
+              <button
+                onClick={handleOpenOptionsDialog}
+                className=" bg-black/60 hover:bg-black/80 text-white text-[10px] font-medium  text-sm rounded-full px-4 py-1.5 w-full flex items-center justify-center gap-1 shadow group-hover:opacity-100 opacity-80"
+                title="View Options"
+              >
+                {data.source.length} Options
+              </button>
+            )}
+          </div>
+        </section>
+
+        {/* ========== Mobile/Tablet: Booking Box BEFORE Content ========== */}
+        <div className="block lg:hidden mb-8">
+          <BookingSidebar
+            {...data}
+            contact={data?.captin?.phone?.toString() || ""}
+          />
         </div>
 
-        {/* RIGHT: Sticky Booking Box (desktop only) */}
-        <div className="hidden lg:block">
-          <div className="sticky top-24">
-            <BookingSidebar
-              places={data?.places}
-              source={data?.source}
-              night={data?.night}
-              days={data?.days}
-            />
+        {/* ===================== Main Content Grid ===================== */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          {/* LEFT: Tour Content */}
+          <div className="lg:col-span-2 space-y-10">
+            {/* ===================== About Section ===================== */}
+            <section>
+              <AboutTourSection description={data?.description || ""} />
+            </section>
+
+            {/* ===================== Inclusions Section ===================== */}
+            <section>
+              <h3 className="text-xl font-semibold mb-4 text-gray-800">
+                Inclusions
+              </h3>
+              <div className="w-full bg-white rounded-2xl shadow-md p-6 flex flex-wrap sm:flex-nowrap justify-between items-center text-center gap-6">
+                {inclusiveData.map((item) => (
+                  <div
+                    key={item.label}
+                    className={`flex flex-col items-center justify-center ${
+                      item?.highlight ? "text-[#C22A54]" : "text-gray-700"
+                    } transition-all duration-300 ease-in-out w-1/2 sm:w-auto flex-1`}
+                  >
+                    <div className="text-3xl mb-1">{item.icon}</div>
+                    <span className="text-sm font-medium">{item.label}</span>
+                  </div>
+                ))}
+              </div>
+            </section>
+
+            {/* =======================Itenary */}
+            <ItinerarySection itenary={data?.itenary || []} />
+          </div>
+
+          {/* RIGHT: Sticky Booking Box (desktop only) */}
+          <div className="hidden lg:block">
+            <div className="sticky top-24">
+              <BookingSidebar
+                places={data?.places}
+                source={data?.source}
+                night={data?.night}
+                days={data?.days}
+                minfair={data?.minfair}
+                contact={data?.captin?.phone?.toString() || ""}
+              />
+            </div>
           </div>
         </div>
       </div>
-    </div>
+      {data?.source && data.source.length > 1 && (
+        <TourOptions
+          open={optionsDialogOpen}
+          onClose={() => setOptionsDialogOpen(false)}
+          tourTitle={data?.tourname || ""}
+          minFair={data?.minfair || 0}
+          source={data?.source}
+        />
+      )}
+    </>
   );
 };
 

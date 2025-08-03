@@ -8,13 +8,17 @@ import GroupIcon from "@mui/icons-material/Group";
 import PhoneIcon from "@mui/icons-material/Phone";
 import HelpOutlineIcon from "@mui/icons-material/HelpOutline";
 import { Tour } from "../TourDetailPage";
+import { useWebsite } from "../../contexts/WebsiteProvider";
 
 const BookingSidebar = (params: {
   source?: Tour["source"];
   places?: Tour["places"];
   days?: number;
   night?: number;
+  minfair?: number | string;
+  contact?: string;
 }) => {
+  const { websiteInfo } = useWebsite();
   return (
     <div className="bg-white border border-gray-200 rounded-2xl shadow-lg p-5 space-y-4 w-full sticky top-24 z-10">
       {/* Destination & Duration */}
@@ -28,6 +32,9 @@ const BookingSidebar = (params: {
             </span>
           </div>
           <p className="text-xs mt-1 text-gray-500">
+            <strong>
+              <b>To:</b>
+            </strong>{" "}
             {params?.places?.map((data) => data.name).join(" & ")}
           </p>
         </div>
@@ -70,14 +77,16 @@ const BookingSidebar = (params: {
               <GroupIcon fontSize="small" />
               <span>5 Travelers</span>
             </div>
-            <p className="line-through text-xs opacity-70 mt-1">₹ 8,599</p>
+            <p className="line-through text-xs opacity-70 mt-1">
+              ₹ {5 * Number(params?.minfair || 0)}
+            </p>
             <p className="bg-white text-[#C22A54] rounded-full text-xs font-semibold px-2 py-0.5 w-max mt-1">
-              Save 15%
+              Save 3%
             </p>
           </div>
           <div className="text-right">
             <p className="text-xl sm:text-2xl font-bold leading-none">
-              ₹ 6,999
+              ₹ {params.minfair}
             </p>
             <p className="text-xs text-white/80">+ taxes per person</p>
           </div>
@@ -85,10 +94,13 @@ const BookingSidebar = (params: {
 
         {/* Action Buttons */}
         <div className="grid grid-cols-2 gap-3 pt-3">
-          <button className="bg-white text-[#C22A54] hover:bg-[#C22A54]/10 font-semibold text-sm rounded-lg py-2 flex justify-center items-center gap-1 transition-all duration-300">
+          <a
+            className="bg-white text-[#C22A54] hover:text-[#691930]/10 font-semibold text-sm rounded-lg py-2 flex justify-center items-center gap-1 transition-all duration-300"
+            href={`tel:${websiteInfo?.phone || params.contact}`}
+          >
             <PhoneIcon fontSize="small" /> Call
-          </button>
-          <button className="bg-white text-[#C22A54] hover:bg-[#C22A54]/10 font-semibold text-sm rounded-lg py-2 flex justify-center items-center gap-1 transition-all duration-300">
+          </a>
+          <button className="bg-white text-[#C22A54] hover:text-[#691930]/10 font-semibold text-sm rounded-lg py-2 flex justify-center items-center gap-1 transition-all duration-300">
             <HelpOutlineIcon fontSize="small" /> Query
           </button>
         </div>
