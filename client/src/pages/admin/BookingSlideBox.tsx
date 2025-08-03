@@ -7,8 +7,14 @@ import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import GroupIcon from "@mui/icons-material/Group";
 import PhoneIcon from "@mui/icons-material/Phone";
 import HelpOutlineIcon from "@mui/icons-material/HelpOutline";
+import { Tour } from "../TourDetailPage";
 
-const BookingSidebar = () => {
+const BookingSidebar = (params: {
+  source?: Tour["source"];
+  places?: Tour["places"];
+  days?: number;
+  night?: number;
+}) => {
   return (
     <div className="bg-white border border-gray-200 rounded-2xl shadow-lg p-5 space-y-4 w-full sticky top-24 z-10">
       {/* Destination & Duration */}
@@ -16,16 +22,20 @@ const BookingSidebar = () => {
         <div className="flex flex-col text-sm text-gray-700">
           <div className="flex items-center gap-2 font-semibold">
             <LocationOnIcon fontSize="small" className="text-[#C22A54]" />
-            <span>From: Delhi</span>
+            <span>
+              From:{" "}
+              {params?.source?.map((data) => data.location.name).join(", ")}
+            </span>
           </div>
           <p className="text-xs mt-1 text-gray-500">
-            Kedarnath (2N) & Guptkashi (2N)
+            {params?.places?.map((data) => data.name).join(" & ")}
           </p>
         </div>
         <div className="flex items-center text-xs gap-2 bg-gray-50 border rounded-full px-3 py-1 text-gray-600">
           <NightsStayIcon fontSize="small" />
-          4 Nights
-          <WbSunnyIcon fontSize="small" />5 Days
+          {params?.night} Nights
+          <WbSunnyIcon fontSize="small" />
+          {params?.days} Days
         </div>
       </div>
 

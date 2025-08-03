@@ -19,7 +19,7 @@ import Common from "../utils/common.js";
  * @property {boolean} isActive - Indicates if the tour is active.
  * @property {Date} createdAt - Auto-generated timestamp for when the tour was created.
  * @property {Date} updatedAt - Auto-generated timestamp for when the tour was last updated.
- * @property {Number} status - 0 means draft and 1 means published
+ * @property {Number} status - 1 means draft and 2 means published
  */
 const GSchema = mongoose.Schema;
 const SourceItemSchema = new GSchema({

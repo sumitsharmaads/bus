@@ -66,6 +66,10 @@ export const getTourDayNight = (
   };
 };
 
+export const isValidObjectId = (id?: string) => {
+  if (!id) return false;
+  return /^[a-f\d]{24}$/i.test(id);
+};
 // const getTourDayNight = (start: Date | string, end: Date) => {
 //   const startDay = new Date(start);
 //   const endDay = new Date(end.getFullYear(), end.getMonth(), end.getDate());

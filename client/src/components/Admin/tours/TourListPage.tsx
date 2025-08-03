@@ -40,7 +40,7 @@ import {
 } from "@mui/icons-material";
 import EventIcon from "@mui/icons-material/Event";
 import axios from "axios";
-import { post } from "../../../service";
+import { patch, post } from "../../../service";
 import { BasicDetailsType } from "./AddBasicTourDetails";
 import { TourTravelType } from "../types";
 import { Link } from "react-router-dom";
@@ -181,6 +181,18 @@ const TourListPage: React.FC = () => {
       tourname: "",
       status: "",
     });
+  };
+
+  const handlePublish = async (id: number | string) => {
+    if (!id) return;
+    try {
+      const response = await patch(`/tours/${id}`, {
+        status: 2,
+      });
+      if (response.data) {
+        fetchTours();
+      }
+    } catch (error) {}
   };
 
   return (
@@ -454,6 +466,9 @@ const TourListPage: React.FC = () => {
                     startIcon={<Publish />}
                     variant="outlined"
                     color={"success"}
+                    onClick={async () => {
+                      if (tour._id) await handlePublish(tour._id);
+                    }}
                   >
                     {"Publish"}
                   </Button>
